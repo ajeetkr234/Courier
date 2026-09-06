@@ -1,0 +1,45 @@
+<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Website Theme Electric Blue & Sky Cyan Gradients (userSpaceOnUse for 100% compatibility) -->
+    <linearGradient id="sfSGrad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="64" y2="64">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="50%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#1D4ED8" />
+    </linearGradient>
+
+    <linearGradient id="sfFGrad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="64" y2="64">
+      <stop offset="0%" stop-color="#00F2FE" />
+      <stop offset="60%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#2563EB" />
+    </linearGradient>
+
+    <linearGradient id="sfArrowAccent" gradientUnits="userSpaceOnUse" x1="40" y1="0" x2="64" y2="24">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#2563EB" />
+    </linearGradient>
+  </defs>
+
+  <!-- Only SF Emblem Monogram Mark (Vibrant Electric Blue & Cyan, 100% Compatible) -->
+
+  <!-- 'S' Loop Ribbon Curve -->
+  <path 
+    d="M 26 12 C 16 12 10 18 10 26 C 10 35 17 37 25 40 C 33 43 37 46 37 53 C 37 60 30 63 20 63 C 12 63 8 57 7 51" 
+    stroke="url(#sfSGrad)" 
+    stroke-width="7.5" 
+    stroke-linecap="round" 
+  />
+
+  <!-- Connected 'F' Ribbon Bars -->
+  <path 
+    d="M 37 12 L 50 12 M 37 27 L 49 27 M 37 12 L 37 63" 
+    stroke="url(#sfFGrad)" 
+    stroke-width="7.5" 
+    stroke-linecap="round" 
+  />
+
+  <!-- Forward Speed Arrowhead -->
+  <path 
+    d="M 48 4 L 60 12 L 48 20 Z" 
+    fill="url(#sfArrowAccent)" 
+  />
+</svg>

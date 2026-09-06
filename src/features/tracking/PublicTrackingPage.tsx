@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { gsap } from 'gsap';
 import { 
   Search, MapPin, Truck, CheckCircle2, Package, Clock, ShieldCheck, 
   ArrowRight, Phone, AlertTriangle, Download, MessageSquare, RefreshCw,
-  ChevronDown, ExternalLink, UserCheck, Sparkles, Navigation
+  ChevronDown, ExternalLink, UserCheck, Sparkles, Navigation, Copy, Share2, HelpCircle, Send, Calendar, Check, X
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { StatusBadge } from '../../components/ui/Badge';
@@ -13,6 +13,7 @@ import { PublicNavbar, PublicFooter } from '../landing/PublicNav';
 import { MockCourierAdapter } from '../../services/couriers/mock.adapter';
 import { TrackingResult } from '../../services/couriers/adapter.interface';
 import { toast } from 'sonner';
+import { GlobalThreeBackground } from '../../components/ui/GlobalThreeBackground';
 
 const routeStages = [
   { id: 'pickup', title: 'PICKUP', subtitle: 'Package Picked Up', icon: <Package className="w-4 h-4 text-blue-600" /> },
@@ -37,6 +38,10 @@ export const PublicTrackingPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [waOptIn, setWaOptIn] = useState(true);
+  const [isCopied, setIsCopied] = useState(false);
+  const [isShareCopied, setIsShareCopied] = useState(false);
+  const [showInstructionModal, setShowInstructionModal] = useState(false);
+  const [instructionText, setInstructionText] = useState('');
 
   const routeLineRef = useRef<HTMLDivElement>(null);
   const truckIconRef = useRef<HTMLDivElement>(null);
@@ -122,49 +127,77 @@ export const PublicTrackingPage: React.FC = () => {
     {
       q: 'Where can I download Proof of Delivery (POD)?',
       a: 'Once a parcel is marked "DELIVERED", the digital POD signature receipt becomes available for download directly in the tracking portal.'
+    },
+    {
+      q: 'What should I do if my shipment delivery is delayed past the estimated date?',
+      a: 'Transit times can occasionally fluctuate due to regional weather or hub volume. If a parcel is delayed past its EDD, our automated tracking engine raises a priority inquiry with the courier dispatch team.'
+    },
+    {
+      q: 'Can I contact the assigned delivery executive or update delivery instructions?',
+      a: 'Yes! When a shipment reaches "Out For Delivery", the executive name and contact button become active. You can also click "Delivery Instructions" to leave security gate or landmark notes.'
+    },
+    {
+      q: 'How can an online store brand this tracking page with their own logo?',
+      a: 'E-commerce merchants on ShipFaster Logistic can enable white-labeled branded tracking pages featuring their company logo, custom domain, and recommended products.'
     }
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-white text-slate-900 flex flex-col font-sans relative overflow-x-hidden">
       <PublicNavbar />
 
-      <section className="relative py-10 sm:py-12 px-6 sm:px-8 bg-slate-950 text-white border-b border-slate-800 overflow-hidden">
-        <div className="relative max-w-4xl mx-auto space-y-8 text-center">
+      {/* Hero Section (White Theme, Consistent with Landing Page) */}
+      <section className="relative py-12 sm:py-16 px-6 sm:px-8 bg-gradient-to-b from-blue-50/40 via-white to-white border-b border-slate-200/80 overflow-hidden">
+        {/* Three.js Dynamic Background Canvas (Exact match to Home Page) */}
+        <div className="absolute inset-0 opacity-40 pointer-events-none z-0">
+          <GlobalThreeBackground />
+        </div>
+
+        <div className="relative max-w-4xl mx-auto space-y-8 text-center z-10">
+          {/* Standardized Pill Chip Badge */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-400/30 text-blue-300 text-xs font-extrabold shadow-sm"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs"
           >
-            <Navigation className="w-4 h-4 text-blue-400 animate-spin" style={{ animationDuration: '8s' }} />
-            <span>Live Courier Tracking • Delhivery, Xpressbees, Shadowfax & DTDC</span>
+            <span className="flex h-2 w-2 relative">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600" />
+            </span>
+            <Navigation className="w-3.5 h-3.5 text-blue-600" />
+            <span className="uppercase tracking-wider">Live Courier Tracking • Delhivery, Xpressbees, Shadowfax &amp; DTDC</span>
           </motion.div>
 
+          {/* Redesigned Premium Display Heading */}
           <motion.h1 
-            initial={{ opacity: 0, y: 25 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl sm:text-6xl font-black font-display tracking-tight leading-tight max-w-3xl mx-auto text-white"
-          >
-            Track Any Courier Shipment in Real-Time.
-          </motion.h1>
-
-          <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-base sm:text-lg text-slate-300 max-w-xl mx-auto leading-relaxed font-medium"
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-2xl xs:text-3xl sm:text-5xl md:text-6xl font-black font-display tracking-tight leading-[1.22] sm:leading-[1.24] max-w-6xl mx-auto text-slate-950"
           >
-            Enter your AWB tracking number or Order ID to inspect live courier progress, estimated delivery times, and milestone history.
+            <span className="block pb-1 sm:pb-1.5 text-slate-950">Universal Courier Radar.</span>
+            <span className="inline-block mt-1 sm:mt-2 px-2 pb-2 sm:pb-3.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent sm:whitespace-nowrap">
+              Track Any Shipment in Real-Time.
+            </span>
+          </motion.h1>
+
+          {/* Subtitle Paragraph */}
+          <motion.p 
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed font-medium mt-3 sm:mt-4"
+          >
+            Enter your AWB tracking number or Order ID to inspect live courier progress, estimated delivery times, and milestone history across 29,000+ pincodes.
           </motion.p>
 
-          {/* Tracking Search Card */}
+          {/* Premium White Tracking Search Card */}
           <motion.div 
-            initial={{ opacity: 0, y: 25 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="bg-slate-900/90 p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-2xl space-y-4 text-left backdrop-blur-md"
+            className="bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/90 shadow-xl shadow-slate-900/5 space-y-4 text-left"
           >
             <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3">
               <input
@@ -172,29 +205,29 @@ export const PublicTrackingPage: React.FC = () => {
                 placeholder="Enter tracking number (e.g. DEL1928374650)..."
                 value={inputAwb}
                 onChange={(e) => setInputAwb(e.target.value)}
-                className="flex-1 bg-slate-950 border border-slate-800 rounded-2xl px-5 py-3.5 text-sm font-mono font-bold text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3.5 text-sm font-mono font-bold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 transition-all"
                 required
               />
               <Button 
                 type="submit" 
                 isLoading={isLoading} 
                 leftIcon={<Search className="w-4 h-4" />} 
-                className="bg-blue-600 hover:bg-blue-500 text-white font-extrabold px-8 py-3.5 rounded-2xl shadow-xl shadow-blue-500/25"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-extrabold px-8 py-3.5 rounded-2xl shadow-lg shadow-blue-500/20"
               >
                 Track Shipment
               </Button>
             </form>
 
             {/* Demo Sample AWBs */}
-            <div className="flex flex-wrap items-center gap-2 pt-2 text-xs">
-              <span className="text-slate-400 font-bold text-[11px] uppercase tracking-wider">Try Demo AWBs:</span>
+            <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
+              <span className="text-slate-500 font-bold text-[11px] uppercase tracking-wider">Try Demo AWBs:</span>
               {sampleAwbs.map((sample) => (
                 <button
                   key={sample.awb}
                   onClick={() => handleSampleClick(sample.awb)}
-                  className={`px-3 py-1 rounded-lg bg-slate-950 border ${sample.color} font-mono text-[11px] font-bold hover:bg-slate-800 transition-colors cursor-pointer`}
+                  className="px-3 py-1 rounded-lg bg-slate-50 border border-slate-200/90 text-slate-700 font-mono text-[11px] font-bold hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-colors cursor-pointer"
                 >
-                  {sample.awb} ({sample.label})
+                  {sample.awb} <span className="text-slate-400 font-normal font-sans">({sample.label})</span>
                 </button>
               ))}
             </div>
@@ -215,8 +248,38 @@ export const PublicTrackingPage: React.FC = () => {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
               <div className="space-y-1">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-blue-600 font-mono">AIR WAYBILL (AWB) TRACKING</span>
-                <h2 className="text-2xl sm:text-3xl font-black text-slate-900 font-display">{trackingData.awbNumber}</h2>
-                <div className="flex items-center gap-2 text-xs text-slate-500 font-medium font-mono">
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  <h2 className="text-2xl sm:text-3xl font-black text-slate-900 font-display">{trackingData.awbNumber}</h2>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(trackingData.awbNumber);
+                      setIsCopied(true);
+                      toast.success('AWB number copied to clipboard!');
+                      setTimeout(() => setIsCopied(false), 2000);
+                    }}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
+                    title="Copy AWB Number"
+                  >
+                    {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-slate-500" />}
+                    <span>{isCopied ? 'Copied' : 'Copy'}</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      const shareUrl = `${window.location.origin}/track?awb=${trackingData.awbNumber}`;
+                      navigator.clipboard.writeText(shareUrl);
+                      setIsShareCopied(true);
+                      toast.success('Shareable tracking URL copied!');
+                      setTimeout(() => setIsShareCopied(false), 2000);
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs font-bold transition-colors cursor-pointer"
+                    title="Share Live Tracking Link"
+                  >
+                    {isShareCopied ? <Check className="w-3.5 h-3.5 text-blue-600" /> : <Share2 className="w-3.5 h-3.5 text-blue-600" />}
+                    <span>{isShareCopied ? 'Link Copied' : 'Share Link'}</span>
+                  </button>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-slate-500 font-medium font-mono pt-1">
                   <span>Carrier: <strong>Delhivery Express</strong></span>
                   <span>•</span>
                   <span>Order: #ORD-9920</span>
@@ -247,10 +310,18 @@ export const PublicTrackingPage: React.FC = () => {
 
               <div className="flex items-center gap-2 shrink-0">
                 <button 
-                  onClick={() => toast.success('Delivery executive notified of your status check!')}
-                  className="px-4 py-2 rounded-xl bg-white border border-blue-200 text-blue-700 font-extrabold hover:bg-blue-50 transition-colors shadow-xs cursor-pointer"
+                  onClick={() => setShowInstructionModal(true)}
+                  className="px-4 py-2 rounded-xl bg-blue-600 text-white font-extrabold hover:bg-blue-500 transition-colors shadow-sm cursor-pointer inline-flex items-center gap-1.5"
                 >
-                  Call Driver
+                  <MessageSquare className="w-3.5 h-3.5" />
+                  <span>Delivery Instructions</span>
+                </button>
+                <button 
+                  onClick={() => toast.success('Connecting call to Delivery Executive Rajesh Kumar (+91 98765*****)...')}
+                  className="px-4 py-2 rounded-xl bg-white border border-blue-200 text-blue-700 font-extrabold hover:bg-blue-50 transition-colors shadow-xs cursor-pointer inline-flex items-center gap-1.5"
+                >
+                  <Phone className="w-3.5 h-3.5 text-blue-600" />
+                  <span>Call Driver</span>
                 </button>
               </div>
             </div>
@@ -404,22 +475,41 @@ export const PublicTrackingPage: React.FC = () => {
           </motion.div>
         )}
 
-        {/* Tracking FAQs Accordion */}
-        <div className="bg-slate-100/70 p-8 sm:p-12 rounded-3xl border border-slate-200/90 shadow-md space-y-6">
-          <div className="text-center space-y-2">
-            <span className="text-xs font-extrabold uppercase tracking-widest text-blue-600 font-display">TRACKING HELP</span>
-            <h3 className="text-2xl sm:text-4xl font-black text-slate-900 font-display tracking-tight">Frequently Asked Tracking Questions</h3>
+        {/* Tracking FAQs Accordion (White Background & Clean Borderless Style) */}
+        <div className="bg-white py-8 sm:py-12 space-y-8">
+          <div className="text-center space-y-3.5 max-w-5xl mx-auto">
+            <div className="inline-block">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
+                <span className="flex h-2 w-2 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
+                </span>
+                <HelpCircle className="w-3.5 h-3.5 text-blue-600" />
+                <span className="uppercase tracking-wider">TRACKING HELP • FREQUENTLY ASKED QUESTIONS</span>
+              </div>
+            </div>
+
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.24] max-w-4xl mx-auto">
+              Frequently Asked{' '}
+              <span className="inline-block pb-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
+                Tracking Questions
+              </span>
+            </h2>
+
+            <p className="text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
+              Learn about live scanning intervals, failed delivery reattempts, and how to download digital Proof of Delivery receipts.
+            </p>
           </div>
 
-          <div className="space-y-3 max-w-3xl mx-auto">
+          <div className="divide-y divide-slate-200/80 max-w-3xl mx-auto">
             {trackingFaqs.map((faq, idx) => (
-              <div key={idx} className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-xs">
+              <div key={idx} className="py-5 first:pt-0 last:pb-0">
                 <button
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                  className="w-full p-5 text-left flex items-center justify-between font-bold text-slate-900 text-sm sm:text-base hover:text-blue-600 transition-colors cursor-pointer"
+                  className="w-full text-left flex items-center justify-between font-bold text-slate-900 text-base sm:text-lg hover:text-blue-600 transition-colors cursor-pointer group"
                 >
-                  <span>{faq.q}</span>
-                  <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${openFaq === idx ? 'rotate-180 text-blue-600' : ''}`} />
+                  <span className="pr-4 group-hover:translate-x-0.5 transition-transform">{faq.q}</span>
+                  <ChevronDown className={`w-5 h-5 text-slate-400 shrink-0 transition-transform duration-200 ${openFaq === idx ? 'rotate-180 text-blue-600' : ''}`} />
                 </button>
                 <AnimatePresence>
                   {openFaq === idx && (
@@ -428,7 +518,7 @@ export const PublicTrackingPage: React.FC = () => {
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.2 }}
-                      className="px-5 pb-5 text-xs sm:text-sm text-slate-600 leading-relaxed font-medium border-t border-slate-200 pt-3"
+                      className="pt-3 text-sm text-slate-600 leading-relaxed font-medium"
                     >
                       {faq.a}
                     </motion.div>
@@ -439,6 +529,100 @@ export const PublicTrackingPage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Delivery Instructions Modal */}
+      <AnimatePresence>
+        {showInstructionModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full border border-slate-200 shadow-2xl space-y-6"
+            >
+              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                    <MessageSquare className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-black text-slate-900 font-display">Special Delivery Instructions</h3>
+                    <p className="text-xs text-slate-500 font-medium">For AWB {trackingData?.awbNumber || 'DEL1928374650'}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowInstructionModal(false)}
+                  className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                  Select or enter special delivery instructions for delivery executive <strong>Rajesh Kumar</strong>:
+                </p>
+
+                <div className="grid grid-cols-2 gap-2 text-xs font-semibold">
+                  {[
+                    'Leave at Security / Gate',
+                    'Call Before Delivery',
+                    'Deliver to Neighbor',
+                    'Deliver Post 4:00 PM'
+                  ].map((preset) => (
+                    <button
+                      key={preset}
+                      type="button"
+                      onClick={() => setInstructionText(preset)}
+                      className={`p-2.5 rounded-xl border text-left transition-colors cursor-pointer ${
+                        instructionText === preset
+                          ? 'border-blue-600 bg-blue-50 text-blue-700 font-extrabold'
+                          : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+                      }`}
+                    >
+                      {preset}
+                    </button>
+                  ))}
+                </div>
+
+                <textarea
+                  rows={3}
+                  placeholder="Or enter custom instructions for courier driver..."
+                  value={instructionText}
+                  onChange={(e) => setInstructionText(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 font-medium"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowInstructionModal(false)}
+                  className="font-bold text-slate-600"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    if (!instructionText.trim()) {
+                      toast.error('Please enter or select a delivery instruction.');
+                      return;
+                    }
+                    toast.success('Delivery instruction submitted to courier partner!');
+                    setShowInstructionModal(false);
+                    setInstructionText('');
+                  }}
+                  className="bg-blue-600 hover:bg-blue-500 text-white font-extrabold px-5"
+                >
+                  Submit Instruction
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       <PublicFooter />
     </div>

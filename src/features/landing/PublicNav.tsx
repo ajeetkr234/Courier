@@ -1,103 +1,159 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '../../components/ui/Button';
-import { ArrowRight, Sparkles, Menu, X, ChevronRight, Phone, Mail, MapPin } from 'lucide-react';
+import { ArrowRight, Menu, X, ChevronRight, Phone, Mail, MapPin } from 'lucide-react';
 
 export const PublicNavbar: React.FC = () => {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAnnouncementVisible, setIsAnnouncementVisible] = useState(true);
+  const [isNavHidden, setIsNavHidden] = useState(false);
+
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Always show near top of page (first 60px) or if mobile menu is open
+      if (currentScrollY <= 60 || mobileMenuOpen) {
+        setIsNavHidden(false);
+        lastScrollY.current = currentScrollY;
+        return;
+      }
+
+      const diff = currentScrollY - lastScrollY.current;
+
+      // Upward scroll -> reveal navbar immediately
+      if (diff < -4) {
+        setIsNavHidden(false);
+        lastScrollY.current = currentScrollY;
+      }
+      // Downward scroll -> hide navbar
+      else if (diff > 8) {
+        setIsNavHidden(true);
+        lastScrollY.current = currentScrollY;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [mobileMenuOpen]);
 
   const isActive = (path: string) => {
     return location.pathname === path;
   };
 
+  const navLinks = [
+    { label: 'Home', path: '/' },
+    { label: 'Features', path: '/features' },
+    { label: 'Integrations', path: '/integrations' },
+    { label: 'Pricing', path: '/pricing' },
+    { label: 'Track Order', path: '/track' },
+    { label: 'Contact', path: '/contact' },
+  ];
+
   return (
-    <div className="sticky top-0 z-50">
-      {/* Slim Professional Announcement Bar */}
+    <motion.div 
+      variants={{
+        visible: { y: '0%' },
+        hidden: { y: '-100%' }
+      }}
+      animate={isNavHidden ? 'hidden' : 'visible'}
+      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+      className="sticky top-0 z-50 will-change-transform"
+    >
+      {/* Slim Refined Top Promotional Bar with Continuous Marquee */}
       {isAnnouncementVisible && (
-        <div className="bg-blue-600 text-white text-[11px] sm:text-xs font-semibold py-1.5 px-3 sm:px-6 flex items-center justify-between shadow-xs transition-all relative">
-          <div className="flex-1 flex items-center justify-center gap-2 truncate">
-            <span className="truncate">Special Offer — 15% Off Your First 100 Shipments</span>
-            <Link 
-              to="/register" 
-              className="inline-flex items-center font-bold text-white hover:text-blue-100 underline decoration-white/60 underline-offset-2 shrink-0 transition-colors"
-            >
-              Claim Offer →
-            </Link>
+        <div className="bg-blue-600 text-white text-[11px] sm:text-xs font-semibold py-1.5 flex items-center overflow-hidden shadow-xs transition-all relative">
+          <div className="flex-1 overflow-hidden relative">
+            <div className="animate-infinite-marquee flex items-center">
+              {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                <div key={i} className="flex items-center gap-6 px-6 shrink-0">
+                  <span className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-300 animate-pulse shrink-0" />
+                    <span>Special Offer — 15% Off Your First 100 Shipments</span>
+                  </span>
+                  <Link 
+                    to="/register" 
+                    className="inline-flex items-center font-bold text-white hover:text-amber-200 underline decoration-white/60 underline-offset-2 shrink-0 transition-colors"
+                  >
+                    Claim Offer →
+                  </Link>
+                  <span className="text-blue-300/60 font-mono select-none">•</span>
+                </div>
+              ))}
+            </div>
           </div>
-          <button
-            onClick={() => setIsAnnouncementVisible(false)}
-            className="text-white/80 hover:text-white p-0.5 rounded-md hover:bg-blue-700/60 transition-colors shrink-0 ml-2"
-            aria-label="Dismiss Announcement"
-          >
-            <X className="w-3.5 h-3.5" />
-          </button>
+          <div className="relative z-10 pl-4 pr-3 bg-gradient-to-l from-blue-600 via-blue-600 to-transparent flex items-center shrink-0">
+            <button
+              onClick={() => setIsAnnouncementVisible(false)}
+              className="text-white/80 hover:text-white p-0.5 rounded-md hover:bg-blue-700/80 transition-colors shrink-0 cursor-pointer"
+              aria-label="Dismiss Announcement"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       )}
 
-      {/* Enterprise Navbar */}
-      <header className="bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
+      {/* Enterprise Navbar — 72px Height with Balanced Spacing */}
+      <header className="bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs h-[72px] flex items-center w-full">
+        <div className="w-full mx-auto px-4 sm:px-8 lg:px-12 flex items-center justify-between">
           {/* Brand Logo & Name */}
-          <Link to="/" className="flex items-center gap-2.5 shrink-0">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-700 to-blue-500 flex items-center justify-center font-black text-white shadow-md text-lg font-display">
+          <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-700 to-blue-500 flex items-center justify-center font-black text-white shadow-md text-lg font-display group-hover:scale-105 transition-transform duration-200">
               S
             </div>
-            <div>
-              <span className="font-black text-lg sm:text-xl tracking-tight text-slate-900 font-display">ShipSmarter</span>
-              <span className="block text-[8px] sm:text-[9px] font-extrabold text-blue-600 uppercase tracking-widest">Multi-Courier Aggregator</span>
+            <div className="flex flex-col justify-center">
+              <span className="font-black text-lg sm:text-xl tracking-tight text-slate-900 font-display leading-tight">ShipSmarter</span>
+              <span className="text-[8px] sm:text-[9px] font-extrabold text-blue-600 uppercase tracking-widest leading-none mt-0.5">Multi-Courier Aggregator</span>
             </div>
           </Link>
 
-          {/* Desktop Navigation Links — Dedicated Standalone Pages */}
-          <nav className="hidden lg:flex items-center gap-7 text-xs font-bold text-slate-600">
-            <Link 
-              to="/" 
-              className={`transition-colors py-1 ${isActive('/') ? 'text-blue-600 font-extrabold border-b-2 border-blue-600' : 'hover:text-blue-600'}`}
-            >
-              Home
-            </Link>
-            <Link 
-              to="/features" 
-              className={`transition-colors py-1 ${isActive('/features') ? 'text-blue-600 font-extrabold border-b-2 border-blue-600' : 'hover:text-blue-600'}`}
-            >
-              Features
-            </Link>
-            <Link 
-              to="/integrations" 
-              className={`transition-colors py-1 ${isActive('/integrations') ? 'text-blue-600 font-extrabold border-b-2 border-blue-600' : 'hover:text-blue-600'}`}
-            >
-              Integrations
-            </Link>
-            <Link 
-              to="/pricing" 
-              className={`transition-colors py-1 ${isActive('/pricing') ? 'text-blue-600 font-extrabold border-b-2 border-blue-600' : 'hover:text-blue-600'}`}
-            >
-              Pricing
-            </Link>
-            <Link 
-              to="/track" 
-              className={`transition-colors py-1 ${isActive('/track') ? 'text-blue-600 font-extrabold border-b-2 border-blue-600' : 'hover:text-blue-600'}`}
-            >
-              Track Order
-            </Link>
-            <Link 
-              to="/contact" 
-              className={`transition-colors py-1 ${isActive('/contact') ? 'text-blue-600 font-extrabold border-b-2 border-blue-600' : 'hover:text-blue-600'}`}
-            >
-              Contact
-            </Link>
+          {/* Desktop Navigation Links — Only Active Item gets Underline */}
+          <nav className="hidden lg:flex items-center gap-8 text-xs">
+            {navLinks.map((link) => {
+              const active = isActive(link.path);
+              return (
+                <Link 
+                  key={link.path}
+                  to={link.path} 
+                  className={`relative py-2.5 transition-colors ${
+                    active 
+                      ? 'text-blue-600 font-extrabold' 
+                      : 'text-slate-600 hover:text-blue-600 font-semibold'
+                  }`}
+                >
+                  {link.label}
+                  {active && (
+                    <motion.div 
+                      layoutId="activeNavIndicator"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-full"
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Desktop Right CTAs */}
-          <div className="hidden sm:flex items-center gap-3">
+          <div className="hidden sm:flex items-center gap-3.5">
             <Link to="/login">
-              <Button variant="ghost" size="sm" className="font-bold text-slate-700 hover:text-blue-600">Sign In</Button>
+              <Button variant="ghost" size="sm" className="font-bold text-slate-700 hover:text-blue-600 px-3">
+                Sign In
+              </Button>
             </Link>
             <Link to="/register">
-              <Button size="sm" rightIcon={<ArrowRight className="w-4 h-4" />}>Start Shipping</Button>
+              <Button 
+                size="sm" 
+                className="font-bold shadow-xs hover:shadow-md hover:shadow-blue-500/20 hover:-translate-y-0.5 transition-all duration-200 group"
+                rightIcon={<ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />}
+              >
+                Start Shipping
+              </Button>
             </Link>
           </div>
 
@@ -115,55 +171,23 @@ export const PublicNavbar: React.FC = () => {
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="lg:hidden border-b border-slate-200 bg-white px-6 py-4 space-y-3 font-semibold text-sm shadow-xl max-h-[80vh] overflow-y-auto">
-            <Link 
-              to="/" 
-              onClick={() => setMobileMenuOpen(false)} 
-              className={`flex items-center justify-between py-2.5 border-b border-slate-100 ${isActive('/') ? 'text-blue-600 font-extrabold' : 'text-slate-700 hover:text-blue-600'}`}
-            >
-              <span>Home</span>
-              <ChevronRight className="w-4 h-4 text-slate-400" />
-            </Link>
-            <Link 
-              to="/features" 
-              onClick={() => setMobileMenuOpen(false)} 
-              className={`flex items-center justify-between py-2.5 border-b border-slate-100 ${isActive('/features') ? 'text-blue-600 font-extrabold' : 'text-slate-700 hover:text-blue-600'}`}
-            >
-              <span>Features</span>
-              <ChevronRight className="w-4 h-4 text-slate-400" />
-            </Link>
-            <Link 
-              to="/integrations" 
-              onClick={() => setMobileMenuOpen(false)} 
-              className={`flex items-center justify-between py-2.5 border-b border-slate-100 ${isActive('/integrations') ? 'text-blue-600 font-extrabold' : 'text-slate-700 hover:text-blue-600'}`}
-            >
-              <span>Integrations</span>
-              <ChevronRight className="w-4 h-4 text-slate-400" />
-            </Link>
-            <Link 
-              to="/pricing" 
-              onClick={() => setMobileMenuOpen(false)} 
-              className={`flex items-center justify-between py-2.5 border-b border-slate-100 ${isActive('/pricing') ? 'text-blue-600 font-extrabold' : 'text-slate-700 hover:text-blue-600'}`}
-            >
-              <span>Pricing</span>
-              <ChevronRight className="w-4 h-4 text-slate-400" />
-            </Link>
-            <Link 
-              to="/track" 
-              onClick={() => setMobileMenuOpen(false)} 
-              className={`flex items-center justify-between py-2.5 border-b border-slate-100 ${isActive('/track') ? 'text-blue-600 font-extrabold' : 'text-slate-700 hover:text-blue-600'}`}
-            >
-              <span>Track Order</span>
-              <ChevronRight className="w-4 h-4 text-slate-400" />
-            </Link>
-            <Link 
-              to="/contact" 
-              onClick={() => setMobileMenuOpen(false)} 
-              className={`flex items-center justify-between py-2.5 border-b border-slate-100 ${isActive('/contact') ? 'text-blue-600 font-extrabold' : 'text-slate-700 hover:text-blue-600'}`}
-            >
-              <span>Contact</span>
-              <ChevronRight className="w-4 h-4 text-slate-400" />
-            </Link>
+          <div className="absolute top-[72px] left-0 right-0 lg:hidden border-b border-slate-200 bg-white px-6 py-4 space-y-3 font-semibold text-sm shadow-xl max-h-[80vh] overflow-y-auto">
+            {navLinks.map((link) => {
+              const active = isActive(link.path);
+              return (
+                <Link 
+                  key={link.path}
+                  to={link.path} 
+                  onClick={() => setMobileMenuOpen(false)} 
+                  className={`flex items-center justify-between py-2.5 border-b border-slate-100 ${
+                    active ? 'text-blue-600 font-extrabold' : 'text-slate-700 hover:text-blue-600'
+                  }`}
+                >
+                  <span>{link.label}</span>
+                  <ChevronRight className={`w-4 h-4 ${active ? 'text-blue-600' : 'text-slate-400'}`} />
+                </Link>
+              );
+            })}
             
             <div className="pt-3 flex flex-col gap-2.5">
               <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
@@ -176,7 +200,7 @@ export const PublicNavbar: React.FC = () => {
           </div>
         )}
       </header>
-    </div>
+    </motion.div>
   );
 };
 
@@ -193,9 +217,9 @@ export const PublicFooter: React.FC = () => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}
-      className="border-t border-slate-200 bg-slate-50 pt-12 sm:pt-16 pb-12 px-4 sm:px-6 lg:px-8 mt-auto"
+      className="border-t border-slate-200 bg-slate-50 pt-12 sm:pt-16 pb-12 px-4 sm:px-8 lg:px-12 mt-auto w-full"
     >
-      <div className="max-w-7xl mx-auto space-y-8 sm:space-y-12">
+      <div className="w-full mx-auto space-y-8 sm:space-y-12">
         {/* Brand Header */}
         <div className="space-y-3 pb-8 border-b border-slate-200/80">
           <div className="flex items-center gap-3">

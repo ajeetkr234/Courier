@@ -24,13 +24,21 @@ export const CouriersPage: React.FC = () => {
       {/* Hero Section */}
       <section className="py-12 sm:py-16 px-6 sm:px-8 bg-gradient-to-b from-blue-50/70 via-white to-white border-b border-slate-200 text-center">
         <div className="max-w-7xl mx-auto space-y-6">
-          <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-100/90 text-blue-800 text-xs font-extrabold border border-blue-200 shadow-xs">
-            <Sparkles className="w-3.5 h-3.5 text-blue-600 animate-spin" /> Pan-India Courier Network
+          <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
+            <span className="flex h-2 w-2 relative">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600" />
+            </span>
+            <Sparkles className="w-3.5 h-3.5 text-blue-600 animate-spin" />
+            <span className="uppercase tracking-wider">Pan-India Courier Network</span>
           </span>
-          <h1 className="text-4xl sm:text-5xl font-black text-slate-900 font-display tracking-tight">
-            Integrated Carrier Partners & Coverage
+          <h1 className="text-2xl xs:text-3xl sm:text-5xl md:text-6xl lg:text-[66px] font-black font-display tracking-tight leading-[1.12] max-w-5xl mx-auto text-slate-950">
+            Integrated Carrier Partners &amp;{' '}
+            <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
+              Pan-India Coverage
+            </span>
           </h1>
-          <p className="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto font-medium leading-relaxed">
+          <p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto font-medium leading-relaxed mt-3 sm:mt-4">
             Compare rates, check pincode serviceability, and book shipments across 28,000+ pincodes in India.
           </p>
 
@@ -41,10 +49,29 @@ export const CouriersPage: React.FC = () => {
       {/* Main Content Container with Standardized Padding */}
       <section className="py-12 sm:py-16 px-6 sm:px-8 max-w-7xl mx-auto w-full space-y-16">
         {/* Interactive Pincode Serviceability Lookup Tool */}
-        <div className="bg-slate-50 p-8 rounded-3xl border border-slate-200 shadow-md space-y-6">
-          <div className="text-center space-y-2">
-            <h2 className="text-2xl font-black text-slate-900 font-display">Check Pincode Courier Serviceability</h2>
-            <p className="text-xs text-slate-600">Enter any destination pincode to view available couriers and COD eligibility.</p>
+        <div className="bg-slate-50 p-8 sm:p-12 rounded-3xl border border-slate-200 shadow-md space-y-8">
+          <div className="text-center space-y-3.5 max-w-5xl mx-auto">
+            <div className="inline-block">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
+                <span className="flex h-2 w-2 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
+                </span>
+                <MapPin className="w-3.5 h-3.5 text-blue-600" />
+                <span className="uppercase tracking-wider">PINCODE SERVICEABILITY • INSTANT CHECK</span>
+              </div>
+            </div>
+
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
+              Check Pincode Courier{' '}
+              <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
+                Serviceability
+              </span>
+            </h2>
+
+            <p className="text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
+              Enter any 6-digit Indian destination pincode to verify active carrier connectivity, COD readiness, and transit SLAs.
+            </p>
           </div>
 
           <form onSubmit={handlePincodeCheck} className="max-w-md mx-auto flex gap-2">
@@ -77,6 +104,31 @@ export const CouriersPage: React.FC = () => {
         </div>
 
         <FloatingCourierBadges />
+
+        {/* Carrier Detail Cards Header */}
+        <div className="text-center space-y-3.5 max-w-5xl mx-auto">
+          <div className="inline-block">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
+              <span className="flex h-2 w-2 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
+              </span>
+              <Truck className="w-3.5 h-3.5 text-blue-600" />
+              <span className="uppercase tracking-wider">FLEET CAPABILITIES • CARRIER BENCHMARKS</span>
+            </div>
+          </div>
+
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
+            Compare Courier Strengths &amp;{' '}
+            <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
+              Delivery SLAs
+            </span>
+          </h2>
+
+          <p className="text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
+            Direct API connections with top Indian carriers ensure real-time rate discounts, automated manifest uploads, and instant label generation.
+          </p>
+        </div>
 
         {/* Carrier Detail Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

@@ -45,7 +45,17 @@ export const DashboardPage: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6 animate-fadeIn">
+    <div className="w-full space-y-6 pb-16 text-slate-900 font-sans">
+      {/* Page Title */}
+      <div className="space-y-1">
+        <h1 className="text-2xl font-black text-slate-900 font-display tracking-tight">
+          Seller Analytics Dashboard
+        </h1>
+        <p className="text-xs text-slate-500 font-medium">
+          Real-time metrics, revenue analytics, carrier distribution &amp; order fulfillment SLAs.
+        </p>
+      </div>
+
       {/* Alert Banner */}
       {(ndrCount > 0 || disputeCount > 0) && (
         <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
@@ -272,4 +282,3 @@ export const DashboardPage: React.FC = () => {
     </div>
   );
 };
-

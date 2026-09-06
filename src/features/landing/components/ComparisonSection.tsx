@@ -26,7 +26,7 @@ export const ComparisonSection: React.FC = () => {
   return (
     <section
       id="why-shipsmarter"
-      className="pt-12 sm:pt-14 pb-20 px-4 sm:px-6 lg:px-8 bg-slate-50 border-b border-slate-200 overflow-hidden"
+      className="pt-12 sm:pt-14 pb-20 px-4 sm:px-8 lg:px-12 bg-slate-50 border-b border-slate-200 overflow-hidden"
     >
       <div className="max-w-7xl mx-auto space-y-12">
         {/* Header Block */}
@@ -35,22 +35,30 @@ export const ComparisonSection: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-50px' }}
           transition={{ duration: 0.5 }}
-          className="text-center space-y-3"
+          className="text-center space-y-3.5 max-w-5xl mx-auto"
         >
           {/* Badge */}
           <div className="inline-block">
-            <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-extrabold border border-blue-200">
-              <HelpCircle className="w-3.5 h-3.5 text-blue-600" /> Why ShipSmarter?
-            </span>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
+              <span className="flex h-2 w-2 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
+              </span>
+              <HelpCircle className="w-3.5 h-3.5 text-blue-600" />
+              <span className="uppercase tracking-wider">Why ShipFaster Logistic?</span>
+            </div>
           </div>
 
           {/* Main Heading */}
-          <h2 className="text-3xl sm:text-4xl font-black text-slate-900 font-display max-w-3xl mx-auto leading-tight">
-            Shipping shouldn't mean managing five different courier systems.
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
+            Shipping Shouldn't Mean Managing{' '}
+            <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
+              Five Different Systems
+            </span>
           </h2>
 
           {/* Subtitle */}
-          <p className="text-sm text-slate-600 max-w-xl mx-auto font-medium">
+          <p className="text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
             Eliminate courier fragmentation, manual rate calculations, and delayed COD remittances.
           </p>
         </motion.div>
@@ -76,7 +84,7 @@ export const ComparisonSection: React.FC = () => {
                   <XCircle className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-black text-slate-900 font-display">Without ShipSmarter</h3>
+                  <h3 className="text-xl font-black text-slate-900 font-display">Without ShipFaster Logistic</h3>
                   <span className="text-xs font-extrabold text-rose-600 uppercase tracking-widest">
                     Traditional Logistics Frustration
                   </span>
@@ -109,7 +117,7 @@ export const ComparisonSection: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* Right Card: With ShipSmarter */}
+          {/* Right Card: With ShipFaster Logistic */}
           <motion.div
             initial={{ opacity: 0, x: shouldReduceMotion ? 0 : 50 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -133,7 +141,7 @@ export const ComparisonSection: React.FC = () => {
                   <CheckCircle2 className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-black text-slate-900 font-display">With ShipSmarter</h3>
+                  <h3 className="text-xl font-black text-slate-900 font-display">With ShipFaster Logistic</h3>
                   <span className="text-xs font-extrabold text-emerald-600 uppercase tracking-widest">
                     Unified Platform Efficiency
                   </span>

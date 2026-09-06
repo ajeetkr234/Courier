@@ -16,7 +16,7 @@ export const SolutionsPage: React.FC = () => {
     {
       title: 'D2C Apparel & Fashion Brands',
       subtitle: 'Exchange management, address verification, and reverse pickups',
-      desc: 'Apparel stores face high exchange requests and address non-deliveries. ShipSmarter automates size exchange reverse pickups, verifies buyer delivery addresses via WhatsApp before dispatch, and handles door-step trial exchanges.',
+      desc: 'Apparel stores face high exchange requests and address non-deliveries. ShipFaster Logistic automates size exchange reverse pickups, verifies buyer delivery addresses via WhatsApp before dispatch, and handles door-step trial exchanges.',
       stats: 'Lower RTO Rate',
       icon: <ShoppingBag className="w-6 h-6 text-blue-600" />,
       features: ['Automated reverse pickup booking', 'WhatsApp address confirmation', 'Exchanges & return management']
@@ -48,7 +48,7 @@ export const SolutionsPage: React.FC = () => {
     {
       title: 'Healthcare & Pharmaceuticals',
       subtitle: 'Priority express dispatch, secure chain-of-custody, and verification',
-      desc: 'Ensure medical supplies and pharma products meet strict delivery timelines. ShipSmarter provides priority express routing, real-time temperature tracking alerts, and doorstep signature verification.',
+      desc: 'Ensure medical supplies and pharma products meet strict delivery timelines. ShipFaster Logistic provides priority express routing, real-time temperature tracking alerts, and doorstep signature verification.',
       stats: 'Priority Express Routing',
       icon: <ShieldCheck className="w-6 h-6 text-rose-600" />,
       features: ['Priority express air dispatch', 'Real-time status alerts', 'Address & phone verification']
@@ -72,8 +72,8 @@ export const SolutionsPage: React.FC = () => {
 
   const solutionFaqs = [
     {
-      q: 'Can ShipSmarter handle reverse pickup for size exchanges in D2C Apparel?',
-      a: 'Yes! ShipSmarter automatically generates reverse shipping AWB labels for exchange items, schedules doorstep courier pickup, and updates your inventory system.'
+      q: 'Can ShipFaster Logistic handle reverse pickup for size exchanges in D2C Apparel?',
+      a: 'Yes! ShipFaster Logistic automatically generates reverse shipping AWB labels for exchange items, schedules doorstep courier pickup, and updates your inventory system.'
     },
     {
       q: 'How does OTP delivery verification work for high-value electronics?',
@@ -92,13 +92,18 @@ export const SolutionsPage: React.FC = () => {
       {/* Hero Header */}
       <section className="py-16 sm:py-20 px-6 sm:px-8 bg-gradient-to-b from-blue-50/80 via-white to-white border-b border-slate-200 overflow-hidden">
         <div className="max-w-7xl mx-auto space-y-6 text-center">
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-100 text-blue-800 text-xs font-extrabold border border-blue-200 shadow-xs">
-            <Sparkles className="w-4 h-4 text-blue-600" /> Industry Tailored Logistics
+          <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
+            <span className="flex h-2 w-2 relative">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600" />
+            </span>
+            <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+            <span className="uppercase tracking-wider">Industry Tailored Logistics</span>
           </span>
-          <h1 className="text-4xl sm:text-6xl font-black text-slate-900 font-display tracking-tight leading-tight max-w-4xl mx-auto">
-            Shipping Workflows Built for <span className="text-blue-600">Your Industry</span>
+          <h1 className="text-2xl xs:text-3xl sm:text-5xl md:text-6xl lg:text-[66px] font-black text-slate-950 font-display tracking-tight leading-[1.12] max-w-5xl mx-auto">
+            Shipping Workflows Built for <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">Your Industry</span>
           </h1>
-          <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed font-medium">
+          <p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed font-medium mt-3 sm:mt-4">
             Configure logistics rules, courier selection, and NDR recovery around the way your specific business actually ships.
           </p>
         </div>
@@ -106,10 +111,28 @@ export const SolutionsPage: React.FC = () => {
 
       {/* 6 Industry Solution Cards Section */}
       <section className="py-16 sm:py-20 px-6 sm:px-8 max-w-7xl mx-auto w-full space-y-16">
-        <div className="text-center space-y-3">
-          <span className="text-xs font-extrabold uppercase tracking-widest text-blue-600 font-display">TAILORED SOLUTIONS</span>
-          <h2 className="text-3xl sm:text-4xl font-black text-slate-900 font-display">Specialized Workflows Across 6 Verticals</h2>
-          <p className="text-sm text-slate-600 max-w-2xl mx-auto font-medium">Every industry faces distinct logistics challenges. Here is how ShipSmarter solves them.</p>
+        <div className="text-center space-y-3.5 max-w-5xl mx-auto">
+          <div className="inline-block">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
+              <span className="flex h-2 w-2 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
+              </span>
+              <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+              <span className="uppercase tracking-wider">TAILORED SOLUTIONS • INDUSTRY WORKFLOWS</span>
+            </div>
+          </div>
+
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
+            Specialized Workflows Across{' '}
+            <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
+              6 Industry Verticals
+            </span>
+          </h2>
+
+          <p className="text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
+            Every industry faces distinct logistics challenges. Here is how ShipFaster Logistic solves them.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -158,10 +181,29 @@ export const SolutionsPage: React.FC = () => {
         </div>
 
         {/* Industry Matrix Comparison */}
-        <div className="bg-slate-50 p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-md space-y-6">
-          <div className="text-center space-y-2">
-            <span className="text-xs font-extrabold uppercase tracking-widest text-blue-600 font-display">INDUSTRY COMPARISON MATRIX</span>
-            <h3 className="text-2xl sm:text-3xl font-black text-slate-900 font-display">Logistics Parameters by Category</h3>
+        <div className="bg-slate-50 p-8 sm:p-12 rounded-3xl border border-slate-200 shadow-md space-y-8">
+          <div className="text-center space-y-3.5 max-w-5xl mx-auto">
+            <div className="inline-block">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
+                <span className="flex h-2 w-2 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
+                </span>
+                <Layers className="w-3.5 h-3.5 text-blue-600" />
+                <span className="uppercase tracking-wider">INDUSTRY COMPARISON MATRIX • CARRIER STACK</span>
+              </div>
+            </div>
+
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
+              Logistics Parameters by{' '}
+              <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
+                Category Vertical
+              </span>
+            </h2>
+
+            <p className="text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
+              Benchmark average RTO risks, fulfillment bottlenecks, and ideal multi-courier allocations tailored to your sector.
+            </p>
           </div>
 
           <div className="overflow-x-auto">
@@ -189,10 +231,29 @@ export const SolutionsPage: React.FC = () => {
         </div>
 
         {/* Industry Solutions FAQs */}
-        <div className="bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-md space-y-6">
-          <div className="text-center space-y-2">
-            <span className="text-xs font-extrabold uppercase tracking-widest text-blue-600 font-display">SOLUTIONS FAQS</span>
-            <h3 className="text-2xl sm:text-3xl font-black text-slate-900 font-display">Industry Workflow FAQs</h3>
+        <div className="py-8 border-t border-slate-200/80 space-y-8">
+          <div className="text-center space-y-3.5 max-w-5xl mx-auto">
+            <div className="inline-block">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
+                <span className="flex h-2 w-2 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
+                </span>
+                <HelpCircle className="w-3.5 h-3.5 text-blue-600" />
+                <span className="uppercase tracking-wider">SOLUTIONS FAQS • EXPERT GUIDANCE</span>
+              </div>
+            </div>
+
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
+              Industry Workflow{' '}
+              <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
+                Frequently Asked Questions
+              </span>
+            </h2>
+
+            <p className="text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
+              Have specific logistics requirements for your product vertical? Explore answers to common questions below.
+            </p>
           </div>
 
           <div className="space-y-3 max-w-3xl mx-auto">
@@ -213,19 +274,6 @@ export const SolutionsPage: React.FC = () => {
               </div>
             ))}
           </div>
-        </div>
-
-        {/* CTA Banner */}
-        <div className="bg-blue-600 text-white p-8 sm:p-12 rounded-3xl shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div className="space-y-2 text-center sm:text-left">
-            <h3 className="text-2xl sm:text-3xl font-black font-display">Need a Custom Shipping Strategy?</h3>
-            <p className="text-xs sm:text-sm text-blue-100 font-medium max-w-xl">Talk to our logistics experts to configure custom rules for your business vertical.</p>
-          </div>
-          <Link to="/contact" className="shrink-0 w-full sm:w-auto">
-            <Button size="lg" className="w-full sm:w-auto bg-white text-blue-700 hover:bg-slate-100 font-extrabold shadow-lg">
-              Book a Demo →
-            </Button>
-          </Link>
         </div>
       </section>
 

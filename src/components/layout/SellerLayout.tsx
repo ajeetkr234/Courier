@@ -1,15 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { 
   LayoutDashboard, ShoppingBag, Truck, CalendarCheck, MapPin, 
   AlertTriangle, RotateCcw, Scale, Wallet, FileText, Globe, 
   BarChart3, Code2, Users, Settings, ChevronDown, LogOut, 
-  Menu, X, Building2, PlusCircle, Upload, ShieldCheck, Search, Activity
+  Menu, X, Building2, PlusCircle, Upload, ShieldCheck, Search, Activity, Calculator
 } from 'lucide-react';
 import { usePlatformStore } from '../../services/store';
 import { useAuth } from '../../app/providers/AuthProvider';
 import { Button } from '../ui/Button';
 import { CommandPalette } from '../ui/CommandPalette';
+
+import { ShipFasterLogo } from '../ui/ShipFasterLogo';
 
 export const SellerLayout: React.FC = () => {
   const location = useLocation();
@@ -23,12 +26,46 @@ export const SellerLayout: React.FC = () => {
   const [ordersOpen, setOrdersOpen] = useState(location.pathname.startsWith('/app/orders'));
   const [financeOpen, setFinanceOpen] = useState(location.pathname.startsWith('/app/finance') || location.pathname.startsWith('/app/wallet'));
   const [isCmdKOpen, setIsCmdKOpen] = useState(false);
+  const [isHeaderHidden, setIsHeaderHidden] = useState(false);
+  const lastMainScrollY = useRef(0);
 
   useEffect(() => {
     if (mainRef.current) {
       mainRef.current.scrollTop = 0;
+      setIsHeaderHidden(false);
     }
   }, [location.pathname]);
+
+  useEffect(() => {
+    const mainEl = mainRef.current;
+    if (!mainEl) return;
+
+    const handleMainScroll = () => {
+      const currentScrollY = mainEl.scrollTop;
+
+      if (currentScrollY <= 50) {
+        setIsHeaderHidden(false);
+        lastMainScrollY.current = currentScrollY;
+        return;
+      }
+
+      const diff = currentScrollY - lastMainScrollY.current;
+
+      // Upward scroll -> reveal header
+      if (diff < -4) {
+        setIsHeaderHidden(false);
+        lastMainScrollY.current = currentScrollY;
+      }
+      // Downward scroll -> hide header
+      else if (diff > 8) {
+        setIsHeaderHidden(true);
+        lastMainScrollY.current = currentScrollY;
+      }
+    };
+
+    mainEl.addEventListener('scroll', handleMainScroll, { passive: true });
+    return () => mainEl.removeEventListener('scroll', handleMainScroll);
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -78,13 +115,7 @@ export const SellerLayout: React.FC = () => {
         {/* Brand Header */}
         <div className="hidden md:flex items-center justify-between px-6 py-5 border-b border-slate-200">
           <Link to="/app/dashboard" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-white shadow-md text-base font-display">
-              S
-            </div>
-            <div>
-              <span className="font-extrabold text-lg tracking-tight text-slate-900 font-display">ShipSwift AI</span>
-              <span className="block text-[10px] text-indigo-600 font-bold uppercase tracking-widest">Seller Portal</span>
-            </div>
+            <ShipFasterLogo size="md" variant="dark" />
           </Link>
         </div>
 
@@ -114,14 +145,25 @@ export const SellerLayout: React.FC = () => {
             setIsSidebarOpen(false);
           }
         }} className="flex-1 overflow-y-auto p-4 space-y-1 text-xs font-semibold">
-          {/* Dashboard */}
+          {/* Home */}
+          <Link
+            to="/app/home"
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
+              isActive('/app/home') ? 'bg-indigo-50 text-indigo-700 font-bold border border-indigo-200' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+            }`}
+          >
+            <LayoutDashboard className="w-4 h-4" />
+            <span>Home</span>
+          </Link>
+
+          {/* Analytics Dashboard */}
           <Link
             to="/app/dashboard"
             className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
               isActive('/app/dashboard') ? 'bg-indigo-50 text-indigo-700 font-bold border border-indigo-200' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
             }`}
           >
-            <LayoutDashboard className="w-4 h-4" />
+            <BarChart3 className="w-4 h-4" />
             <span>Dashboard</span>
           </Link>
 
@@ -230,6 +272,17 @@ export const SellerLayout: React.FC = () => {
           >
             <Scale className="w-4 h-4" />
             <span>Weight Disputes</span>
+          </Link>
+
+          {/* Rate Calculator */}
+          <Link
+            to="/app/rate-calculator"
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
+              isActive('/app/rate-calculator') ? 'bg-indigo-50 text-indigo-700 font-bold border border-indigo-200' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+            }`}
+          >
+            <Calculator className="w-4 h-4" />
+            <span>Rate Calculator</span>
           </Link>
 
           {/* Finance Parent */}
@@ -362,12 +415,21 @@ export const SellerLayout: React.FC = () => {
 
       {/* Main App Content Viewport */}
       <div className="flex-1 flex flex-col h-screen min-w-0 overflow-hidden">
-        {/* Desktop Fixed Top Header Navbar */}
-        <header className="hidden md:flex items-center justify-between px-6 h-16 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs shrink-0 z-30">
+        {/* Desktop Fixed Top Header Navbar — Smart Auto-Hide on Scroll */}
+        <motion.header 
+          variants={{
+            visible: { y: '0%', opacity: 1 },
+            hidden: { y: '-100%', opacity: 0 }
+          }}
+          animate={isHeaderHidden ? 'hidden' : 'visible'}
+          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          className="hidden md:flex items-center justify-between px-6 h-16 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs shrink-0 z-30 will-change-transform"
+        >
           <div className="flex items-center gap-3">
             <span className="w-2.5 h-2.5 rounded-full bg-indigo-600 animate-pulse"></span>
             <h1 className="text-base font-black text-slate-900 font-display tracking-tight">
-              {isActive('/app/dashboard') && 'Seller Dashboard'}
+              {isActive('/app/home') && 'Seller Home'}
+              {isActive('/app/dashboard') && 'Seller Analytics Dashboard'}
               {isActive('/app/orders') && 'Orders Management'}
               {isActive('/app/orders/new') && 'Create New Order'}
               {isActive('/app/orders/import') && 'Bulk Import Orders'}
@@ -377,6 +439,7 @@ export const SellerLayout: React.FC = () => {
               {isActive('/app/ndr') && 'NDR Resolution Hub'}
               {isActive('/app/returns') && 'Reverse Logistics & Returns'}
               {isActive('/app/weight-disputes') && 'Weight Disputes Inbox'}
+              {isActive('/app/rate-calculator') && 'Shipping Rate Calculator'}
               {isActive('/app/wallet') && 'Wallet & Financial Ledger'}
               {isActive('/app/cod') && 'COD Remittances & Settlements'}
               {isActive('/app/billing') && 'Invoices & Rate Cards'}
@@ -423,7 +486,7 @@ export const SellerLayout: React.FC = () => {
               </Button>
             </Link>
           </div>
-        </header>
+        </motion.header>
 
         {/* Scrollable Page Content Body */}
         <main ref={mainRef} className="flex-1 overflow-y-auto p-4 md:p-6 w-full max-w-none">

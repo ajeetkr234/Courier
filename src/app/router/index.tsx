@@ -23,6 +23,7 @@ import { AdminLayout } from '../../components/layout/AdminLayout';
 
 // Seller Feature Pages
 import { DashboardPage } from '../../features/dashboard/DashboardPage';
+import { SellerHomePage } from '../../features/dashboard/SellerHomePage';
 import { OrdersListPage } from '../../features/orders/OrdersListPage';
 import { CreateOrderPage } from '../../features/orders/CreateOrderPage';
 import { ImportOrdersPage } from '../../features/orders/ImportOrdersPage';
@@ -37,6 +38,7 @@ import { IntegrationsPage as SellerIntegrationsPage } from '../../features/integ
 import { DeveloperPortalPage } from '../../features/developers/DeveloperPortalPage';
 import { TeamManagementPage } from '../../features/team/TeamManagementPage';
 import { ReportsPage } from '../../features/reports/ReportsPage';
+import { RateCalculatorPage } from '../../features/rate-calculator/RateCalculatorPage';
 
 // Admin Feature Pages
 import { AdminDashboardPage } from '../../admin/dashboard/AdminDashboardPage';
@@ -71,7 +73,8 @@ export const router = createBrowserRouter([
         path: '/app',
         element: <SellerLayout />,
         children: [
-          { path: '', element: <Navigate to="/app/dashboard" replace /> },
+          { path: '', element: <Navigate to="/app/home" replace /> },
+          { path: 'home', element: <SellerHomePage /> },
           { path: 'dashboard', element: <DashboardPage /> },
           { path: 'orders', element: <OrdersListPage /> },
           { path: 'orders/new', element: <CreateOrderPage /> },
@@ -84,6 +87,8 @@ export const router = createBrowserRouter([
           { path: 'rto', element: <RTOTrackingPage /> },
           { path: 'returns', element: <ReturnsPage /> },
           { path: 'weight-disputes', element: <WeightDisputesPage /> },
+          { path: 'rate-calculator', element: <RateCalculatorPage /> },
+          { path: 'tools/rate-calculator', element: <RateCalculatorPage /> },
           { path: 'wallet', element: <WalletPage /> },
           { path: 'cod', element: <CODRemittancePage /> },
           { path: 'billing', element: <WalletPage /> },

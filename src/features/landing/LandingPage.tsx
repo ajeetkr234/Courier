@@ -82,24 +82,23 @@ const heroProductVisualVariants: Variants = {
     transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
   },
 };
-import { 
-  Truck, Search, CheckCircle2, ShieldCheck, Zap, ArrowRight, 
-  ChevronRight, BarChart3, Wallet, MapPin, Calculator, Sparkles, 
-  Building2, Award, Users, RefreshCw, Package, ArrowUpRight, 
-  HelpCircle, ChevronDown, Star, Check, Layers, DollarSign, 
-  ShoppingBag, Store, Globe, Code2, FileSpreadsheet, Headset, 
+import {
+  Truck, Search, CheckCircle2, ShieldCheck, Zap, ArrowRight,
+  ChevronRight, BarChart3, Wallet, MapPin, Calculator, Sparkles,
+  Building2, Award, Users, RefreshCw, Package, ArrowUpRight,
+  HelpCircle, ChevronDown, Star, Check, Layers, DollarSign,
+  ShoppingBag, Store, Globe, Code2, FileSpreadsheet, Headset,
   Send, Mail, Phone, Scale, FileText, Clock, Navigation, Plane,
   XCircle, AlertTriangle, Filter, ArrowUpDown, Cpu, Printer, Bell, CheckSquare,
-  MessageSquare, Smartphone, Calendar, PackageCheck, ArrowDown, FileCheck, Receipt, Loader2, Box, Tag, Quote, Lock, X, Eye, TrendingUp
+  MessageSquare, Smartphone, Calendar, PackageCheck, FileCheck, Receipt, Loader2, Box, Tag, Quote, Lock, X, Eye, TrendingUp
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { PublicNavbar, PublicFooter } from './PublicNav';
 import { ComparisonSection } from './components/ComparisonSection';
 import { HowItWorksSection } from './components/HowItWorksSection';
-import { IntegrationsNetworkVisualizer } from './components/IntegrationsNetworkVisualizer';
+import { IndustryOrbitVisualizer } from './components/IndustryOrbitVisualizer';
 import { AnimatedCounter } from '../../components/ui/AnimatedCounter';
-import { HeroCourierAnimation, FloatingCourierBadges } from '../../components/ui/AnimatedCourierVisuals';
 import { GlobalThreeBackground } from '../../components/ui/GlobalThreeBackground';
 import { rateEngine } from '../../services/couriers/rateEngine';
 import { RateQuote } from '../../types';
@@ -144,7 +143,7 @@ export const LandingPage: React.FC = () => {
     setTimeout(scrollToTop, 0);
     setTimeout(scrollToTop, 50);
   }, []);
-  
+
   // Freight Calculator Inputs State
   const [calcPickup, setCalcPickup] = useState('110020');
   const [calcDelivery, setCalcDelivery] = useState('400001');
@@ -464,7 +463,7 @@ export const LandingPage: React.FC = () => {
     const ctx = gsap.context(() => {
       const cards = solutionsCardsRef.current.filter(Boolean);
       if (cards.length > 0) {
-        gsap.fromTo(cards, 
+        gsap.fromTo(cards,
           { opacity: 0, y: 35, scale: 0.98 },
           {
             opacity: 1,
@@ -561,13 +560,117 @@ export const LandingPage: React.FC = () => {
   };
 
   const courierNetworkCards = [
-    { name: 'Delhivery', type: 'Air & Surface', logoBg: 'bg-red-600', icon: <Truck className="w-4 h-4 text-white" /> },
-    { name: 'Xpressbees', type: 'Express Cargo', logoBg: 'bg-amber-500 text-slate-950', icon: <Zap className="w-4 h-4 text-slate-950" /> },
-    { name: 'Ecom Express', type: 'Prepaid & COD', logoBg: 'bg-emerald-600', icon: <Package className="w-4 h-4 text-white" /> },
-    { name: 'Shadowfax', type: 'Hyperlocal', logoBg: 'bg-purple-600', icon: <Navigation className="w-4 h-4 text-white" /> },
-    { name: 'DTDC', type: 'Air & Ground', logoBg: 'bg-sky-500', icon: <Truck className="w-4 h-4 text-white" /> },
-    { name: 'Blue Dart', type: 'Express Freight', logoBg: 'bg-blue-600', icon: <Plane className="w-4 h-4 text-white" /> },
-    { name: 'DHL', type: 'International', logoBg: 'bg-yellow-400 text-red-700', icon: <Globe className="w-4 h-4 text-red-700" /> }
+    {
+      name: 'Delhivery',
+      logoSvg: (
+        <svg viewBox="0 0 140 40" className="h-8 sm:h-9 w-auto">
+          <rect width="140" height="40" rx="8" fill="#E11D48" />
+          <text x="70" y="26" textAnchor="middle" fill="#FFFFFF" fontFamily="system-ui, sans-serif" fontWeight="900" fontSize="17" letterSpacing="1">DELHIVERY</text>
+        </svg>
+      ),
+      borderGlow: 'hover:border-red-500/80 hover:shadow-[0_0_30px_rgba(225,29,72,0.35)]'
+    },
+    {
+      name: 'Blue Dart',
+      logoSvg: (
+        <svg viewBox="0 0 140 40" className="h-8 sm:h-9 w-auto">
+          <rect width="140" height="40" rx="8" fill="#1D4ED8" />
+          <path d="M12 20 L22 12 L22 28 Z" fill="#FACC15" />
+          <text x="76" y="26" textAnchor="middle" fill="#FFFFFF" fontFamily="system-ui, sans-serif" fontWeight="900" fontSize="15" letterSpacing="0.5">BLUE DART</text>
+        </svg>
+      ),
+      borderGlow: 'hover:border-blue-500/80 hover:shadow-[0_0_30px_rgba(29,78,216,0.35)]'
+    },
+    {
+      name: 'DHL Express',
+      logoSvg: (
+        <svg viewBox="0 0 110 40" className="h-8 sm:h-9 w-auto">
+          <rect width="110" height="40" rx="8" fill="#FFCC00" />
+          <line x1="8" y1="12" x2="30" y2="12" stroke="#D0021B" strokeWidth="3" />
+          <line x1="8" y1="20" x2="25" y2="20" stroke="#D0021B" strokeWidth="3" />
+          <line x1="8" y1="28" x2="20" y2="28" stroke="#D0021B" strokeWidth="3" />
+          <text x="68" y="28" textAnchor="middle" fill="#D0021B" fontFamily="Impact, Arial Black, sans-serif" fontWeight="900" fontSize="24" letterSpacing="1">DHL</text>
+        </svg>
+      ),
+      borderGlow: 'hover:border-amber-400/80 hover:shadow-[0_0_30px_rgba(255,204,0,0.35)]'
+    },
+    {
+      name: 'Xpressbees',
+      logoSvg: (
+        <svg viewBox="0 0 145 40" className="h-8 sm:h-9 w-auto">
+          <rect width="145" height="40" rx="8" fill="#F59E0B" />
+          <path d="M14 10 L22 20 L16 20 L24 30 L16 22 L22 22 Z" fill="#090D16" />
+          <text x="82" y="26" textAnchor="middle" fill="#090D16" fontFamily="system-ui, sans-serif" fontWeight="900" fontSize="14" letterSpacing="0.5">XPRESSBEES</text>
+        </svg>
+      ),
+      borderGlow: 'hover:border-amber-500/80 hover:shadow-[0_0_30px_rgba(245,158,11,0.35)]'
+    },
+    {
+      name: 'Shadowfax',
+      logoSvg: (
+        <svg viewBox="0 0 140 40" className="h-8 sm:h-9 w-auto">
+          <rect width="140" height="40" rx="8" fill="#7C3AED" />
+          <polygon points="14,20 26,12 22,20 26,28" fill="#FFFFFF" />
+          <text x="80" y="26" textAnchor="middle" fill="#FFFFFF" fontFamily="system-ui, sans-serif" fontWeight="800" fontSize="15">shadowfax</text>
+        </svg>
+      ),
+      borderGlow: 'hover:border-purple-500/80 hover:shadow-[0_0_30px_rgba(124,58,237,0.35)]'
+    },
+    {
+      name: 'DTDC',
+      logoSvg: (
+        <svg viewBox="0 0 120 40" className="h-8 sm:h-9 w-auto">
+          <rect width="120" height="40" rx="8" fill="#0284C7" />
+          <circle cx="18" cy="20" r="9" fill="#EF4444" />
+          <text x="68" y="27" textAnchor="middle" fill="#FFFFFF" fontFamily="Impact, Arial Black, sans-serif" fontWeight="900" fontSize="21" letterSpacing="1.5">DTDC</text>
+        </svg>
+      ),
+      borderGlow: 'hover:border-sky-400/80 hover:shadow-[0_0_30px_rgba(2,132,199,0.35)]'
+    },
+    {
+      name: 'Ecom Express',
+      logoSvg: (
+        <svg viewBox="0 0 145 40" className="h-8 sm:h-9 w-auto">
+          <rect width="145" height="40" rx="8" fill="#059669" />
+          <rect x="12" y="13" width="14" height="14" rx="3" fill="#FFFFFF" />
+          <text x="82" y="26" textAnchor="middle" fill="#FFFFFF" fontFamily="system-ui, sans-serif" fontWeight="800" fontSize="14">ecom express</text>
+        </svg>
+      ),
+      borderGlow: 'hover:border-emerald-500/80 hover:shadow-[0_0_30px_rgba(5,150,105,0.35)]'
+    },
+    {
+      name: 'Amazon Shipping',
+      logoSvg: (
+        <svg viewBox="0 0 155 40" className="h-8 sm:h-9 w-auto">
+          <rect width="155" height="40" rx="8" fill="#1F2937" />
+          <text x="77" y="23" textAnchor="middle" fill="#FFFFFF" fontFamily="system-ui, sans-serif" fontWeight="800" fontSize="13">amazon<tspan fill="#FF9900"> shipping</tspan></text>
+          <path d="M 40 28 Q 77 35 115 28" stroke="#FF9900" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+        </svg>
+      ),
+      borderGlow: 'hover:border-orange-400/80 hover:shadow-[0_0_30px_rgba(255,153,0,0.35)]'
+    },
+    {
+      name: 'FedEx',
+      logoSvg: (
+        <svg viewBox="0 0 120 40" className="h-8 sm:h-9 w-auto">
+          <rect width="120" height="40" rx="8" fill="#1E1B4B" />
+          <text x="60" y="28" textAnchor="middle" fontFamily="Impact, Arial Black, sans-serif" fontWeight="900" fontSize="24">
+            <tspan fill="#6366F1">Fed</tspan><tspan fill="#F97316">Ex</tspan>
+          </text>
+        </svg>
+      ),
+      borderGlow: 'hover:border-indigo-400/80 hover:shadow-[0_0_30px_rgba(99,102,241,0.35)]'
+    },
+    {
+      name: 'Aramex',
+      logoSvg: (
+        <svg viewBox="0 0 130 40" className="h-8 sm:h-9 w-auto">
+          <rect width="130" height="40" rx="8" fill="#DC2626" />
+          <text x="65" y="26" textAnchor="middle" fill="#FFFFFF" fontFamily="system-ui, sans-serif" fontWeight="900" fontSize="17" letterSpacing="0.5">aramex</text>
+        </svg>
+      ),
+      borderGlow: 'hover:border-rose-500/80 hover:shadow-[0_0_30px_rgba(220,38,38,0.35)]'
+    }
   ];
 
   const trustBenefits = [
@@ -789,29 +892,33 @@ export const LandingPage: React.FC = () => {
       <PublicNavbar />
 
       {/* Hero Section */}
-      <section className="relative pt-10 sm:pt-12 pb-8 sm:pb-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-blue-50/40 via-white to-white overflow-hidden">
+      <section className="relative pt-10 sm:pt-12 pb-8 sm:pb-12 px-4 sm:px-8 lg:px-12 bg-gradient-to-b from-blue-50/40 via-white to-white overflow-hidden">
         {/* Three.js Dynamic Background Canvas */}
         <div className="absolute inset-0 opacity-40 pointer-events-none z-0">
           <GlobalThreeBackground />
         </div>
 
-        <motion.div 
-          className="max-w-7xl mx-auto text-center relative z-10 space-y-5 sm:space-y-6"
+        <motion.div
+          className="w-full mx-auto text-center relative z-10 space-y-5 sm:space-y-6 px-4 sm:px-8 lg:px-12"
           variants={heroContainerVariants}
           initial="hidden"
           animate="visible"
         >
           {/* 1. Badge (y: -15 -> 0, opacity: 0 -> 1, 0.5s) */}
-          <motion.div 
+          <motion.div
             variants={heroBadgeVariants}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-100/90 border border-blue-200 text-blue-800 text-xs font-extrabold shadow-xs"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs"
           >
-            <Truck className="w-4 h-4 text-blue-600" />
-            <span>Multi-Courier Shipping Aggregator</span>
+            <span className="flex h-2 w-2 relative">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
+            </span>
+            <Truck className="w-3.5 h-3.5 text-blue-600" />
+            <span className="uppercase tracking-wider">Multi-Courier Shipping Aggregator</span>
           </motion.div>
 
           {/* 2. Responsive Animated Heading */}
-          <motion.h1 
+          <motion.h1
             variants={heroHeadingWordContainerVariants}
             className="text-2xl xs:text-3xl sm:text-5xl md:text-6xl lg:text-[66px] xl:text-[72px] font-black text-slate-950 tracking-tight leading-tight sm:leading-none font-display max-w-[1350px] mx-auto flex items-center justify-center flex-wrap sm:flex-nowrap gap-x-2 sm:gap-x-3.5 py-1 px-2"
           >
@@ -830,7 +937,7 @@ export const LandingPage: React.FC = () => {
           </motion.h1>
 
           {/* 3. Description (y: 20 -> 0, opacity: 0 -> 1, 0.5s) */}
-          <motion.p 
+          <motion.p
             variants={heroDescriptionVariants}
             className="text-base sm:text-lg text-slate-600 max-w-[780px] mx-auto leading-relaxed font-medium mt-3 sm:mt-4"
           >
@@ -838,7 +945,7 @@ export const LandingPage: React.FC = () => {
           </motion.p>
 
           {/* 4. CTA Buttons (y: 20 -> 0, opacity: 0 -> 1, 0.5s) */}
-          <motion.div 
+          <motion.div
             variants={heroCtaVariants}
             className="flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-4 mt-6 sm:mt-7"
           >
@@ -851,10 +958,10 @@ export const LandingPage: React.FC = () => {
             </Link>
             <a href="#calculator" className="w-full sm:w-auto">
               <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.18 }}>
-                <Button 
-                  variant="outline" 
-                  size="lg" 
-                  className="w-full sm:w-auto hover:border-blue-300 transition-colors" 
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="w-full sm:w-auto hover:border-blue-300 transition-colors"
                   leftIcon={
                     <span className="w-6 h-6 rounded-lg bg-blue-600/10 border border-blue-600/20 flex items-center justify-center text-blue-600 shadow-2xs">
                       <Calculator className="w-3.5 h-3.5" />
@@ -884,8 +991,8 @@ export const LandingPage: React.FC = () => {
           </div>
 
           {/* 5. Tracking Input (y: 20 -> 0, scale: 0.98 -> 1, opacity: 0 -> 1, 0.55s) */}
-          <motion.div 
-            id="track" 
+          <motion.div
+            id="track"
             variants={heroTrackingVariants}
             className="mt-6 sm:mt-7 max-w-[540px] mx-auto"
           >
@@ -907,12 +1014,12 @@ export const LandingPage: React.FC = () => {
             </form>
           </motion.div>
 
-          {/* 6. Product Visual Showcase & GSAP Live Operational Timeline */}
-          <motion.div 
+          {/* 6. Product Visual Showcase */}
+          <motion.div
             variants={heroProductVisualVariants}
-            className="mt-8 sm:mt-10 max-w-[1150px] mx-auto w-full space-y-6"
+            className="mt-8 sm:mt-10 max-w-6xl mx-auto w-full"
           >
-            <div className="relative rounded-2xl overflow-hidden p-1.5 bg-white border border-slate-200 shadow-md">
+            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden p-2 sm:p-2.5 bg-white border border-slate-200 shadow-xl shadow-slate-900/5">
               <div className="relative aspect-video w-full rounded-xl sm:rounded-2xl overflow-hidden bg-slate-950 flex items-center justify-center">
                 <video
                   src="/Create_a_premium_–_second.mp4"
@@ -924,141 +1031,93 @@ export const LandingPage: React.FC = () => {
                 />
               </div>
             </div>
-
-            {/* GSAP Interactive Operational Journey Animation */}
-            <HeroCourierAnimation />
           </motion.div>
         </motion.div>
       </section>
 
-      {/* Refined Courier Network Section */}
-      <section className="relative pt-12 pb-14 sm:pt-16 sm:pb-16 bg-slate-950 border-y border-slate-800 overflow-hidden">
+      {/* Minimalist Big-Logo Courier Network Showcase */}
+      <section className="relative py-14 sm:py-16 px-4 sm:px-8 lg:px-12 bg-[#090d16] border-y border-slate-800/80 overflow-hidden">
+        {/* Ambient Glows & Grid Mesh */}
+        <div
+          className="absolute inset-0 opacity-[0.03] pointer-events-none"
+          style={{
+            backgroundImage: `radial-gradient(#38bdf8 1px, transparent 1px)`,
+            backgroundSize: '28px 28px'
+          }}
+        />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[280px] bg-blue-600/10 blur-[120px] rounded-full pointer-events-none" />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-          {/* Header Block & Pill */}
-          <div className="text-center space-y-3.5">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-extrabold shadow-sm backdrop-blur-xs">
-              <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-              <span>12+ Integrated Courier Partners</span>
+        <div className="relative w-full mx-auto px-4 sm:px-8 lg:px-12 space-y-8">
+
+          {/* Header Block (Standardized Chip & Gradient Heading) */}
+          <div className="text-center space-y-3.5 max-w-4xl mx-auto">
+            <div className="inline-block">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 text-cyan-200 text-xs font-extrabold border border-white/20 shadow-xs backdrop-blur-md">
+                <span className="flex h-2 w-2 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-300 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-400"></span>
+                </span>
+                <Truck className="w-3.5 h-3.5 text-cyan-300" />
+                <span className="uppercase tracking-wider text-white/95">12+ Integrated Courier Partners</span>
+              </div>
             </div>
 
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight font-display text-white">
-              One Platform. Multiple Courier Networks.
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight font-display text-white leading-[1.18]">
+              One Platform.{' '}
+              <span className="bg-gradient-to-r from-cyan-200 via-sky-200 to-white bg-clip-text text-transparent">
+                Multiple Courier Networks.
+              </span>
             </h2>
-
-            <p className="text-xs sm:text-sm text-slate-400 font-medium max-w-xl mx-auto leading-relaxed">
-              Compare rates, choose optimal carriers, and manage all shipment manifests from a single control tower.
-            </p>
           </div>
 
-          {/* Feature Benefit Badges — Horizontal Scrollable Row on Mobile, Flex on Desktop */}
-          <div className="w-full overflow-x-auto pb-1 no-scrollbar flex items-center justify-start sm:justify-center gap-2 touch-pan-x whitespace-nowrap px-1">
-            {trustBenefits.map((benefit, idx) => (
-              <div 
-                key={idx} 
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/90 border border-slate-800 text-slate-300 text-[11px] sm:text-xs font-bold shadow-xs shrink-0"
-              >
-                {benefit.icon}
-                <span>{benefit.label}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* MOBILE VIEW: Compact 2-Column Partner Cards Grid (No Clipping, Full Visibility) */}
-          <div className="block sm:hidden grid grid-cols-2 gap-2.5 pt-1">
-            {courierNetworkCards.slice(0, 6).map((partner, idx) => (
-              <div 
-                key={`mobile-partner-${idx}`} 
-                className="bg-slate-900/90 p-3 rounded-2xl border border-slate-800/90 flex items-center gap-2.5 shadow-md"
-              >
-                <div className={`w-8 h-8 rounded-xl ${partner.logoBg} flex items-center justify-center font-bold text-xs shadow-xs shrink-0`}>
-                  {partner.icon}
-                </div>
-                <div className="min-w-0 flex-1 space-y-0.5">
-                  <span className="font-black text-xs text-white font-display truncate block">
-                    {partner.name}
-                  </span>
-                  <span className="block text-[9px] text-slate-400 font-semibold truncate">{partner.type}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* DESKTOP / TABLET VIEW: Continuous Infinite Marquee Track */}
-          <div 
-            className="hidden sm:block relative overflow-hidden py-3 max-w-full [mask-image:linear-gradient(to_right,transparent_0%,black_8%,black_92%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,transparent_0%,black_8%,black_92%,transparent_100%)]"
+          {/* LARGE LOGO CONTINUOUS INFINITE MARQUEE */}
+          <div
+            className="relative overflow-hidden py-4 max-w-full [mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)]"
           >
             <div ref={marqueeTrackRef} className="animate-infinite-marquee flex items-center shrink-0">
-              {/* Marquee Track 1 */}
-              <div className="flex items-center gap-4 pr-4 shrink-0">
+              {/* Track Loop 1 */}
+              <div className="flex items-center gap-4 sm:gap-6 pr-4 sm:pr-6 shrink-0">
                 {courierNetworkCards.map((partner, idx) => (
-                  <div 
-                    key={`track1-${idx}`} 
+                  <div
+                    key={`track1-${idx}`}
                     onMouseEnter={handleMarqueeCardMouseEnter}
                     onMouseLeave={handleMarqueeCardMouseLeave}
-                    className="group bg-slate-900/90 hover:bg-slate-800/90 text-slate-100 p-3.5 rounded-2xl border border-slate-800 shadow-xl flex items-center gap-3.5 hover:border-blue-500/60 hover:shadow-[0_0_25px_rgba(59,130,246,0.25)] hover:-translate-y-1 transition-all duration-300 ease-out shrink-0 cursor-pointer w-[185px]"
+                    className={`group bg-slate-900/90 hover:bg-slate-800 p-3 sm:p-4 rounded-2xl border border-slate-800/90 shadow-2xl flex items-center justify-center ${partner.borderGlow} hover:-translate-y-1 transition-all duration-300 ease-out shrink-0 cursor-pointer`}
                   >
-                    <div className={`w-10 h-10 rounded-xl ${partner.logoBg} flex items-center justify-center font-bold text-xs shadow-md shadow-black/50 shrink-0 transition-transform duration-300 ease-out group-hover:scale-105`}>
-                      {partner.icon}
-                    </div>
-                    <div className="min-w-0 flex-1 space-y-0.5">
-                      <div className="flex items-center justify-between">
-                        <span className="font-extrabold text-xs text-white font-display tracking-tight truncate group-hover:text-blue-300 transition-colors">
-                          {partner.name}
-                        </span>
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>
-                      </div>
-                      <span className="block text-[10px] text-slate-400 font-semibold truncate">{partner.type}</span>
+                    <div className="transition-transform duration-300 group-hover:scale-105">
+                      {partner.logoSvg}
                     </div>
                   </div>
                 ))}
               </div>
 
-              {/* Marquee Track 2 */}
-              <div className="flex items-center gap-4 pr-4 shrink-0" aria-hidden="true">
+              {/* Track Loop 2 */}
+              <div className="flex items-center gap-4 sm:gap-6 pr-4 sm:pr-6 shrink-0" aria-hidden="true">
                 {courierNetworkCards.map((partner, idx) => (
-                  <div 
-                    key={`track2-${idx}`} 
+                  <div
+                    key={`track2-${idx}`}
                     onMouseEnter={handleMarqueeCardMouseEnter}
                     onMouseLeave={handleMarqueeCardMouseLeave}
-                    className="group bg-slate-900/90 hover:bg-slate-800/90 text-slate-100 p-3.5 rounded-2xl border border-slate-800 shadow-xl flex items-center gap-3.5 hover:border-blue-500/60 hover:shadow-[0_0_25px_rgba(59,130,246,0.25)] hover:-translate-y-1 transition-all duration-300 ease-out shrink-0 cursor-pointer w-[185px]"
+                    className={`group bg-slate-900/90 hover:bg-slate-800 p-3 sm:p-4 rounded-2xl border border-slate-800/90 shadow-2xl flex items-center justify-center ${partner.borderGlow} hover:-translate-y-1 transition-all duration-300 ease-out shrink-0 cursor-pointer`}
                   >
-                    <div className={`w-10 h-10 rounded-xl ${partner.logoBg} flex items-center justify-center font-bold text-xs shadow-md shadow-black/50 shrink-0 transition-transform duration-300 ease-out group-hover:scale-105`}>
-                      {partner.icon}
-                    </div>
-                    <div className="min-w-0 flex-1 space-y-0.5">
-                      <div className="flex items-center justify-between">
-                        <span className="font-extrabold text-xs text-white font-display tracking-tight truncate group-hover:text-blue-300 transition-colors">
-                          {partner.name}
-                        </span>
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>
-                      </div>
-                      <span className="block text-[10px] text-slate-400 font-semibold truncate">{partner.type}</span>
+                    <div className="transition-transform duration-300 group-hover:scale-105">
+                      {partner.logoSvg}
                     </div>
                   </div>
                 ))}
               </div>
 
-              {/* Marquee Track 3 */}
-              <div className="flex items-center gap-4 pr-4 shrink-0" aria-hidden="true">
+              {/* Track Loop 3 */}
+              <div className="flex items-center gap-4 sm:gap-6 pr-4 sm:pr-6 shrink-0" aria-hidden="true">
                 {courierNetworkCards.map((partner, idx) => (
-                  <div 
-                    key={`track3-${idx}`} 
+                  <div
+                    key={`track3-${idx}`}
                     onMouseEnter={handleMarqueeCardMouseEnter}
                     onMouseLeave={handleMarqueeCardMouseLeave}
-                    className="group bg-slate-900/90 hover:bg-slate-800/90 text-slate-100 p-3.5 rounded-2xl border border-slate-800 shadow-xl flex items-center gap-3.5 hover:border-blue-500/60 hover:shadow-[0_0_25px_rgba(59,130,246,0.25)] hover:-translate-y-1 transition-all duration-300 ease-out shrink-0 cursor-pointer w-[185px]"
+                    className={`group bg-slate-900/90 hover:bg-slate-800 p-3 sm:p-4 rounded-2xl border border-slate-800/90 shadow-2xl flex items-center justify-center ${partner.borderGlow} hover:-translate-y-1 transition-all duration-300 ease-out shrink-0 cursor-pointer`}
                   >
-                    <div className={`w-10 h-10 rounded-xl ${partner.logoBg} flex items-center justify-center font-bold text-xs shadow-md shadow-black/50 shrink-0 transition-transform duration-300 ease-out group-hover:scale-105`}>
-                      {partner.icon}
-                    </div>
-                    <div className="min-w-0 flex-1 space-y-0.5">
-                      <div className="flex items-center justify-between">
-                        <span className="font-extrabold text-xs text-white font-display tracking-tight truncate group-hover:text-blue-300 transition-colors">
-                          {partner.name}
-                        </span>
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>
-                      </div>
-                      <span className="block text-[10px] text-slate-400 font-semibold truncate">{partner.type}</span>
+                    <div className="transition-transform duration-300 group-hover:scale-105">
+                      {partner.logoSvg}
                     </div>
                   </div>
                 ))}
@@ -1066,239 +1125,50 @@ export const LandingPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Bottom Network Status Bar (Sleek Inline Flex Bar on Laptop/Desktop, 2x2 Grid on Mobile) */}
-          <div className="pt-6 border-t border-slate-800/80 font-mono text-xs max-w-5xl mx-auto grid grid-cols-2 sm:flex sm:items-center sm:justify-between gap-3 text-slate-300">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0 animate-pulse"></span>
-              <span className="font-bold text-slate-200">High System Availability</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-blue-400 shrink-0"></span>
-              <span className="font-bold text-blue-300">Real-Time Freight Rates</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
-              <span className="font-bold text-emerald-300">29,000+ PIN Codes</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-indigo-400 shrink-0"></span>
-              <span className="font-bold text-indigo-300">Automated Courier Selection</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Industry Solutions Section (#solutions - Interactive Workbench with Framer Motion & GSAP) */}
-      <section 
-        ref={solutionsSectionRef} 
-        id="solutions" 
-        className="py-12 sm:py-16 px-4 sm:px-8 bg-slate-50 border-b border-slate-200 overflow-hidden relative"
-      >
-        <div className="relative max-w-7xl mx-auto space-y-8 sm:space-y-10">
-          {/* Header Block */}
-          <motion.div 
-            initial={{ opacity: 0, y: 25 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.5 }}
-            className="text-center space-y-4"
-          >
-            <div className="inline-block">
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 text-blue-800 text-xs font-extrabold border border-blue-200 shadow-xs">
-                <Building2 className="w-3.5 h-3.5 text-blue-600" />
-                <span>Industry Workflows</span>
-              </span>
-            </div>
-
-            <h2 className="text-3xl sm:text-5xl font-black leading-tight tracking-tight font-display max-w-4xl mx-auto text-slate-900">
-              Shipping Built for Your Business Model
-            </h2>
-
-            <p className="text-base sm:text-lg text-slate-600 max-w-[800px] mx-auto font-medium leading-relaxed">
-              Configure specialized shipping rules, courier combinations, and settlement workflows tailored to your specific industry dispatches.
-            </p>
-          </motion.div>
-
-          {/* Interactive Industry Segmented Tab Bar */}
-          <div className="w-full overflow-x-auto pb-2 scrollbar-none gap-2 px-1 flex items-center justify-start sm:justify-center touch-pan-x whitespace-nowrap">
-            {industrySolutions.map((sol, idx) => {
-              const isSelected = selectedIndustryIdx === idx;
-              return (
-                <button
-                  key={sol.id}
-                  onClick={() => setSelectedIndustryIdx(idx)}
-                  className={`relative px-4 py-2.5 rounded-xl text-xs font-extrabold shrink-0 whitespace-nowrap transition-all duration-200 cursor-pointer flex items-center gap-2 border ${
-                    isSelected
-                      ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-500/20'
-                      : 'bg-white text-slate-700 border-slate-200 hover:border-blue-300 hover:text-blue-600'
-                  }`}
-                >
-                  {sol.icon}
-                  <span>{sol.shortName}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Interactive 2-Column Solution Workbench (Framer Motion AnimatePresence) */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-md p-6 sm:p-8 overflow-hidden">
-            <AnimatePresence mode="wait">
-              {(() => {
-                const currentSol = industrySolutions[selectedIndustryIdx];
-                return (
-                  <motion.div
-                    key={currentSol.id}
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -15 }}
-                    transition={{ duration: 0.28, ease: 'easeOut' }}
-                    className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center"
-                  >
-                    {/* Left Column: Operational Profile & Strategy */}
-                    <div className="lg:col-span-7 space-y-6 text-left">
-                      <div className="flex items-center gap-3 flex-wrap">
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-extrabold">
-                          {currentSol.icon}
-                          <span>{currentSol.title}</span>
-                        </span>
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-600 text-xs font-mono font-bold">
-                          <BarChart3 className="w-3.5 h-3.5 text-slate-500" />
-                          <span>{currentSol.rtoRate}</span>
-                        </span>
-                      </div>
-
-                      <div className="space-y-2">
-                        <h3 className="text-2xl sm:text-3xl font-black text-slate-900 font-display">
-                          {currentSol.title} Operational Protocol
-                        </h3>
-                        <p className="text-sm text-slate-600 font-medium leading-relaxed">
-                          <span className="font-extrabold text-slate-900">Primary Industry Challenge: </span>
-                          {currentSol.challenge}
-                        </p>
-                      </div>
-
-                      {/* Recommended Logistics Carrier Mix */}
-                      <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
-                        <span className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block font-mono">
-                          RECOMMENDED CARRIER MIX &amp; SLA
-                        </span>
-                        <p className="text-xs sm:text-sm font-bold text-slate-800 flex items-center gap-2">
-                          <Truck className="w-4 h-4 text-blue-600 shrink-0" />
-                          <span>{currentSol.recommendedMix}</span>
-                        </p>
-                      </div>
-
-                      {/* Capabilities List */}
-                      <div className="space-y-3 pt-1">
-                        <span className="text-xs font-extrabold text-slate-900 uppercase tracking-wider block font-display">
-                          AUTOMATED WORKFLOW CAPABILITIES
-                        </span>
-                        <div className="space-y-2.5">
-                          {currentSol.capabilities.map((cap, cIdx) => (
-                            <div key={cIdx} className="flex items-start gap-2.5 text-xs sm:text-sm font-bold text-slate-800">
-                              <div className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center border border-emerald-200 shrink-0 mt-0.5">
-                                <CheckCircle2 className="w-3 h-3 text-emerald-700" />
-                              </div>
-                              <span className="leading-snug">{cap}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* CTA Button */}
-                      <div className="pt-3">
-                        <Link to="/register">
-                          <Button size="md" variant="primary" className="font-bold shadow-md shadow-blue-500/10" rightIcon={<ArrowRight className="w-4 h-4" />}>
-                            {currentSol.ctaText}
-                          </Button>
-                        </Link>
-                      </div>
-                    </div>
-
-                    {/* Right Column: Live Operational Preview Card */}
-                    <div className="lg:col-span-5 bg-slate-950 text-white p-6 sm:p-7 rounded-xl border border-slate-800 space-y-6 shadow-xl relative overflow-hidden">
-                      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                        <div className="flex items-center gap-2">
-                          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-                          <span className="text-xs font-mono font-bold text-slate-300">SYSTEM RULE PREVIEW</span>
-                        </div>
-                        <span className="text-[10px] font-mono text-blue-400 font-bold bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">
-                          AUTO-ROUTING ACTIVE
-                        </span>
-                      </div>
-
-                      <div className="space-y-4">
-                        <div className="p-3.5 rounded-lg bg-slate-900 border border-slate-800 space-y-1">
-                          <span className="text-[10px] font-mono text-slate-400 uppercase">Target Industry</span>
-                          <p className="text-sm font-black text-white font-display">{currentSol.title}</p>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-3">
-                          <div className="p-3 rounded-lg bg-slate-900 border border-slate-800 space-y-1">
-                            <span className="text-[10px] font-mono text-slate-400 uppercase">Delivery Verification</span>
-                            <p className="text-xs font-bold text-emerald-400 flex items-center gap-1">
-                              <ShieldCheck className="w-3.5 h-3.5" /> OTP / SMS Active
-                            </p>
-                          </div>
-                          <div className="p-3 rounded-lg bg-slate-900 border border-slate-800 space-y-1">
-                            <span className="text-[10px] font-mono text-slate-400 uppercase">COD Settlement</span>
-                            <p className="text-xs font-bold text-amber-400 flex items-center gap-1">
-                              <Wallet className="w-3.5 h-3.5" /> T+2 Remittance
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="p-3.5 rounded-lg bg-blue-950/60 border border-blue-800/60 space-y-1.5">
-                          <div className="flex items-center justify-between text-[11px] font-mono font-bold">
-                            <span className="text-blue-300">AUTOMATED NDR ATTEMPTS</span>
-                            <span className="text-emerald-400">3 RETRIES RECOVERY</span>
-                          </div>
-                          <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                            <div className="h-full bg-blue-500 rounded-full w-4/5"></div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="pt-2 text-[11px] text-slate-400 font-mono flex items-center justify-between border-t border-slate-800/80">
-                        <span>Configured Pincodes: 29,000+</span>
-                        <span className="text-emerald-400 font-bold">SLA: 98.6%</span>
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              })()}
-            </AnimatePresence>
-          </div>
         </div>
       </section>
 
       {/* How It Works Section */}
       <HowItWorksSection />
 
+      {/* Industry Solutions / Workflow Section - Circular Orbiting Shipping Models Visualizer */}
+      <div id="solutions">
+        <IndustryOrbitVisualizer />
+      </div>
+
       {/* Why ShipSmarter? Section */}
       <ComparisonSection />
 
 
       {/* FREIGHT CALCULATOR SECTION (#calculator) */}
-      <section id="calculator" className="py-10 sm:py-12 px-4 sm:px-8 bg-white border-b border-slate-200 overflow-hidden">
+      <section id="calculator" className="py-10 sm:py-12 px-4 sm:px-8 lg:px-12 bg-white border-b border-slate-200 overflow-hidden">
         <div className="max-w-6xl mx-auto space-y-6 sm:space-y-8">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.5 }}
-            className="text-center space-y-3"
+            className="text-center space-y-3.5 max-w-5xl mx-auto"
           >
-            <span className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-blue-50 text-blue-800 text-xs font-extrabold border border-blue-200/80 shadow-xs">
-              <span className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-xs">
-                <Calculator className="w-3 h-3 text-white" />
+            <div className="inline-block">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
+                <span className="flex h-2 w-2 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
+                </span>
+                <Calculator className="w-3.5 h-3.5 text-blue-600" />
+                <span className="uppercase tracking-wider">Multi-Courier Freight Calculator • Rate Demo</span>
+              </div>
+            </div>
+
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
+              Calculate Your Shipping Cost{' '}
+              <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
+                Before You Ship
               </span>
-              <span>Multi-Courier Freight Calculator • Rate Demo</span>
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-black text-slate-900 font-display">
-              Calculate Your Shipping Cost Before You Ship
             </h2>
-            <p className="text-sm text-slate-600 max-w-2xl mx-auto font-medium leading-relaxed">
+
+            <p className="text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
               Enter your shipment dimensions, weight, payment mode, and route to compute volumetric weight and compare carrier freight quotes.
             </p>
           </motion.div>
@@ -1451,10 +1321,10 @@ export const LandingPage: React.FC = () => {
                 </div>
               )}
 
-              <Button 
-                type="submit" 
-                size="lg" 
-                className="w-full shadow-md justify-center" 
+              <Button
+                type="submit"
+                size="lg"
+                className="w-full shadow-md justify-center"
                 leftIcon={
                   isCalcLoading ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
@@ -1553,11 +1423,10 @@ export const LandingPage: React.FC = () => {
                             <div className="flex items-center gap-2.5">
                               <span className="font-black text-slate-900 font-display">{q.courier_name}</span>
                               {q.recommendation_badge && (
-                                <span className={`px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase ${
-                                  q.recommendation_badge === 'Cheapest' ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' :
-                                  q.recommendation_badge === 'Fastest' ? 'bg-amber-100 text-amber-800 border border-amber-200' :
-                                  'bg-blue-100 text-blue-800 border border-blue-200'
-                                }`}>
+                                <span className={`px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase ${q.recommendation_badge === 'Cheapest' ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' :
+                                    q.recommendation_badge === 'Fastest' ? 'bg-amber-100 text-amber-800 border border-amber-200' :
+                                      'bg-blue-100 text-blue-800 border border-blue-200'
+                                  }`}>
                                   {q.recommendation_badge}
                                 </span>
                               )}
@@ -1589,29 +1458,41 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* PRICING PLANS SECTION (#pricing) */}
-      <section id="pricing" className="py-10 sm:py-12 px-4 sm:px-8 bg-slate-50 border-b border-slate-200 overflow-hidden">
+      <section id="pricing" className="py-10 sm:py-12 px-4 sm:px-8 lg:px-12 bg-slate-50 border-b border-slate-200 overflow-hidden">
         <div className="max-w-6xl mx-auto space-y-6 sm:space-y-8">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.5 }}
-            className="text-center space-y-3"
+            className="text-center space-y-3.5 max-w-5xl mx-auto"
           >
-            <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-extrabold border border-blue-200">
-              <Tag className="w-3.5 h-3.5 text-blue-600" /> Transparent Pricing Plans
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-black text-slate-900 font-display">
-              Simple, Predictable Logistics Pricing
+            <div className="inline-block">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
+                <span className="flex h-2 w-2 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
+                </span>
+                <Tag className="w-3.5 h-3.5 text-blue-600" />
+                <span className="uppercase tracking-wider">Transparent Pricing Plans</span>
+              </div>
+            </div>
+
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
+              Simple, Predictable{' '}
+              <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
+                Logistics Pricing
+              </span>
             </h2>
-            <p className="text-sm text-slate-600 max-w-2xl mx-auto font-medium leading-relaxed">
-            Choose the plan that fits your current order volume and scale your e-commerce shipping with zero upfront subscription cost.
+
+            <p className="text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
+              Choose the plan that fits your current order volume and scale your e-commerce shipping with zero upfront subscription cost.
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
             {/* STARTER PLAN */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 25 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -1656,7 +1537,7 @@ export const LandingPage: React.FC = () => {
             </motion.div>
 
             {/* GROWTH PLAN (RECOMMENDED HIGHLIGHTED) */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 25 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -1709,7 +1590,7 @@ export const LandingPage: React.FC = () => {
             </motion.div>
 
             {/* ENTERPRISE PLAN */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 25 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -1765,30 +1646,42 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* Recover More Orders. Reduce RTO. Section (Upgraded Fantastic Design with Motion) */}
-      <section id="ndr-recovery" className="py-20 px-4 sm:px-8 bg-slate-950 text-white border-b border-slate-800 overflow-hidden relative">
+      <section id="ndr-recovery" className="py-20 px-4 sm:px-8 lg:px-12 bg-slate-950 text-white border-b border-slate-800 overflow-hidden relative">
 
         <div className="relative max-w-6xl mx-auto space-y-16">
           {/* Header Block */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.5 }}
-            className="text-center space-y-3.5"
+            className="text-center space-y-3.5 max-w-5xl mx-auto"
           >
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-500/20 text-rose-300 text-xs font-extrabold border border-rose-500/30">
-              <Zap className="w-3.5 h-3.5 text-rose-400" /> NDR & RTO Recovery Hub
-            </span>
-            <h2 className="text-3xl sm:text-5xl font-black text-white font-display tracking-tight">
-              Recover More Orders. Reduce RTO.
+            <div className="inline-block">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 text-cyan-200 text-xs font-extrabold border border-white/20 shadow-xs backdrop-blur-md">
+                <span className="flex h-2 w-2 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-300 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-400"></span>
+                </span>
+                <Zap className="w-3.5 h-3.5 text-cyan-300" />
+                <span className="uppercase tracking-wider text-white/95">NDR &amp; RTO Recovery Hub</span>
+              </div>
+            </div>
+
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
+              Recover More Orders,{' '}
+              <span className="bg-gradient-to-r from-cyan-200 via-sky-200 to-white bg-clip-text text-transparent">
+                Reduce RTO Costs
+              </span>
             </h2>
-            <p className="text-sm text-slate-400 max-w-2xl mx-auto font-normal leading-relaxed">
-              Turn failed delivery attempts into successful deliveries with structured NDR recovery workflows.
+
+            <p className="text-sm sm:text-base md:text-lg text-slate-300 font-medium leading-relaxed max-w-3xl mx-auto">
+              Turn failed delivery attempts into successful deliveries with automated buyer WhatsApp reattempts and instant NDR recovery workflows.
             </p>
           </motion.div>
 
           {/* Automated NDR Resolution Pipeline Container */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
@@ -1840,7 +1733,7 @@ export const LandingPage: React.FC = () => {
           {/* Action Center & Key Features Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
             {/* Left Card: NDR Action Center Performance */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: '-50px' }}
@@ -1858,7 +1751,7 @@ export const LandingPage: React.FC = () => {
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5">
-                <motion.div 
+                <motion.div
                   whileHover={{ scale: 1.03 }}
                   className="p-4 rounded-2xl bg-slate-900/90 border border-rose-500/20 space-y-1 shadow-[0_0_15px_rgba(244,63,94,0.05)] transition-all"
                 >
@@ -1866,7 +1759,7 @@ export const LandingPage: React.FC = () => {
                   <span className="block text-xl sm:text-2xl font-black text-rose-400 font-display">1,248</span>
                 </motion.div>
 
-                <motion.div 
+                <motion.div
                   whileHover={{ scale: 1.03 }}
                   className="p-4 rounded-2xl bg-slate-900/90 border border-blue-500/20 space-y-1 shadow-[0_0_15px_rgba(59,130,246,0.05)] transition-all"
                 >
@@ -1874,7 +1767,7 @@ export const LandingPage: React.FC = () => {
                   <span className="block text-xl sm:text-2xl font-black text-blue-400 font-display">1,180</span>
                 </motion.div>
 
-                <motion.div 
+                <motion.div
                   whileHover={{ scale: 1.03 }}
                   className="p-4 rounded-2xl bg-slate-900/90 border border-purple-500/20 space-y-1 shadow-[0_0_15px_rgba(168,85,247,0.05)] transition-all"
                 >
@@ -1882,7 +1775,7 @@ export const LandingPage: React.FC = () => {
                   <span className="block text-xl sm:text-2xl font-black text-purple-400 font-display">945</span>
                 </motion.div>
 
-                <motion.div 
+                <motion.div
                   whileHover={{ scale: 1.03 }}
                   className="p-4 rounded-2xl bg-slate-900/90 border border-amber-500/20 space-y-1 shadow-[0_0_15px_rgba(245,158,11,0.05)] transition-all"
                 >
@@ -1890,7 +1783,7 @@ export const LandingPage: React.FC = () => {
                   <span className="block text-xl sm:text-2xl font-black text-amber-400 font-display">912</span>
                 </motion.div>
 
-                <motion.div 
+                <motion.div
                   whileHover={{ scale: 1.02 }}
                   className="p-4.5 rounded-2xl bg-slate-900/90 border border-emerald-500/30 col-span-2 sm:col-span-2 space-y-1 shadow-[0_0_20px_rgba(16,185,129,0.1)] transition-all"
                 >
@@ -1901,7 +1794,7 @@ export const LandingPage: React.FC = () => {
             </motion.div>
 
             {/* Right Column: Key Recovery Features */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: '-50px' }}
@@ -1913,7 +1806,7 @@ export const LandingPage: React.FC = () => {
 
                 <div className="space-y-3 font-medium text-xs text-slate-300">
                   {ndrHighlights.map((feat, idx) => (
-                    <motion.div 
+                    <motion.div
                       key={idx}
                       whileHover={{ x: 6 }}
                       transition={{ duration: 0.2 }}
@@ -1937,37 +1830,43 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* One Tracking Experience for Every Courier Section (Elevated Redesign) */}
-      <section 
-        ref={trackingSectionRef} 
-        id="unified-tracking" 
-        className="py-10 sm:py-12 px-4 sm:px-8 bg-slate-50 border-b border-slate-200 overflow-hidden relative"
+      <section
+        ref={trackingSectionRef}
+        id="unified-tracking"
+        className="py-10 sm:py-12 px-4 sm:px-8 lg:px-12 bg-slate-50 border-b border-slate-200 overflow-hidden relative"
       >
 
-        <div className="relative max-w-7xl mx-auto space-y-8 sm:space-y-10">
+        <div className="relative w-full mx-auto space-y-8 sm:space-y-10 px-4 sm:px-8 lg:px-12">
           {/* Header Block */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.5 }}
-            className="text-center space-y-4"
+            className="text-center space-y-3.5 max-w-5xl mx-auto"
           >
             {/* Badge */}
             <div className="inline-block">
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50/90 text-blue-800 text-xs font-extrabold border border-blue-200/80 shadow-xs backdrop-blur-xs">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
+                <span className="flex h-2 w-2 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
+                </span>
                 <Navigation className="w-3.5 h-3.5 text-blue-600" />
-                <span>Unified Courier Tracking Engine • Product Demo</span>
-              </span>
+                <span className="uppercase tracking-wider">Unified Courier Tracking Engine</span>
+              </div>
             </div>
 
             {/* Heading */}
-            <h2 className="text-[32px] sm:text-[42px] md:text-[48px] lg:text-[56px] font-black leading-tight tracking-tight font-display max-w-4xl mx-auto">
-              <span className="text-slate-900">One Tracking Experience </span>
-              <span className="text-blue-600">for Every Courier</span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight font-display text-slate-900 leading-[1.18] max-w-4xl mx-auto">
+              One Tracking Experience{' '}
+              <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
+                for Every Courier
+              </span>
             </h2>
 
             {/* Description */}
-            <p className="text-base sm:text-lg text-slate-600 max-w-[800px] mx-auto font-medium leading-relaxed">
+            <p className="text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
               Normalize status events across Delhivery, Xpressbees, Ecom Express &amp; Shadowfax into a single, beautifully branded customer tracking experience.
             </p>
           </motion.div>
@@ -1975,7 +1874,7 @@ export const LandingPage: React.FC = () => {
           {/* Product Showcase (Left Panel, Center Connection, Right Panel) */}
           <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-stretch max-w-6xl mx-auto">
             {/* LEFT PANEL: Courier Operations Dashboard */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -40 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: '-50px' }}
@@ -2029,13 +1928,12 @@ export const LandingPage: React.FC = () => {
                       {/* Icon Node */}
                       <div className="flex flex-col items-center">
                         <div
-                          className={`tracking-node-icon w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs shadow-md transition-all duration-300 ${
-                            idx === 4
+                          className={`tracking-node-icon w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs shadow-md transition-all duration-300 ${idx === 4
                               ? 'bg-blue-600 text-white ring-4 ring-blue-500/30 scale-110'
                               : idx < 4
-                              ? 'bg-emerald-500 text-slate-950'
-                              : 'bg-slate-800 text-slate-500'
-                          }`}
+                                ? 'bg-emerald-500 text-slate-950'
+                                : 'bg-slate-800 text-slate-500'
+                            }`}
                         >
                           {idx < 4 ? '✓' : idx === 4 ? '●' : ''}
                         </div>
@@ -2043,13 +1941,12 @@ export const LandingPage: React.FC = () => {
 
                       {/* Status Text & Time */}
                       <div className="flex-1 flex items-center justify-between py-1 border-b border-slate-800/60">
-                        <span className={`tracking-node-text font-extrabold ${
-                          idx === 4
+                        <span className={`tracking-node-text font-extrabold ${idx === 4
                             ? 'text-blue-400 font-black'
                             : idx < 4
-                            ? 'text-slate-100'
-                            : 'text-slate-500'
-                        }`}>
+                              ? 'text-slate-100'
+                              : 'text-slate-500'
+                          }`}>
                           {node.status}
                         </span>
                         <span className="text-[10px] font-mono text-slate-400">{node.time}</span>
@@ -2060,23 +1957,8 @@ export const LandingPage: React.FC = () => {
               </div>
             </motion.div>
 
-            {/* CENTER CONNECTION: Visual Beam / Pill Indicator */}
-            <div className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none items-center justify-center">
-              <div className="px-3.5 py-1.5 rounded-full bg-white border border-blue-200 text-blue-700 text-[11px] font-black uppercase tracking-widest shadow-lg shadow-blue-500/10 flex items-center gap-1.5 backdrop-blur-md">
-                <span className="w-2 h-2 rounded-full bg-blue-500 animate-ping" />
-                <span>Unified Tracking</span>
-              </div>
-            </div>
-
-            {/* Mobile Vertical Connection Pill */}
-            <div className="flex lg:hidden items-center justify-center py-2">
-              <div className="px-3.5 py-1 rounded-full bg-blue-100 text-blue-800 text-[10px] font-extrabold uppercase tracking-widest border border-blue-200 flex items-center gap-1.5">
-                <ArrowDown className="w-3.5 h-3.5 text-blue-600" /> Normalized by ShipSmarter
-              </div>
-            </div>
-
             {/* RIGHT PANEL: Branded Customer Tracking Page */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 40 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: '-50px' }}
@@ -2089,9 +1971,9 @@ export const LandingPage: React.FC = () => {
                 <div className="flex items-center justify-between pb-4 border-b border-slate-100">
                   <div className="flex items-center gap-2.5">
                     <div className="w-8.5 h-8.5 rounded-xl bg-blue-600 text-white font-black text-xs flex items-center justify-center font-display shadow-md">
-                      SS
+                      FL
                     </div>
-                    <span className="text-sm font-black text-slate-900 font-display">ShipSmarter Merchant Store</span>
+                    <span className="text-sm font-black text-slate-900 font-display">ShipFaster Logistic Merchant Store</span>
                   </div>
                   <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
                     Branded Page
@@ -2099,7 +1981,7 @@ export const LandingPage: React.FC = () => {
                 </div>
 
                 {/* Main Status Highlight Box */}
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, scale: 0.96, y: 15 }}
                   whileInView={{ opacity: 1, scale: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -2132,47 +2014,53 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* Bring COD, Settlements & Billing Into One View Section (3rd Mockup Design Upgrade) */}
-      <section id="finance-suite" className="py-20 sm:py-24 px-4 sm:px-8 bg-slate-50 border-b border-slate-200 overflow-hidden relative">
+      <section id="finance-suite" className="py-20 sm:py-24 px-4 sm:px-8 lg:px-12 bg-slate-50 border-b border-slate-200 overflow-hidden relative">
 
         <div className="relative max-w-6xl mx-auto space-y-12 sm:space-y-16">
           {/* Header Block */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.5 }}
-            className="text-center space-y-4"
+            className="text-center space-y-3.5 max-w-5xl mx-auto"
           >
             <div className="inline-block">
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50/90 text-blue-800 text-xs font-extrabold border border-blue-200/80 shadow-xs backdrop-blur-xs">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
+                <span className="flex h-2 w-2 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
+                </span>
                 <Wallet className="w-3.5 h-3.5 text-blue-600" />
-                <span>Financial Operations &amp; COD Suite • Product Preview</span>
-              </span>
+                <span className="uppercase tracking-wider">Financial Operations &amp; COD Suite</span>
+              </div>
             </div>
 
-            <h2 className="text-[32px] sm:text-[42px] md:text-[48px] lg:text-[54px] font-black leading-tight tracking-tight font-display max-w-4xl mx-auto">
-              <span className="text-slate-900">Bring COD, Settlements &amp; Billing </span>
-              <span className="text-blue-600">Into One View</span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
+              Bring COD, Settlements &amp; Billing{' '}
+              <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
+                Into One View
+              </span>
             </h2>
 
-            <p className="text-base sm:text-lg text-slate-600 max-w-[800px] mx-auto font-medium leading-relaxed">
+            <p className="text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
               Gain complete financial transparency with unified COD reconciliation, automated settlement tracking, and weight dispute logs.
             </p>
           </motion.div>
 
-          {/* TOP CARD CONTAINER: Cash On Delivery Settlement Lifecycle */}
-          <motion.div 
+          {/* TOP CARD CONTAINER: Cash On Delivery Settlement Lifecycle (Infinite Marquee Ticker) */}
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="bg-white p-6 sm:p-10 rounded-3xl border border-slate-200/90 shadow-xl space-y-8 relative overflow-hidden backdrop-blur-xs"
+            className="bg-white py-8 sm:py-10 rounded-3xl border border-slate-200/90 shadow-xl space-y-8 relative overflow-hidden backdrop-blur-xs"
           >
             {/* Background Light Beam Accents */}
             <div className="absolute -top-24 -left-24 w-72 h-72 bg-blue-100/50 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute -bottom-24 -right-24 w-72 h-72 bg-blue-100/50 rounded-full blur-3xl pointer-events-none" />
 
-            <div className="text-center">
+            <div className="text-center px-4">
               <h3 className="text-xs font-extrabold uppercase tracking-widest text-slate-400 font-display flex items-center justify-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-blue-400 opacity-60" />
                 <span>CASH ON DELIVERY SETTLEMENT LIFECYCLE</span>
@@ -2180,115 +2068,116 @@ export const LandingPage: React.FC = () => {
               </h3>
             </div>
 
-            {/* Lifecycle Flow Grid */}
-            <div ref={financeLifecycleRef} className="space-y-6 relative">
-              {/* Row 1: Steps 01, 02, 03 */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
-                {/* Step 01 */}
-                <motion.div 
-                  whileHover={{ y: -3 }}
-                  className="finance-lifecycle-step bg-slate-50/80 p-5 rounded-2xl border border-slate-200/80 space-y-2 flex flex-col items-center text-center relative group shadow-xs hover:border-blue-300 transition-all duration-300"
-                >
-                  <span className="absolute top-3 right-3 text-[10px] font-mono font-black text-blue-600 bg-blue-100/80 px-2 py-0.5 rounded-full border border-blue-200">
-                    01
-                  </span>
-                  <div className="w-11 h-11 rounded-2xl bg-blue-100/80 border border-blue-200/80 flex items-center justify-center text-blue-600 shadow-xs group-hover:scale-110 transition-transform">
-                    <ShoppingBag className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-black text-slate-900 font-display">COD Order</h4>
-                    <p className="text-[11px] text-slate-500 font-medium mt-0.5">Order placed with COD amount</p>
-                  </div>
-                </motion.div>
+            {/* Continuous Marquee Container */}
+            <div className="relative w-full overflow-hidden py-3">
+              {/* Soft Gradient Side Fades */}
+              <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+              <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
 
-                {/* Arrow 1-2 */}
-                <div className="hidden md:flex absolute left-[31%] top-1/2 -translate-y-1/2 z-10 text-blue-400 items-center gap-1 font-mono text-xs">
-                  <span className="text-blue-300 tracking-widest">••••••</span>
-                  <ChevronRight className="w-5 h-5 text-blue-500 animate-pulse" />
-                </div>
+              <div className="animate-infinite-marquee flex items-center gap-6 shrink-0">
+                {[0, 1, 2].map((setIndex) => (
+                  <div key={setIndex} className="flex items-center gap-6 shrink-0">
+                    {/* Step 01 */}
+                    <div className="w-64 bg-slate-50/90 p-5 rounded-2xl border border-slate-200/90 space-y-2 flex flex-col items-center text-center relative shadow-xs hover:border-blue-300 transition-all duration-300 shrink-0">
+                      <span className="absolute top-3 right-3 text-[10px] font-mono font-black text-blue-600 bg-blue-100/80 px-2 py-0.5 rounded-full border border-blue-200">
+                        01
+                      </span>
+                      <div className="w-11 h-11 rounded-2xl bg-blue-100/80 border border-blue-200/80 flex items-center justify-center text-blue-600 shadow-xs">
+                        <ShoppingBag className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-black text-slate-900 font-display">COD Order</h4>
+                        <p className="text-[11px] text-slate-500 font-medium mt-0.5">Order placed with COD amount</p>
+                      </div>
+                    </div>
 
-                {/* Step 02 */}
-                <motion.div 
-                  whileHover={{ y: -3 }}
-                  className="finance-lifecycle-step bg-emerald-50/40 p-5 rounded-2xl border border-emerald-200/60 space-y-2 flex flex-col items-center text-center relative group shadow-xs hover:border-emerald-300 transition-all duration-300"
-                >
-                  <span className="absolute top-3 right-3 text-[10px] font-mono font-black text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full border border-emerald-200">
-                    02
-                  </span>
-                  <div className="w-11 h-11 rounded-2xl bg-emerald-100/80 border border-emerald-200/80 flex items-center justify-center text-emerald-600 shadow-xs group-hover:scale-110 transition-transform">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-black text-slate-900 font-display">Delivered</h4>
-                    <p className="text-[11px] text-slate-500 font-medium mt-0.5">Order delivered successfully</p>
-                  </div>
-                </motion.div>
+                    {/* Arrow 1-2 */}
+                    <div className="text-blue-400 flex items-center gap-1 font-mono text-xs shrink-0">
+                      <span className="text-blue-300 tracking-widest">••••••</span>
+                      <ChevronRight className="w-5 h-5 text-blue-500 animate-pulse" />
+                    </div>
 
-                {/* Arrow 2-3 */}
-                <div className="hidden md:flex absolute left-[64%] top-1/2 -translate-y-1/2 z-10 text-blue-400 items-center gap-1 font-mono text-xs">
-                  <span className="text-blue-300 tracking-widest">••••••</span>
-                  <ChevronRight className="w-5 h-5 text-blue-500 animate-pulse" />
-                </div>
+                    {/* Step 02 */}
+                    <div className="w-64 bg-emerald-50/40 p-5 rounded-2xl border border-emerald-200/60 space-y-2 flex flex-col items-center text-center relative shadow-xs hover:border-emerald-300 transition-all duration-300 shrink-0">
+                      <span className="absolute top-3 right-3 text-[10px] font-mono font-black text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full border border-emerald-200">
+                        02
+                      </span>
+                      <div className="w-11 h-11 rounded-2xl bg-emerald-100/80 border border-emerald-200/80 flex items-center justify-center text-emerald-600 shadow-xs">
+                        <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-black text-slate-900 font-display">Delivered</h4>
+                        <p className="text-[11px] text-slate-500 font-medium mt-0.5">Order delivered successfully</p>
+                      </div>
+                    </div>
 
-                {/* Step 03 */}
-                <motion.div 
-                  whileHover={{ y: -3 }}
-                  className="finance-lifecycle-step bg-amber-50/40 p-5 rounded-2xl border border-amber-200/60 space-y-2 flex flex-col items-center text-center relative group shadow-xs hover:border-amber-300 transition-all duration-300"
-                >
-                  <span className="absolute top-3 right-3 text-[10px] font-mono font-black text-amber-700 bg-amber-100/80 px-2 py-0.5 rounded-full border border-amber-200">
-                    03
-                  </span>
-                  <div className="w-11 h-11 rounded-2xl bg-amber-100/80 border border-amber-200/80 flex items-center justify-center text-amber-600 shadow-xs group-hover:scale-110 transition-transform">
-                    <DollarSign className="w-5 h-5 text-amber-600" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-black text-slate-900 font-display">COD Collected</h4>
-                    <p className="text-[11px] text-slate-500 font-medium mt-0.5">COD collected from the customer</p>
-                  </div>
-                </motion.div>
-              </div>
+                    {/* Arrow 2-3 */}
+                    <div className="text-blue-400 flex items-center gap-1 font-mono text-xs shrink-0">
+                      <span className="text-blue-300 tracking-widest">••••••</span>
+                      <ChevronRight className="w-5 h-5 text-blue-500 animate-pulse" />
+                    </div>
 
-              {/* Row 2: Steps 04, 05 */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto pt-2 relative">
-                {/* Step 04 */}
-                <motion.div 
-                  whileHover={{ y: -3 }}
-                  className="finance-lifecycle-step bg-purple-50/40 p-5 rounded-2xl border border-purple-200/60 space-y-2 flex flex-col items-center text-center relative group shadow-xs hover:border-purple-300 transition-all duration-300"
-                >
-                  <span className="absolute top-3 right-3 text-[10px] font-mono font-black text-purple-700 bg-purple-100/80 px-2 py-0.5 rounded-full border border-purple-200">
-                    04
-                  </span>
-                  <div className="w-11 h-11 rounded-2xl bg-purple-100/80 border border-purple-200/80 flex items-center justify-center text-purple-600 shadow-xs group-hover:scale-110 transition-transform">
-                    <RefreshCw className="w-5 h-5 text-purple-600" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-black text-slate-900 font-display">Settlement Processing</h4>
-                    <p className="text-[11px] text-slate-500 font-medium mt-0.5">Amount reconciled &amp; verified automatically</p>
-                  </div>
-                </motion.div>
+                    {/* Step 03 */}
+                    <div className="w-64 bg-amber-50/40 p-5 rounded-2xl border border-amber-200/60 space-y-2 flex flex-col items-center text-center relative shadow-xs hover:border-amber-300 transition-all duration-300 shrink-0">
+                      <span className="absolute top-3 right-3 text-[10px] font-mono font-black text-amber-700 bg-amber-100/80 px-2 py-0.5 rounded-full border border-amber-200">
+                        03
+                      </span>
+                      <div className="w-11 h-11 rounded-2xl bg-amber-100/80 border border-amber-200/80 flex items-center justify-center text-amber-600 shadow-xs">
+                        <DollarSign className="w-5 h-5 text-amber-600" />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-black text-slate-900 font-display">COD Collected</h4>
+                        <p className="text-[11px] text-slate-500 font-medium mt-0.5">COD collected from customer</p>
+                      </div>
+                    </div>
 
-                {/* Left Arrow between 05 and 04 */}
-                <div className="hidden md:flex absolute left-[47%] top-1/2 -translate-y-1/2 z-10 text-blue-400 items-center gap-1 font-mono text-xs">
-                  <span className="text-blue-500 font-bold">←</span>
-                  <span className="text-blue-300 tracking-widest">••••••</span>
-                </div>
+                    {/* Arrow 3-4 */}
+                    <div className="text-blue-400 flex items-center gap-1 font-mono text-xs shrink-0">
+                      <span className="text-blue-300 tracking-widest">••••••</span>
+                      <ChevronRight className="w-5 h-5 text-blue-500 animate-pulse" />
+                    </div>
 
-                {/* Step 05 */}
-                <motion.div 
-                  whileHover={{ y: -3 }}
-                  className="finance-lifecycle-step bg-emerald-50/40 p-5 rounded-2xl border border-emerald-200/60 space-y-2 flex flex-col items-center text-center relative group shadow-xs hover:border-emerald-300 transition-all duration-300"
-                >
-                  <span className="absolute top-3 right-3 text-[10px] font-mono font-black text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full border border-emerald-200">
-                    05
-                  </span>
-                  <div className="w-11 h-11 rounded-2xl bg-emerald-100/80 border border-emerald-200/80 flex items-center justify-center text-emerald-600 shadow-xs group-hover:scale-110 transition-transform">
-                    <Building2 className="w-5 h-5 text-emerald-600" />
+                    {/* Step 04 */}
+                    <div className="w-64 bg-purple-50/40 p-5 rounded-2xl border border-purple-200/60 space-y-2 flex flex-col items-center text-center relative shadow-xs hover:border-purple-300 transition-all duration-300 shrink-0">
+                      <span className="absolute top-3 right-3 text-[10px] font-mono font-black text-purple-700 bg-purple-100/80 px-2 py-0.5 rounded-full border border-purple-200">
+                        04
+                      </span>
+                      <div className="w-11 h-11 rounded-2xl bg-purple-100/80 border border-purple-200/80 flex items-center justify-center text-purple-600 shadow-xs">
+                        <RefreshCw className="w-5 h-5 text-purple-600" />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-black text-slate-900 font-display">Settlement Processing</h4>
+                        <p className="text-[11px] text-slate-500 font-medium mt-0.5">Reconciled &amp; verified</p>
+                      </div>
+                    </div>
+
+                    {/* Arrow 4-5 */}
+                    <div className="text-blue-400 flex items-center gap-1 font-mono text-xs shrink-0">
+                      <span className="text-blue-300 tracking-widest">••••••</span>
+                      <ChevronRight className="w-5 h-5 text-blue-500 animate-pulse" />
+                    </div>
+
+                    {/* Step 05 */}
+                    <div className="w-64 bg-emerald-50/40 p-5 rounded-2xl border border-emerald-200/60 space-y-2 flex flex-col items-center text-center relative shadow-xs hover:border-emerald-300 transition-all duration-300 shrink-0">
+                      <span className="absolute top-3 right-3 text-[10px] font-mono font-black text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full border border-emerald-200">
+                        05
+                      </span>
+                      <div className="w-11 h-11 rounded-2xl bg-emerald-100/80 border border-emerald-200/80 flex items-center justify-center text-emerald-600 shadow-xs">
+                        <Building2 className="w-5 h-5 text-emerald-600" />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-black text-slate-900 font-display">Merchant Account</h4>
+                        <p className="text-[11px] text-slate-500 font-medium mt-0.5">Settled to merchant wallet</p>
+                      </div>
+                    </div>
+
+                    {/* End Loop Connector */}
+                    <div className="text-blue-400 flex items-center gap-1 font-mono text-xs shrink-0 pr-6">
+                      <span className="text-blue-300 tracking-widest">••••••</span>
+                      <ChevronRight className="w-5 h-5 text-blue-500 animate-pulse" />
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-sm font-black text-slate-900 font-display">Merchant Account</h4>
-                    <p className="text-[11px] text-slate-500 font-medium mt-0.5">Settled to merchant account/wallet</p>
-                  </div>
-                </motion.div>
+                ))}
               </div>
             </div>
           </motion.div>
@@ -2296,7 +2185,7 @@ export const LandingPage: React.FC = () => {
           {/* BOTTOM GRID: Merchant Financial Ledger (Left) & Reconciliation Suite (Right) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
             {/* LEFT CARD: Merchant Financial Ledger & Trend Chart */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -40 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: '-50px' }}
@@ -2440,7 +2329,7 @@ export const LandingPage: React.FC = () => {
             </motion.div>
 
             {/* RIGHT COLUMN: Financial & Reconciliation Suite */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 40 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: '-50px' }}
@@ -2457,7 +2346,7 @@ export const LandingPage: React.FC = () => {
                 {/* 6 Feature List Cards with Descriptions & Chevron > */}
                 <div className="space-y-2.5 font-medium text-xs text-slate-700">
                   {financeSuiteFeatures.map((item, idx) => (
-                    <motion.div 
+                    <motion.div
                       key={idx}
                       whileHover={{ x: 4 }}
                       transition={{ duration: 0.2 }}
@@ -2487,7 +2376,7 @@ export const LandingPage: React.FC = () => {
           </div>
 
           {/* NEW BOTTOM 4-CARD BENEFIT BANNER GRID */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -2537,194 +2426,31 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Section 8: INTEGRATIONS — Primary Three.js 2.5D API Network Visualization */}
-      <IntegrationsNetworkVisualizer />
 
-
-
-      {/* Couriers Pincode Serviceability (#couriers) */}
-      <section id="couriers" className="py-10 sm:py-12 px-6 sm:px-8 bg-white border-b border-slate-200 overflow-hidden">
-        <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
-          <div className="text-center space-y-3">
-            <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-extrabold border border-blue-200">
-              <MapPin className="w-3.5 h-3.5 text-blue-600" /> Carrier Partner Network & Serviceability
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-black text-slate-900 font-display">
-              Check Courier Serviceability Before You Ship
-            </h2>
-            <p className="text-sm text-slate-600 max-w-2xl mx-auto font-medium leading-relaxed">
-              Enter your pickup and destination pincodes to instantly verify carrier coverage, COD serviceability, and pickup availability.
-            </p>
-          </div>
-
-          <div className="bg-slate-50 p-8 rounded-3xl border border-slate-200 shadow-lg max-w-4xl mx-auto space-y-8">
-            <form onSubmit={handlePincodeCheck} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-700">Pickup PIN</label>
-                  <input
-                    type="text"
-                    maxLength={6}
-                    placeholder="Enter 6-digit Pickup PIN (e.g. 110020)..."
-                    value={pincodePickup}
-                    onChange={(e) => setPincodePickup(e.target.value.replace(/\D/g, ''))}
-                    className="w-full glass-input rounded-xl px-4 py-3 text-sm font-mono font-bold"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-700">Delivery PIN</label>
-                  <input
-                    type="text"
-                    maxLength={6}
-                    placeholder="Enter 6-digit Delivery PIN (e.g. 400001)..."
-                    value={pincodeDelivery}
-                    onChange={(e) => setPincodeDelivery(e.target.value.replace(/\D/g, ''))}
-                    className="w-full glass-input rounded-xl px-4 py-3 text-sm font-mono font-bold"
-                    required
-                  />
-                </div>
-              </div>
-
-              {pincodeStatus === 'ERROR' && pincodeErrorMsg && (
-                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-rose-500 shrink-0" />
-                  <span>{pincodeErrorMsg}</span>
-                </div>
-              )}
-
-              <Button 
-                type="submit" 
-                size="lg" 
-                className="w-full shadow-md justify-center" 
-                leftIcon={pincodeStatus === 'LOADING' ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
-                disabled={pincodeStatus === 'LOADING'}
-              >
-                {pincodeStatus === 'LOADING' ? 'Verifying Courier Networks...' : 'Check Serviceability'}
-              </Button>
-            </form>
-
-            {/* Results Panel */}
-            {pincodeStatus === 'SUCCESS' && (
-              <motion.div 
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-md space-y-6"
-              >
-                <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-100">
-                  <div>
-                    <h3 className="text-lg font-black text-slate-900 font-display">Available Couriers</h3>
-                    <span className="text-xs text-slate-500 font-medium">Route: <span className="font-mono font-bold text-slate-800">{pincodePickup} → {pincodeDelivery}</span></span>
-                  </div>
-                  <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-extrabold border border-emerald-200">
-                    100% Serviceable Route
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {availableCouriersList.map((c, idx) => (
-                    <div key={idx} className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center gap-3">
-                      <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-                      <div>
-                        <span className="block font-black text-xs text-slate-900 font-display">{c.name}</span>
-                        <span className="block text-[10px] text-slate-500 font-bold">{c.type}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 font-medium text-xs text-slate-700">
-                  <div className="p-4 rounded-xl bg-blue-50/70 border border-blue-100 flex items-center gap-3">
-                    <DollarSign className="w-5 h-5 text-amber-600 shrink-0" />
-                    <div>
-                      <span className="block text-[10px] uppercase font-bold text-blue-900">COD Available</span>
-                      <span className="block text-xs font-black text-slate-900 font-display">Yes (Up to ₹50,000)</span>
-                    </div>
-                  </div>
-
-                  <div className="p-4 rounded-xl bg-purple-50/70 border border-purple-100 flex items-center gap-3">
-                    <Package className="w-5 h-5 text-purple-600 shrink-0" />
-                    <div>
-                      <span className="block text-[10px] uppercase font-bold text-purple-900">Pickup Available</span>
-                      <span className="block text-xs font-black text-slate-900 font-display">Yes (Same-Day)</span>
-                    </div>
-                  </div>
-
-                  <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-100 flex items-center gap-3">
-                    <Clock className="w-5 h-5 text-emerald-600 shrink-0" />
-                    <div>
-                      <span className="block text-[10px] uppercase font-bold text-emerald-900">Estimated Delivery</span>
-                      <span className="block text-xs font-black text-slate-900 font-display">2-3 Business Days</span>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </div>
-
-          <FloatingCourierBadges />
-        </div>
-      </section>
-
-      {/* About Us (#about) */}
-      <section id="about" className="py-20 px-6 sm:px-8 bg-slate-50 border-b border-slate-200 overflow-hidden">
-        <div className="max-w-7xl mx-auto space-y-16">
-          <div className="text-center space-y-3">
-            <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-extrabold border border-blue-200">
-              <Building2 className="w-3.5 h-3.5 text-blue-600" /> About ShipSmarter • Infrastructure for Indian E-Commerce
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-black text-slate-900 font-display max-w-3xl mx-auto leading-tight">
-              Built for the Next Generation of Indian Commerce
-            </h2>
-            <p className="text-sm text-slate-600 max-w-2xl mx-auto font-medium leading-relaxed">
-              ShipSmarter brings courier selection, shipping automation, tracking, recovery, and financial visibility into one platform.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {aboutCapabilities.map((item, idx) => (
-              <motion.div 
-                key={idx}
-                whileHover={{ y: -4 }}
-                className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4 flex flex-col justify-between"
-              >
-                <div className="space-y-3">
-                  <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center shadow-xs">
-                    {item.icon}
-                  </div>
-                  <h3 className="text-lg font-black text-slate-900 font-display">{item.title}</h3>
-                  <p className="text-xs text-slate-600 leading-relaxed font-medium">
-                    {item.desc}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-md max-w-3xl mx-auto text-center space-y-3">
-            <div className="w-10 h-10 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 mx-auto">
-              <Sparkles className="w-5 h-5" />
-            </div>
-            <h4 className="text-sm font-extrabold uppercase tracking-widest text-slate-500 font-display">Our Mission</h4>
-            <blockquote className="text-base sm:text-lg font-bold text-slate-900 font-display italic max-w-2xl mx-auto leading-snug">
-              "ShipSmarter is designed to simplify the fragmented logistics workflows faced by modern Indian commerce businesses."
-            </blockquote>
-          </div>
-        </div>
-      </section>
 
       {/* Talk to Our Logistics Experts / Book a Demo Section (#contact) */}
-      <section id="contact" className="py-10 sm:py-12 px-6 sm:px-8 bg-slate-50 border-b border-slate-200 overflow-hidden">
-        <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
-          <div className="text-center space-y-3">
-            <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-extrabold border border-blue-200">
-              <Headset className="w-3.5 h-3.5 text-blue-600" /> Sales & Logistics Consultation
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-black text-slate-900 font-display">
-              Talk to Our Logistics Experts
+      <section id="contact" className="py-10 sm:py-12 px-4 sm:px-8 lg:px-12 bg-slate-50 border-b border-slate-200 overflow-hidden">
+        <div className="w-full mx-auto space-y-6 sm:space-y-8 px-4 sm:px-8 lg:px-12">
+          <div className="text-center space-y-3.5 max-w-5xl mx-auto">
+            <div className="inline-block">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
+                <span className="flex h-2 w-2 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
+                </span>
+                <Headset className="w-3.5 h-3.5 text-blue-600" />
+                <span className="uppercase tracking-wider">Sales &amp; Logistics Consultation</span>
+              </div>
+            </div>
+
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
+              Talk to Our{' '}
+              <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
+                Logistics Experts
+              </span>
             </h2>
-            <p className="text-sm text-slate-600 max-w-2xl mx-auto font-medium leading-relaxed">
+
+            <p className="text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
               Tell us about your shipping volume, courier requirements, or integration needs.
             </p>
           </div>
@@ -2746,7 +2472,7 @@ export const LandingPage: React.FC = () => {
                   <Mail className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
                   <div>
                     <span className="block font-bold text-slate-900 text-sm">Email Inquiries</span>
-                    <span className="text-slate-600">support@shipsmarter.com</span>
+                    <span className="text-slate-600">support@shipfasterlogistic.com</span>
                   </div>
                 </div>
 
@@ -2771,38 +2497,38 @@ export const LandingPage: React.FC = () => {
               )}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Input 
-                  label="Full Name" 
-                  value={demoFullName} 
-                  onChange={(e) => setDemoFullName(e.target.value)} 
+                <Input
+                  label="Full Name"
+                  value={demoFullName}
+                  onChange={(e) => setDemoFullName(e.target.value)}
                   placeholder="e.g. Rahul Sharma"
-                  required 
+                  required
                 />
-                <Input 
-                  label="Work Email" 
-                  type="email" 
-                  value={demoWorkEmail} 
-                  onChange={(e) => setDemoWorkEmail(e.target.value)} 
+                <Input
+                  label="Work Email"
+                  type="email"
+                  value={demoWorkEmail}
+                  onChange={(e) => setDemoWorkEmail(e.target.value)}
                   placeholder="e.g. rahul@brand.com"
-                  required 
+                  required
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Input 
-                  label="Mobile Number" 
-                  type="tel" 
-                  value={demoMobileNumber} 
-                  onChange={(e) => setDemoMobileNumber(e.target.value)} 
+                <Input
+                  label="Mobile Number"
+                  type="tel"
+                  value={demoMobileNumber}
+                  onChange={(e) => setDemoMobileNumber(e.target.value)}
                   placeholder="e.g. +91 98765 43210"
-                  required 
+                  required
                 />
-                <Input 
-                  label="Company Name" 
-                  value={demoCompanyName} 
-                  onChange={(e) => setDemoCompanyName(e.target.value)} 
+                <Input
+                  label="Company Name"
+                  value={demoCompanyName}
+                  onChange={(e) => setDemoCompanyName(e.target.value)}
                   placeholder="e.g. Acme Commerce Pvt Ltd"
-                  required 
+                  required
                 />
               </div>
 
@@ -2822,11 +2548,11 @@ export const LandingPage: React.FC = () => {
                   </select>
                 </div>
 
-                <Input 
-                  label="Website (Optional)" 
-                  type="url" 
-                  value={demoWebsite} 
-                  onChange={(e) => setDemoWebsite(e.target.value)} 
+                <Input
+                  label="Website (Optional)"
+                  type="url"
+                  value={demoWebsite}
+                  onChange={(e) => setDemoWebsite(e.target.value)}
                   placeholder="e.g. https://brand.com"
                 />
               </div>
@@ -2847,91 +2573,6 @@ export const LandingPage: React.FC = () => {
                 Book a Demo →
               </Button>
             </form>
-          </div>
-        </div>
-      </section>
-
-      {/* REDESIGNED FINAL CTA SECTION WITH SHIPSMARTER BLUE & PRODUCT DASHBOARD VISUAL */}
-      <section className="py-20 px-6 sm:px-8 bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-900 text-white relative overflow-hidden">
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            {/* Left Content & Buttons */}
-            <div className="lg:col-span-7 space-y-6 text-left">
-              <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-500/30 text-blue-100 text-xs font-extrabold border border-blue-400/40">
-                <Zap className="w-3.5 h-3.5 text-blue-200" /> Start Shipping Today
-              </span>
-
-              <h2 className="text-3xl sm:text-5xl font-black font-display leading-tight text-white">
-                Ready to Ship Smarter?
-              </h2>
-
-              <p className="text-sm sm:text-base text-blue-100 max-w-xl font-medium leading-relaxed">
-                Connect your store, compare courier rates, and manage your entire shipping workflow from one platform.
-              </p>
-
-              <div className="flex flex-col sm:flex-row items-center gap-4 pt-2">
-                <Link to="/register" className="w-full sm:w-auto">
-                  <button className="w-full sm:w-auto bg-white hover:bg-blue-50 text-blue-700 font-extrabold text-sm px-6 py-3 rounded-xl shadow-2xl transition-all duration-200 cursor-pointer flex items-center justify-center gap-2">
-                    <span>Start Shipping Free</span>
-                    <ArrowRight className="w-5 h-5 text-blue-700" />
-                  </button>
-                </Link>
-
-                <a href="#contact" className="w-full sm:w-auto">
-                  <Button 
-                    variant="outline" 
-                    size="lg" 
-                    className="w-full sm:w-auto bg-blue-800/40 text-white hover:bg-blue-800/70 border-blue-400/50 font-bold justify-center"
-                    leftIcon={<Headset className="w-5 h-5 text-blue-200" />}
-                  >
-                    Book a Demo
-                  </Button>
-                </a>
-              </div>
-            </div>
-
-            {/* Right Subtle Product / Dashboard Visual Mockup Beside CTA */}
-            <div className="lg:col-span-5 bg-blue-950/40 border border-blue-400/30 backdrop-blur-md rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl">
-              <div className="flex items-center justify-between pb-4 border-b border-blue-400/20">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-xl bg-blue-500 text-white font-black text-xs flex items-center justify-center font-display shadow-xs">
-                    SS
-                  </div>
-                  <span className="text-xs font-black text-white font-display">ShipSmarter Aggregator</span>
-                </div>
-                <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold border border-emerald-500/30">
-                  Ready to Dispatch
-                </span>
-              </div>
-
-              {/* Mini Dashboard Metrics Preview */}
-              <div className="grid grid-cols-2 gap-3 text-xs">
-                <div className="p-3 rounded-2xl bg-blue-900/60 border border-blue-800/60 space-y-1">
-                  <span className="block text-[10px] text-blue-300 font-bold uppercase">Rate Engine</span>
-                  <span className="block text-sm font-extrabold text-emerald-400 font-mono">4 Couriers Active</span>
-                </div>
-
-                <div className="p-3 rounded-2xl bg-blue-900/60 border border-blue-800/60 space-y-1">
-                  <span className="block text-[10px] text-blue-300 font-bold uppercase">Serviceable PINs</span>
-                  <span className="block text-sm font-extrabold text-white font-mono">28,000+ Verified</span>
-                </div>
-              </div>
-
-              {/* Carrier Selection Row */}
-              <div className="p-4 rounded-2xl bg-blue-900/40 border border-blue-800/40 space-y-2">
-                <div className="flex items-center justify-between text-[11px]">
-                  <span className="font-bold text-blue-200">Recommended Carrier</span>
-                  <span className="text-emerald-400 font-mono font-bold">₹48.00 • 2 Days</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-lg bg-red-600 flex items-center justify-center text-[10px] font-bold text-white">
-                    DL
-                  </div>
-                  <span className="text-xs font-bold text-white font-display">Delhivery Express Surface</span>
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 ml-auto" />
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -2962,7 +2603,7 @@ export const LandingPage: React.FC = () => {
               <div className="space-y-2">
                 <h3 className="text-2xl font-black text-slate-900 font-display">Sign In Required</h3>
                 <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                  Sign in or create a free ShipSmarter account to compare live courier freight rates across Delhivery, Xpressbees, Ecom Express &amp; Shadowfax.
+                  Sign in or create a free ShipFaster Logistic account to compare live courier freight rates across Delhivery, Xpressbees, Ecom Express &amp; Shadowfax.
                 </p>
               </div>
 
@@ -3005,7 +2646,7 @@ export const LandingPage: React.FC = () => {
             <Truck className="w-4 h-4 text-white" />
           </div>
           <div>
-            <span className="block text-xs font-black text-white font-display">ShipSmarter</span>
+            <span className="block text-xs font-black text-white font-display">ShipFaster Logistic</span>
             <span className="block text-[10px] text-slate-400 font-semibold">Rates from ₹28/500g</span>
           </div>
         </div>

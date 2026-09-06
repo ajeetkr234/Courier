@@ -4,6 +4,7 @@ import { Mail, Lock, ArrowRight, ShieldCheck, UserCheck } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { useAuth } from '../../app/providers/AuthProvider';
+import { ShipFasterLogo } from '../../components/ui/ShipFasterLogo';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -37,11 +38,8 @@ export const LoginPage: React.FC = () => {
       <div className="max-w-md w-full bg-white p-8 rounded-2xl border border-slate-200 space-y-6 shadow-xl">
         {/* Brand */}
         <div className="text-center space-y-2">
-          <Link to="/" className="inline-flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center font-bold text-white shadow-md text-xl font-display">
-              S
-            </div>
-            <span className="font-extrabold text-2xl tracking-tight text-slate-900 font-display">ShipSmarter</span>
+          <Link to="/" className="inline-flex items-center justify-center">
+            <ShipFasterLogo size="lg" variant="dark" />
           </Link>
           <p className="text-xs text-slate-500 font-medium">Sign in to manage your multi-courier shipping operations</p>
         </div>

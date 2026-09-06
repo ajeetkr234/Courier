@@ -4,6 +4,7 @@ import { Mail, Lock, Building, Phone, ArrowRight } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { useAuth } from '../../app/providers/AuthProvider';
+import { ShipFasterLogo } from '../../components/ui/ShipFasterLogo';
 
 export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
@@ -24,11 +25,8 @@ export const RegisterPage: React.FC = () => {
     <div className="min-h-screen bg-navy-950 text-slate-100 flex items-center justify-center p-6">
       <div className="max-w-md w-full glass-panel p-8 rounded-2xl border border-slate-800 space-y-6 shadow-2xl">
         <div className="text-center space-y-2">
-          <Link to="/" className="inline-flex items-center gap-2">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center font-bold text-white shadow-glow-indigo text-lg">
-              S
-            </div>
-            <span className="font-extrabold text-2xl tracking-tight text-white font-display">ShipSmarter</span>
+          <Link to="/" className="inline-flex items-center justify-center">
+            <ShipFasterLogo size="lg" variant="light" />
           </Link>
           <p className="text-xs text-slate-400">Register your brand to start multi-courier shipping</p>
         </div>

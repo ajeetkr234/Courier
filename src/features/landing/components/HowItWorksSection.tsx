@@ -8,9 +8,7 @@ import {
   Package, 
   Truck, 
   Check, 
-  Sparkles,
-  ChevronRight,
-  ArrowRight
+  Sparkles
 } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -169,23 +167,32 @@ export const HowItWorksSection: React.FC = () => {
     <section
       ref={sectionRef}
       id="how-it-works"
-      className="py-16 sm:py-20 px-4 sm:px-8 bg-slate-50 border-b border-slate-200 overflow-hidden relative"
+      className="py-16 sm:py-20 px-4 sm:px-8 lg:px-12 bg-slate-50 border-b border-slate-200 overflow-hidden relative"
     >
 
       <div className="relative max-w-7xl mx-auto space-y-12">
         {/* Header Block */}
-        <div className="text-center space-y-3.5 max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50/90 text-blue-800 text-xs font-extrabold border border-blue-200/80 shadow-xs backdrop-blur-xs">
-            <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-            <span>How It Works • Automated Shipping Journey</span>
+        <div className="text-center space-y-3.5 max-w-5xl mx-auto">
+          <div className="inline-block">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
+              <span className="flex h-2 w-2 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
+              </span>
+              <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+              <span className="uppercase tracking-wider">How It Works • Automated Journey</span>
+            </div>
           </div>
 
-          <h2 className="text-[28px] sm:text-[38px] md:text-[46px] font-black text-slate-900 font-display tracking-tight leading-tight">
-            From Order Placement to Doorstep Delivery
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18]">
+            From Order Placement to{' '}
+            <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
+              Doorstep Delivery
+            </span>
           </h2>
 
-          <p className="text-sm sm:text-base text-slate-600 font-medium leading-relaxed max-w-2xl mx-auto">
-            See how ShipSmarter manages every stage of your multi-courier shipping lifecycle.
+          <p className="text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
+            See how ShipFaster Logistic manages every stage of your multi-courier shipping lifecycle.
           </p>
         </div>
 
