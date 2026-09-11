@@ -3,8 +3,12 @@ import { ShieldCheck, Search, Filter, Clock, User, HardDrive } from 'lucide-reac
 import { usePlatformStore } from '../../services/store';
 
 export const AdminAuditLogsPage: React.FC = () => {
-  const { auditLogs } = usePlatformStore();
+  const { auditLogs, loadSupabaseData, isLoadingData } = usePlatformStore();
   const [searchTerm, setSearchTerm] = useState('');
+
+  React.useEffect(() => {
+    loadSupabaseData();
+  }, []);
 
   const filteredLogs = auditLogs.filter(
     (log) =>
@@ -61,8 +65,15 @@ export const AdminAuditLogsPage: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60 font-medium">
-              {filteredLogs.map((log) => (
-                <tr key={log.id} className="hover:bg-slate-800/40 transition-colors">
+              {filteredLogs.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="text-center py-8 text-slate-500">
+                    No platform audit events logged yet. System operations will be captured here in real-time.
+                  </td>
+                </tr>
+              ) : (
+                filteredLogs.map((log) => (
+                  <tr key={log.id} className="hover:bg-slate-800/40 transition-colors">
                   <td className="p-3.5 font-mono text-slate-400">
                     {new Date(log.timestamp).toLocaleString('en-IN')}
                   </td>
@@ -87,7 +98,7 @@ export const AdminAuditLogsPage: React.FC = () => {
                   </td>
                   <td className="p-3.5 font-mono text-slate-400">{log.ip_address}</td>
                 </tr>
-              ))}
+              )))}
             </tbody>
           </table>
         </div>

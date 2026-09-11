@@ -5,7 +5,7 @@ import { Zap, ArrowRight, Headphones, CheckCircle2 } from 'lucide-react';
 
 export const ReadyToShipCTA: React.FC = () => {
   return (
-    <section className="py-16 sm:py-20 px-4 sm:px-8 lg:px-12 bg-gradient-to-r from-blue-600 via-blue-600 to-indigo-700 text-white relative overflow-hidden">
+    <section className="py-8 sm:py-12 px-4 sm:px-8 lg:px-12 bg-gradient-to-r from-blue-600 via-blue-600 to-indigo-700 text-white relative overflow-hidden">
       {/* Background Radial Glow & Accents */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.15),transparent_50%)] pointer-events-none" />
       <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl pointer-events-none" />
@@ -28,7 +28,7 @@ export const ReadyToShipCTA: React.FC = () => {
 
             {/* Main Title */}
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black font-display tracking-tight text-white leading-tight">
-              Ready to Ship Smarter?
+              Ready to Ship Faster?
             </h2>
 
             {/* Subtext */}

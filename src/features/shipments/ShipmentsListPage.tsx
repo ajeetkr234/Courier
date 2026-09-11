@@ -1,26 +1,48 @@
-import React, { useState } from 'react';
-import { 
-  Truck, Printer, CalendarCheck, Search, Download, XCircle, FileText, CheckCircle2, PackageCheck, Layers
-} from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { Printer, CalendarCheck, Search, FileText, Layers, MapPin, ArrowRight, Calculator, ShoppingBag } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Input, Select } from '../../components/ui/Input';
 import { StatusBadge } from '../../components/ui/Badge';
 import { Modal } from '../../components/ui/Modal';
-import { Shipment } from '../../types';
+import { Shipment, ShipmentStatus } from '../../types';
 import { usePlatformStore } from '../../services/store';
 import { toast } from 'sonner';
 
 export const ShipmentsListPage: React.FC = () => {
-  const { shipments, warehouses, schedulePickup, generateManifest } = usePlatformStore();
+  const [searchParams] = useSearchParams();
+  const initialStatus = searchParams.get('status') || 'ALL';
+
+  const { shipments, warehouses, couriers, schedulePickup, generateManifest, updateShipmentStatus, loadSupabaseData } = usePlatformStore();
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('ALL');
+  const [statusFilter, setStatusFilter] = useState(initialStatus);
   const [labelModalShipment, setLabelModalShipment] = useState<Shipment | null>(null);
   const [pickupModalOpen, setPickupModalOpen] = useState(false);
   const [manifestModalOpen, setManifestModalOpen] = useState(false);
-  const [pickupCourier, setPickupCourier] = useState('c-delhivery');
-  const [pickupWarehouse, setPickupWarehouse] = useState(warehouses[0]?.id || 'wh-mumbai');
+  const [pickupCourier, setPickupCourier] = useState(couriers[0]?.id || '');
+  const [pickupWarehouse, setPickupWarehouse] = useState(warehouses[0]?.id || '');
   const [pickupDate, setPickupDate] = useState(new Date().toISOString().split('T')[0]);
   const [flippedAwb, setFlippedAwb] = useState<string | null>(null);
+
+  useEffect(() => {
+    const s = searchParams.get('status');
+    if (s) {
+      setStatusFilter(s);
+    }
+  }, [searchParams]);
+
+  React.useEffect(() => {
+    loadSupabaseData();
+  }, []);
+
+  React.useEffect(() => {
+    if (couriers.length > 0 && !couriers.some((courier) => courier.id === pickupCourier)) {
+      setPickupCourier(couriers[0].id);
+    }
+    if (warehouses.length > 0 && !warehouses.some((warehouse) => warehouse.id === pickupWarehouse)) {
+      setPickupWarehouse(warehouses[0].id);
+    }
+  }, [couriers, pickupCourier, pickupWarehouse, warehouses]);
 
   const filteredShipments = shipments.filter((shp) => {
     const matchesSearch = 
@@ -37,15 +59,27 @@ export const ShipmentsListPage: React.FC = () => {
     toast.success(`AWB ${awb} copied to clipboard!`);
   };
 
-  const handlePrintLabel = (awb: string, format: 'A4' | 'THERMAL_4X6') => {
-    toast.success(`Downloading label for AWB ${awb} in ${format} format!`);
-    window.open('https://pdfobject.com/pdf/sample.pdf', '_blank');
+  const handlePrintLabel = (shipment: Shipment, format: 'A4' | 'THERMAL_4X6') => {
+    if (shipment.label_url) {
+      window.open(shipment.label_url, '_blank');
+      toast.success(`Opening ${format} label for AWB ${shipment.awb_number}`);
+      return;
+    }
+    toast.info(`Carrier label URL is not available yet for AWB ${shipment.awb_number}`);
   };
 
   const handleSchedulePickup = (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const pickup = schedulePickup(pickupCourier, pickupWarehouse, pickupDate, filteredShipments.length || 1);
+      filteredShipments
+        .filter((shipment) => shipment.status === 'CREATED')
+        .forEach((shipment) => updateShipmentStatus(
+          shipment.id,
+          'PICKUP_SCHEDULED',
+          `Pickup scheduled for ${pickupDate}`,
+          warehouses.find((warehouse) => warehouse.id === pickupWarehouse)?.city || 'Pickup warehouse'
+        ));
       toast.success(`Pickup scheduled successfully! Ref: ${pickup.pickup_reference}`);
       setPickupModalOpen(false);
     } catch (err: any) {
@@ -64,6 +98,25 @@ export const ShipmentsListPage: React.FC = () => {
     setManifestModalOpen(false);
   };
 
+  const nextShipmentActions: Partial<Record<ShipmentStatus, Array<{ label: string; status: ShipmentStatus; message: string }>>> = {
+    CREATED: [{ label: 'Pickup Scheduled', status: 'PICKUP_SCHEDULED', message: 'Pickup scheduled for carrier handover' }],
+    PICKUP_SCHEDULED: [{ label: 'Mark Picked Up', status: 'PICKED_UP', message: 'Shipment picked up from warehouse' }],
+    PICKED_UP: [{ label: 'In Transit', status: 'IN_TRANSIT', message: 'Shipment moved into transit network' }],
+    IN_TRANSIT: [{ label: 'Out For Delivery', status: 'OUT_FOR_DELIVERY', message: 'Shipment assigned for last-mile delivery' }],
+    OUT_FOR_DELIVERY: [{ label: 'Delivered', status: 'DELIVERED', message: 'Shipment delivered successfully' }],
+    NDR: [
+      { label: 'Reattempt Transit', status: 'IN_TRANSIT', message: 'NDR resolved and shipment moved back into transit' },
+      { label: 'Start RTO', status: 'RTO_INITIATED', message: 'Return to origin initiated' },
+    ],
+    RTO_INITIATED: [{ label: 'RTO In Transit', status: 'RTO_IN_TRANSIT', message: 'Return shipment is in transit' }],
+    RTO_IN_TRANSIT: [{ label: 'RTO Delivered', status: 'RTO_DELIVERED', message: 'Return shipment delivered to origin' }],
+  };
+
+  const handleShipmentStatusUpdate = (shipment: Shipment, status: ShipmentStatus, message: string) => {
+    updateShipmentStatus(shipment.id, status, message, shipment.order?.shipping_address?.city || 'Carrier network');
+    toast.success(`AWB ${shipment.awb_number} moved to ${status.replace(/_/g, ' ')}`);
+  };
+
   return (
     <div className="space-y-6 animate-fadeIn">
       {/* Header */}
@@ -74,52 +127,67 @@ export const ShipmentsListPage: React.FC = () => {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          <Link to="/app/orders">
+            <Button size="sm" variant="outline" leftIcon={<ShoppingBag className="w-4 h-4" />}>
+              All Orders
+            </Button>
+          </Link>
+          <Link to="/app/rate-calculator">
+            <Button size="sm" variant="outline" leftIcon={<Calculator className="w-4 h-4" />}>
+              Rate Calc
+            </Button>
+          </Link>
           <Button size="sm" variant="outline" leftIcon={<CalendarCheck className="w-4 h-4" />} onClick={() => setPickupModalOpen(true)}>
             Schedule Pickup
           </Button>
           <Button size="sm" variant="outline" leftIcon={<Layers className="w-4 h-4" />} onClick={() => setManifestModalOpen(true)}>
             Create Manifest
           </Button>
-          <Button size="sm" variant="primary" leftIcon={<Printer className="w-4 h-4" />} onClick={() => handlePrintLabel('BULK-ALL', 'THERMAL_4X6')}>
-            Batch Print Labels (PDF)
+          <Button size="sm" variant="primary" leftIcon={<Printer className="w-4 h-4" />} onClick={() => toast.info('Open individual shipments with available carrier label URLs')}>
+            Bulk Print
           </Button>
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="w-full md:w-80">
+      {/* Filters Card */}
+      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col md:flex-row gap-3 items-center justify-between">
+        <div className="flex-1 w-full md:max-w-md">
           <Input
-            placeholder="Search AWB Number or Order ID..."
+            placeholder="Search by AWB, shipment ID, or order ID..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            leftIcon={<Search className="w-4 h-4" />}
+            leftIcon={<Search className="w-4 h-4 text-slate-400" />}
           />
         </div>
-
-        <Select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          options={[
-            { value: 'ALL', label: 'All Shipment Statuses' },
-            { value: 'CREATED', label: 'Created' },
-            { value: 'PICKUP_SCHEDULED', label: 'Pickup Scheduled' },
-            { value: 'IN_TRANSIT', label: 'In Transit' },
-            { value: 'DELIVERED', label: 'Delivered' },
-            { value: 'NDR', label: 'NDR' },
-            { value: 'RTO_INITIATED', label: 'RTO Initiated' },
-          ]}
-        />
+        <div className="w-full md:w-64">
+          <Select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            options={[
+              { value: 'ALL', label: 'All Shipment Statuses' },
+              { value: 'CREATED', label: 'Created' },
+              { value: 'PICKUP_SCHEDULED', label: 'Pickup Scheduled' },
+              { value: 'PICKED_UP', label: 'Picked Up' },
+              { value: 'IN_TRANSIT', label: 'In Transit' },
+              { value: 'OUT_FOR_DELIVERY', label: 'Out for Delivery' },
+              { value: 'DELIVERED', label: 'Delivered' },
+              { value: 'NDR', label: 'NDR (Exception)' },
+              { value: 'RTO_INITIATED', label: 'RTO Initiated' },
+              { value: 'RTO_IN_TRANSIT', label: 'RTO In Transit' },
+              { value: 'RTO_DELIVERED', label: 'RTO Delivered' },
+            ]}
+          />
+        </div>
       </div>
 
-      {/* Shipments Data Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden p-6 space-y-4">
-        <div className="flex items-center justify-between">
+      {/* Shipments Table Card */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+        <div className="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50/50">
           <h3 className="text-base font-black text-slate-900 uppercase tracking-wider font-display">Active Shipments Log</h3>
           <span className="text-xs text-slate-500 font-semibold">{filteredShipments.length} Total Shipments</span>
         </div>
 
-        <div className="overflow-x-auto rounded-xl border border-slate-200">
+        <div className="overflow-x-auto rounded-xl border border-slate-200 m-4">
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-100 uppercase tracking-wider text-slate-700 font-bold border-b border-slate-200">
               <tr>
@@ -128,41 +196,93 @@ export const ShipmentsListPage: React.FC = () => {
                 <th className="p-3.5">Order ID</th>
                 <th className="p-3.5">Freight Cost</th>
                 <th className="p-3.5">Status</th>
+                <th className="p-3.5">Next Step</th>
                 <th className="p-3.5 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium">
               {filteredShipments.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="text-center py-10 text-slate-400">
-                    No shipments found. Ship an order to generate your first AWB & label!
+                  <td colSpan={7} className="text-center py-10 text-slate-400">
+                    No shipments found. Ship an order to generate your first AWB &amp; label!
                   </td>
                 </tr>
               ) : (
                 filteredShipments.map((shp) => (
                   <tr key={shp.id} className="hover:bg-slate-50 transition-colors">
                     <td className="p-3.5 font-mono font-bold">
-                      <button
-                        onClick={() => handleCopyAWB(shp.awb_number)}
-                        title="Click to copy AWB"
-                        className="block text-indigo-600 font-bold hover:underline cursor-pointer flex items-center gap-1"
-                      >
-                        {shp.awb_number}
-                        <span className="text-[9px] font-mono text-indigo-400 bg-indigo-50 border border-indigo-200 px-1 rounded">
+                      <div className="flex items-center gap-2">
+                        <Link
+                          to={`/app/tracking?awb=${shp.awb_number}`}
+                          title="Track this AWB live"
+                          className="text-indigo-600 font-bold hover:underline cursor-pointer"
+                        >
+                          {shp.awb_number}
+                        </Link>
+                        <button
+                          onClick={() => handleCopyAWB(shp.awb_number)}
+                          title="Click to copy AWB"
+                          className="text-[9px] font-mono text-indigo-500 bg-indigo-50 border border-indigo-200 px-1.5 py-0.5 rounded hover:bg-indigo-100"
+                        >
                           Copy
-                        </span>
-                      </button>
+                        </button>
+                      </div>
                       <span className="text-[10px] text-slate-500 font-sans">{shp.id}</span>
                     </td>
-                    <td className="p-3.5 font-bold text-slate-800">{shp.courier_name || 'Delhivery Direct'}</td>
-                    <td className="p-3.5 font-mono text-slate-700">{shp.order_id}</td>
-                    <td className="p-3.5 text-slate-700 font-semibold">₹{(shp.shipping_cost || 68).toFixed(2)}</td>
+                    <td className="p-3.5 font-bold text-slate-800">{shp.courier_name || 'Courier Partner'}</td>
+                    <td className="p-3.5 font-mono">
+                      <Link
+                        to={`/app/orders?shipOrderId=${shp.order_id}`}
+                        className="text-slate-700 hover:text-indigo-600 hover:underline font-bold"
+                        title="View order details"
+                      >
+                        {shp.order_id}
+                      </Link>
+                    </td>
+                    <td className="p-3.5 text-slate-700 font-semibold">Rs {(shp.shipping_cost || 0).toFixed(2)}</td>
                     <td className="p-3.5"><StatusBadge status={shp.status} /></td>
-                    <td className="p-3.5 text-right space-x-2">
+                    <td className="p-3.5">
+                      <div className="flex flex-wrap gap-1.5">
+                        {(nextShipmentActions[shp.status] || []).map((action) => (
+                          <Button
+                            key={action.status}
+                            size="sm"
+                            variant="outline"
+                            className="text-[11px] px-2 py-1"
+                            onClick={() => handleShipmentStatusUpdate(shp, action.status, action.message)}
+                          >
+                            {action.label}
+                          </Button>
+                        ))}
+                        {!nextShipmentActions[shp.status] && (
+                          <span className="text-[11px] font-bold text-slate-400">No seller update needed</span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="p-3.5 text-right space-x-1.5">
+                      <Link to={`/app/tracking?awb=${shp.awb_number}`}>
+                        <Button size="sm" variant="outline" className="text-xs text-indigo-600 border-indigo-200 hover:bg-indigo-50" leftIcon={<MapPin className="w-3.5 h-3.5" />}>
+                          Track
+                        </Button>
+                      </Link>
+                      {shp.status === 'NDR' && (
+                        <Link to="/app/ndr">
+                          <Button size="sm" variant="outline" className="text-xs text-amber-600 border-amber-200 hover:bg-amber-50">
+                            NDR
+                          </Button>
+                        </Link>
+                      )}
+                      {(shp.status === 'RTO_INITIATED' || shp.status === 'RTO_IN_TRANSIT' || shp.status === 'RTO_DELIVERED') && (
+                        <Link to="/app/rto">
+                          <Button size="sm" variant="outline" className="text-xs text-rose-600 border-rose-200 hover:bg-rose-50">
+                            RTO
+                          </Button>
+                        </Link>
+                      )}
                       <Button size="sm" variant="outline" className="text-xs" leftIcon={<Printer className="w-3.5 h-3.5" />} onClick={() => setLabelModalShipment(shp)}>
                         Label
                       </Button>
-                      <Button size="sm" variant="outline" className="text-xs text-emerald-600 border-emerald-200 hover:bg-emerald-50" onClick={() => handlePrintLabel(shp.awb_number, 'A4')}>
+                      <Button size="sm" variant="outline" className="text-xs text-emerald-600 border-emerald-200 hover:bg-emerald-50" onClick={() => handlePrintLabel(shp, 'A4')}>
                         Invoice
                       </Button>
                     </td>
@@ -193,7 +313,7 @@ export const ShipmentsListPage: React.FC = () => {
             <div className="flex justify-between items-center border-b border-slate-800 pb-2">
               <span className="font-extrabold text-indigo-400">EXPRESS AIR • 4x6 THERMAL</span>
               <span className="bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded text-[10px] border border-emerald-500/30">
-                {labelModalShipment?.courier_name?.toUpperCase() || 'DELHIVERY'}
+                {labelModalShipment?.courier_name?.toUpperCase() || 'COURIER'}
               </span>
             </div>
 
@@ -205,11 +325,11 @@ export const ShipmentsListPage: React.FC = () => {
             <div className="grid grid-cols-2 gap-2 text-[11px] pt-1">
               <div>
                 <span className="text-slate-400 block">DESTINATION PINCODE</span>
-                <strong className="text-white">411001 (PUNE)</strong>
+                <strong className="text-white">{labelModalShipment?.order?.shipping_address?.pincode || 'NA'} ({labelModalShipment?.order?.shipping_address?.city || 'NA'})</strong>
               </div>
               <div className="text-right">
                 <span className="text-slate-400 block">PAYMENT MODE</span>
-                <strong className="text-emerald-400">PREPAID (₹799.00)</strong>
+                <strong className="text-emerald-400">{labelModalShipment?.order?.payment_type || 'NA'} (Rs {Number(labelModalShipment?.order?.total_amount || 0).toLocaleString('en-IN')})</strong>
               </div>
             </div>
           </div>
@@ -217,7 +337,7 @@ export const ShipmentsListPage: React.FC = () => {
           <div className="grid grid-cols-2 gap-4">
             <button
               onClick={() => {
-                handlePrintLabel(labelModalShipment!.awb_number, 'THERMAL_4X6');
+                handlePrintLabel(labelModalShipment!, 'THERMAL_4X6');
                 setLabelModalShipment(null);
               }}
               className="p-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-center space-y-1 cursor-pointer transition-all shadow-lg"
@@ -228,7 +348,7 @@ export const ShipmentsListPage: React.FC = () => {
 
             <button
               onClick={() => {
-                handlePrintLabel(labelModalShipment!.awb_number, 'A4');
+                handlePrintLabel(labelModalShipment!, 'A4');
                 setLabelModalShipment(null);
               }}
               className="p-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-center space-y-1 cursor-pointer transition-all"
@@ -270,10 +390,11 @@ export const ShipmentsListPage: React.FC = () => {
               onChange={(e) => setPickupCourier(e.target.value)}
               className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
-              <option value="c-delhivery">Delhivery Direct</option>
-              <option value="c-xpressbees">Xpressbees Express</option>
-              <option value="c-ecom">Ecom Express</option>
-              <option value="c-shadowfax">Shadowfax Local</option>
+              {couriers.map((courier) => (
+                <option key={courier.id} value={courier.id}>
+                  {courier.name}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -313,7 +434,7 @@ export const ShipmentsListPage: React.FC = () => {
             </div>
             <div className="flex justify-between text-xs">
               <span className="text-slate-400">Pickup Warehouse:</span>
-              <strong className="text-white">{warehouses[0]?.name || 'Bhiwandi Hub'}</strong>
+              <strong className="text-white">{warehouses.find((warehouse) => warehouse.id === pickupWarehouse)?.name || 'No warehouse selected'}</strong>
             </div>
           </div>
 

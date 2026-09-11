@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Users, ShieldCheck, CheckCircle2, XCircle, FileText, Eye, Wallet, CreditCard } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Users, ShieldCheck, CheckCircle2, XCircle, FileText, Eye, Wallet, CreditCard, ExternalLink } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Modal } from '../../components/ui/Modal';
 import { usePlatformStore } from '../../services/store';
@@ -7,7 +8,8 @@ import { Seller } from '../../types';
 import { toast } from 'sonner';
 
 export const AdminSellersPage: React.FC = () => {
-  const { sellers, updateSellerKYC, updateSellerStatus, rateCards, addLedgerEntry } = usePlatformStore();
+  const navigate = useNavigate();
+  const { sellers, updateSellerKYC, updateSellerStatus, rateCards, addLedgerEntry, setCurrentSeller } = usePlatformStore();
   const [kycModalSeller, setKycModalSeller] = useState<Seller | null>(null);
   const [rechargeModalSeller, setRechargeModalSeller] = useState<Seller | null>(null);
   const [creditAmount, setCreditAmount] = useState('1000');
@@ -46,6 +48,12 @@ export const AdminSellersPage: React.FC = () => {
     });
     toast.success(`Credited ₹${amt} to ${rechargeModalSeller.company_name} wallet!`);
     setRechargeModalSeller(null);
+  };
+
+  const handleImpersonateSeller = (seller: Seller) => {
+    setCurrentSeller(seller);
+    toast.success(`Switched context to ${seller.company_name} (${seller.brand_name || 'Seller Store'})`);
+    navigate('/app/home');
   };
 
   return (
@@ -98,7 +106,16 @@ export const AdminSellersPage: React.FC = () => {
                       {s.status}
                     </span>
                   </td>
-                  <td className="p-3.5 text-right space-x-2">
+                  <td className="p-3.5 text-right space-x-1.5">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="text-xs text-indigo-400 border-indigo-500/30 hover:bg-indigo-950/40"
+                      onClick={() => handleImpersonateSeller(s)}
+                      leftIcon={<ExternalLink className="w-3 h-3" />}
+                    >
+                      View Store
+                    </Button>
                     {s.status === 'KYC_PENDING' && (
                       <Button size="sm" variant="primary" onClick={() => setKycModalSeller(s)}>
                         Review KYC

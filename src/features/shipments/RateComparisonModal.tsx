@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { X, ShieldCheck, Zap, Tag, AlertCircle, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { X, ShieldCheck, Zap, Tag, AlertCircle, ArrowRight, CheckCircle2, Wallet } from 'lucide-react';
 import { Order, RateQuote } from '../../types';
 import { rateEngine } from '../../services/couriers/rateEngine';
 import { usePlatformStore } from '../../services/store';
@@ -18,6 +19,7 @@ export const RateComparisonModal: React.FC<RateComparisonModalProps> = ({
   onClose,
   onShipmentCreated,
 }) => {
+  const navigate = useNavigate();
   const { walletBalance, createShipment } = usePlatformStore();
   const [quotes, setQuotes] = useState<RateQuote[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -74,7 +76,9 @@ export const RateComparisonModal: React.FC<RateComparisonModalProps> = ({
     }
 
     if (walletBalance < selectedQuote.total_rate) {
-      toast.error(`Insufficient wallet balance (₹${walletBalance}). Recharge required.`);
+      toast.warning(`Insufficient balance (₹${walletBalance.toFixed(2)}). Opening Wallet to recharge...`);
+      onClose();
+      navigate('/app/wallet');
       return;
     }
 

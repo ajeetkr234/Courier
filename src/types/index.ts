@@ -103,6 +103,8 @@ export interface OrderItem {
   unit_price: number;
 }
 
+export type RTORiskLevel = 'LOW' | 'MEDIUM' | 'HIGH';
+
 export interface Order {
   id: string;
   seller_id: string;
@@ -122,6 +124,8 @@ export interface Order {
   shipping_address: ShippingAddress;
   items?: OrderItem[];
   current_status: OrderStatus;
+  rto_risk_level?: RTORiskLevel;
+  rto_risk_reason?: string;
   created_at: string;
   updated_at: string;
 }
@@ -281,6 +285,23 @@ export interface NDRAction {
   created_at: string;
 }
 
+export interface NDREscalation {
+  id: string;
+  ndr_case_id: string;
+  awb_number: string;
+  seller_id: string;
+  seller_name?: string;
+  courier_code: string;
+  customer_phone: string;
+  customer_name: string;
+  reason: string;
+  evidence_notes: string;
+  carrier_escalation_status: 'OPEN' | 'INVESTIGATING' | 'CARRIER_WARNED' | 'RESOLVED_REATTEMPT' | 'PENALIZED';
+  admin_notes?: string;
+  created_at: string;
+  resolved_at?: string;
+}
+
 // Returns & Exchanges
 export interface ReturnOrder {
   id: string;
@@ -334,6 +355,25 @@ export interface CODRemittance {
   created_at: string;
 }
 
+export interface CODPayoutBatch {
+  id: string;
+  batch_reference: string;
+  seller_id: string;
+  seller_name: string;
+  gross_cod_amount: number;
+  freight_deductions: number;
+  early_cod_fee: number;
+  net_payout_amount: number;
+  shipment_count: number;
+  bank_name: string;
+  account_number_masked: string;
+  utr_number?: string;
+  payout_mode: 'STANDARD_T3' | 'EARLY_COD_T1';
+  status: 'PENDING_APPROVAL' | 'PROCESSING' | 'SETTLED' | 'REJECTED';
+  settled_at?: string;
+  created_at: string;
+}
+
 export interface ReconciliationRecord {
   id: string;
   awb_number: string;
@@ -360,7 +400,27 @@ export interface WeightDiscrepancy {
   status: 'PENDING' | 'ACCEPTED' | 'DISPUTED' | 'RESOLVED';
   deadline: string;
   evidence_urls?: string[];
+  evidence_scale_url?: string;
+  evidence_tape_url?: string;
+  sku_master_weight?: number;
+  admin_arbitration_notes?: string;
+  resolution_outcome?: 'SELLER_REFUNDED' | 'COURIER_UPHELD';
   created_at: string;
+}
+
+export interface BrandedTrackingConfig {
+  seller_id: string;
+  brand_name: string;
+  logo_url: string;
+  brand_color: string;
+  support_phone: string;
+  support_email: string;
+  promotional_banner_url: string;
+  promotional_banner_link?: string;
+  discount_coupon_code?: string;
+  discount_percentage?: number;
+  custom_domain?: string;
+  help_whatsapp_number?: string;
 }
 
 // Developer, Integrations & Audit Logs

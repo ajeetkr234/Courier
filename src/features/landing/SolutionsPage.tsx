@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { PublicNavbar, PublicFooter } from './PublicNav';
 import { motion } from 'framer-motion';
 import { 
   ShoppingBag, Cpu, Sparkles, Truck, ShieldCheck, Store, 
@@ -86,8 +85,7 @@ export const SolutionsPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 flex flex-col font-sans">
-      <PublicNavbar />
+    <div className="text-slate-900 flex flex-col font-sans">
 
       {/* Hero Header */}
       <section className="py-16 sm:py-20 px-6 sm:px-8 bg-gradient-to-b from-blue-50/80 via-white to-white border-b border-slate-200 overflow-hidden">
@@ -276,8 +274,6 @@ export const SolutionsPage: React.FC = () => {
           </div>
         </div>
       </section>
-
-      <PublicFooter />
     </div>
   );
 };

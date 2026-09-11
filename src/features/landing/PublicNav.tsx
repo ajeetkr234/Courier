@@ -76,7 +76,7 @@ export const PublicNavbar: React.FC = () => {
                     <span>Special Offer — 15% Off Your First 100 Shipments</span>
                   </span>
                   <Link 
-                    to="/register" 
+                    to="/app/home" 
                     className="inline-flex items-center font-bold text-white hover:text-amber-200 underline decoration-white/60 underline-offset-2 shrink-0 transition-colors"
                   >
                     Claim Offer →
@@ -107,7 +107,7 @@ export const PublicNavbar: React.FC = () => {
               S
             </div>
             <div className="flex flex-col justify-center">
-              <span className="font-black text-lg sm:text-xl tracking-tight text-slate-900 font-display leading-tight">ShipSmarter</span>
+              <span className="font-black text-lg sm:text-xl tracking-tight text-slate-900 font-display leading-tight">ShipFaster</span>
               <span className="text-[8px] sm:text-[9px] font-extrabold text-blue-600 uppercase tracking-widest leading-none mt-0.5">Multi-Courier Aggregator</span>
             </div>
           </Link>
@@ -141,12 +141,12 @@ export const PublicNavbar: React.FC = () => {
 
           {/* Desktop Right CTAs */}
           <div className="hidden sm:flex items-center gap-3.5">
-            <Link to="/login">
+            <Link to="/app/home">
               <Button variant="ghost" size="sm" className="font-bold text-slate-700 hover:text-blue-600 px-3">
-                Sign In
+                Open Dashboard
               </Button>
             </Link>
-            <Link to="/register">
+            <Link to="/app/home">
               <Button 
                 size="sm" 
                 className="font-bold shadow-xs hover:shadow-md hover:shadow-blue-500/20 hover:-translate-y-0.5 transition-all duration-200 group"
@@ -190,10 +190,10 @@ export const PublicNavbar: React.FC = () => {
             })}
             
             <div className="pt-3 flex flex-col gap-2.5">
-              <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
-                <Button variant="outline" className="w-full justify-center">Sign In to Dashboard</Button>
+              <Link to="/app/home" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="outline" className="w-full justify-center">Open Dashboard</Button>
               </Link>
-              <Link to="/register" onClick={() => setMobileMenuOpen(false)}>
+              <Link to="/app/home" onClick={() => setMobileMenuOpen(false)}>
                 <Button className="w-full justify-center" rightIcon={<ArrowRight className="w-4 h-4" />}>Start Shipping</Button>
               </Link>
             </div>
@@ -226,7 +226,7 @@ export const PublicFooter: React.FC = () => {
             <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center font-black text-white text-lg font-display shadow-xs">
               S
             </div>
-            <span className="font-black text-2xl text-slate-900 font-display">ShipSmarter</span>
+            <span className="font-black text-2xl text-slate-900 font-display">ShipFaster</span>
           </div>
           <p className="text-xs text-slate-600 max-w-2xl font-medium leading-relaxed">
             Multi-courier shipping platform for Indian businesses. Compare carrier rates, automate pickups, track shipments, and manage COD settlements from one dashboard.
@@ -284,7 +284,7 @@ export const PublicFooter: React.FC = () => {
             <h4 className="font-black text-slate-900 uppercase text-xs tracking-wider font-display">CONTACT</h4>
             <div className="space-y-2.5 font-medium text-slate-600">
               <p className="flex items-center gap-2"><Phone className="w-4 h-4 text-blue-600 shrink-0" /> +91 1800 123 4567</p>
-              <p className="flex items-center gap-2"><Mail className="w-4 h-4 text-blue-600 shrink-0" /> support@shipsmarter.com</p>
+              <p className="flex items-center gap-2"><Mail className="w-4 h-4 text-blue-600 shrink-0" /> support@shipfaster.com</p>
               <p className="flex items-start gap-2 text-slate-500 leading-relaxed pt-1">
                 <MapPin className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
                 <span>Plot 42, Cyber City, Phase 3, Gurugram, Haryana - 122002</span>
@@ -374,7 +374,7 @@ export const PublicFooter: React.FC = () => {
           {/* Mobile Direct Contact Details */}
           <div className="pt-2 space-y-2 font-medium text-slate-600">
             <p className="flex items-center gap-2"><Phone className="w-4 h-4 text-blue-600 shrink-0" /> +91 1800 123 4567</p>
-            <p className="flex items-center gap-2"><Mail className="w-4 h-4 text-blue-600 shrink-0" /> support@shipsmarter.com</p>
+            <p className="flex items-center gap-2"><Mail className="w-4 h-4 text-blue-600 shrink-0" /> support@shipfaster.com</p>
             <p className="flex items-start gap-2 text-slate-500 leading-relaxed pt-1">
               <MapPin className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
               <span>Plot 42, Cyber City, Phase 3, Gurugram, Haryana - 122002</span>
@@ -384,7 +384,7 @@ export const PublicFooter: React.FC = () => {
 
         {/* Bottom Bar Copyright */}
         <div className="pt-8 border-t border-slate-200/80 text-center text-xs font-semibold text-slate-500">
-          <p>© 2026 ShipSmarter. All rights reserved.</p>
+          <p>© 2026 ShipFaster. All rights reserved.</p>
         </div>
       </div>
     </motion.footer>

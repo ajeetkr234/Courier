@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { PublicNavbar, PublicFooter } from './PublicNav';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Mail, Phone, MapPin, Send, Sparkles, Clock, Headset, ShieldCheck, 
@@ -10,7 +9,6 @@ import {
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { toast } from 'sonner';
-import { GlobalThreeBackground } from '../../components/ui/GlobalThreeBackground';
 
 export const ContactPage: React.FC = () => {
   const [demoFullName, setDemoFullName] = useState('');
@@ -157,15 +155,9 @@ export const ContactPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 flex flex-col font-sans relative overflow-x-hidden">
-      <PublicNavbar />
-
+    <div className="text-slate-900 flex flex-col font-sans relative overflow-x-hidden">
       {/* Hero Header (White Theme, Consistent with Landing Page) */}
       <section className="relative py-12 sm:py-16 px-6 sm:px-8 bg-gradient-to-b from-blue-50/40 via-white to-white border-b border-slate-200/80 overflow-hidden text-center">
-        {/* Three.js Dynamic Background Canvas (Exact match to Home Page) */}
-        <div className="absolute inset-0 opacity-40 pointer-events-none z-0">
-          <GlobalThreeBackground />
-        </div>
 
         <div className="relative max-w-4xl mx-auto space-y-8 z-10">
           {/* Standardized Pill Chip Badge */}
@@ -665,8 +657,6 @@ export const ContactPage: React.FC = () => {
           </div>
         </div>
       </section>
-
-      <PublicFooter />
     </div>
   );
 };

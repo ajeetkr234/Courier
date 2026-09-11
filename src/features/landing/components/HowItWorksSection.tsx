@@ -249,7 +249,7 @@ export const HowItWorksSection: React.FC = () => {
                 key={step.id}
                 ref={(el) => { stepCardsRef.current[idx] = el; }}
                 onClick={() => setActiveStepIndex(idx)}
-                className={`bg-white p-6 rounded-3xl border transition-all duration-300 space-y-4 flex flex-col justify-between relative overflow-hidden group cursor-pointer ${
+                className={`bg-white p-5 sm:p-6 rounded-2xl sm:rounded-3xl border transition-all duration-300 space-y-4 flex flex-col justify-between relative overflow-hidden group cursor-pointer ${
                   isCurrent
                     ? 'border-blue-400 shadow-xl shadow-blue-500/10 ring-2 ring-blue-500/20 -translate-y-1'
                     : isActive
@@ -288,7 +288,7 @@ export const HowItWorksSection: React.FC = () => {
                   {/* Title & Subtitle */}
                   <div>
                     <h3 className="text-lg font-black text-slate-900 font-display group-hover:text-blue-600 transition-colors">
-                      {step.title} <span className="text-slate-400 font-semibold text-xs">/ {step.subtitle}</span>
+                      {step.title} <span className="text-slate-400 font-semibold text-xs block xs:inline">/ {step.subtitle}</span>
                     </h3>
                   </div>
 

@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
-import { PublicNavbar, PublicFooter } from './PublicNav';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Truck, CheckCircle2, ShieldCheck, MapPin, Zap, Search, ArrowRight, Sparkles } from 'lucide-react';
 import { HeroCourierAnimation, FloatingCourierBadges } from '../../components/ui/AnimatedCourierVisuals';
-import { MOCK_COURIERS } from '../../lib/mockData';
+import { fetchCouriersFromSupabase } from '../../services/supabaseCouriers';
+import { Courier } from '../../types';
 import { Button } from '../../components/ui/Button';
 
 export const CouriersPage: React.FC = () => {
+  const [couriersList, setCouriersList] = useState<Courier[]>([]);
   const [searchPincode, setSearchPincode] = useState('110020');
   const [serviceableCouriers, setServiceableCouriers] = useState<string[]>(['Delhivery Express', 'Xpressbees Surface', 'Ecom Express COD', 'Shadowfax Hyperlocal']);
+
+  useEffect(() => {
+    fetchCouriersFromSupabase().then((data) => {
+      if (data && data.length > 0) setCouriersList(data);
+    });
+  }, []);
 
   const handlePincodeCheck = (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,8 +25,7 @@ export const CouriersPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 flex flex-col font-sans">
-      <PublicNavbar />
+    <div className="text-slate-900 flex flex-col font-sans">
 
       {/* Hero Section */}
       <section className="py-12 sm:py-16 px-6 sm:px-8 bg-gradient-to-b from-blue-50/70 via-white to-white border-b border-slate-200 text-center">
@@ -132,7 +138,7 @@ export const CouriersPage: React.FC = () => {
 
         {/* Carrier Detail Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {MOCK_COURIERS.map((c: any) => (
+          {couriersList.map((c) => (
             <motion.div 
               key={c.id} 
               whileHover={{ scale: 1.01 }}
@@ -171,8 +177,6 @@ export const CouriersPage: React.FC = () => {
           ))}
         </div>
       </section>
-
-      <PublicFooter />
     </div>
   );
 };

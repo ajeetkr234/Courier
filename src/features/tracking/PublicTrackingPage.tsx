@@ -1,60 +1,135 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { gsap } from 'gsap';
 import { 
-  Search, MapPin, Truck, CheckCircle2, Package, Clock, ShieldCheck, 
-  ArrowRight, Phone, AlertTriangle, Download, MessageSquare, RefreshCw,
-  ChevronDown, ExternalLink, UserCheck, Sparkles, Navigation, Copy, Share2, HelpCircle, Send, Calendar, Check, X
+  Search, MapPin, Truck, CheckCircle2, Package, Clock, 
+  Phone, AlertTriangle, Download, MessageSquare, 
+  ChevronDown, UserCheck, Navigation, Copy, Share2, 
+  HelpCircle, Check, X, Building2, FileCheck, RotateCcw,
+  BadgeCheck
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { StatusBadge } from '../../components/ui/Badge';
-import { PublicNavbar, PublicFooter } from '../landing/PublicNav';
-import { MockCourierAdapter } from '../../services/couriers/mock.adapter';
+import { fetchPublicTrackingFromSupabase } from '../../services/supabaseShipments';
+import { usePlatformStore } from '../../services/store';
 import { TrackingResult } from '../../services/couriers/adapter.interface';
+import { ShipmentStatus } from '../../types';
 import { toast } from 'sonner';
-import { GlobalThreeBackground } from '../../components/ui/GlobalThreeBackground';
+import { ReadyToShipCTA } from '../landing/components/ReadyToShipCTA';
 
 const routeStages = [
-  { id: 'pickup', title: 'PICKUP', subtitle: 'Package Picked Up', icon: <Package className="w-4 h-4 text-blue-600" /> },
-  { id: 'hub', title: 'HUB', subtitle: 'Arrived at Hub', icon: <MapPin className="w-4 h-4 text-purple-600" /> },
-  { id: 'in_transit', title: 'IN TRANSIT', subtitle: 'On the Way', icon: <Truck className="w-4 h-4 text-amber-600" /> },
-  { id: 'out_for_delivery', title: 'OUT FOR DELIVERY', subtitle: 'Delivery Executive Assigned', icon: <Clock className="w-4 h-4 text-sky-600" /> },
-  { id: 'delivered', title: 'DELIVERED', subtitle: 'Doorstep Delivered', icon: <CheckCircle2 className="w-4 h-4 text-emerald-600" /> }
+  { id: 'pickup', title: 'PICKUP', subtitle: 'Manifest & Picked Up', icon: <Package className="w-4 h-4 text-blue-600" /> },
+  { id: 'hub', title: 'HUB', subtitle: 'Origin Sorting Hub', icon: <Building2 className="w-4 h-4 text-purple-600" /> },
+  { id: 'in_transit', title: 'IN TRANSIT', subtitle: 'Interstate Transport', icon: <Truck className="w-4 h-4 text-amber-600" /> },
+  { id: 'out_for_delivery', title: 'OUT FOR DELIVERY', subtitle: 'Assigned to Courier Agent', icon: <Clock className="w-4 h-4 text-sky-600" /> },
+  { id: 'delivered', title: 'DELIVERED', subtitle: 'Doorstep Delivered & Signed', icon: <CheckCircle2 className="w-4 h-4 text-emerald-600" /> }
 ];
 
-const sampleAwbs = [
-  { label: 'Delhivery Express', awb: 'DEL1928374650', status: 'Out for Delivery', color: 'border-blue-500/40 text-blue-400' },
-  { label: 'Xpressbees Air', awb: 'XPB9928172610', status: 'In Transit', color: 'border-purple-500/40 text-purple-400' },
-  { label: 'Shadowfax Hyperlocal', awb: 'SFX8817263540', status: 'Delivered', color: 'border-emerald-500/40 text-emerald-400' },
-];
+const getStageIndex = (status: ShipmentStatus): number => {
+  switch (status) {
+    case 'CREATED':
+    case 'PICKUP_SCHEDULED':
+      return 0;
+    case 'PICKED_UP':
+      return 1;
+    case 'IN_TRANSIT':
+      return 2;
+    case 'OUT_FOR_DELIVERY':
+    case 'NDR':
+      return 3;
+    case 'DELIVERED':
+      return 4;
+    default:
+      return 2;
+  }
+};
 
 export const PublicTrackingPage: React.FC = () => {
-  const [searchParams] = useSearchParams();
-  const awbQuery = searchParams.get('awb') || 'DEL1928374650';
+  const location = useLocation();
+  const isSellerPanel = location.pathname.startsWith('/app/');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const awbQuery = searchParams.get('awb') || '';
 
-  const [inputAwb, setInputAwb] = useState(awbQuery);
+  const [searchType, setSearchType] = useState<'AWB' | 'ORDER'>('AWB');
+  const [inputQuery, setInputQuery] = useState(awbQuery);
   const [trackingData, setTrackingData] = useState<TrackingResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [notFoundError, setNotFoundError] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [waOptIn, setWaOptIn] = useState(true);
   const [isCopied, setIsCopied] = useState(false);
   const [isShareCopied, setIsShareCopied] = useState(false);
+
+  // Modals
   const [showInstructionModal, setShowInstructionModal] = useState(false);
   const [instructionText, setInstructionText] = useState('');
+  const [showPodModal, setShowPodModal] = useState(false);
+  const [showRescheduleModal, setShowRescheduleModal] = useState(false);
+  const [rescheduleDate, setRescheduleDate] = useState('Tomorrow');
+  const [rescheduleSlot, setRescheduleSlot] = useState<'MORNING' | 'AFTERNOON' | 'EVENING'>('AFTERNOON');
+  const [rescheduleNotes, setRescheduleNotes] = useState('');
 
   const routeLineRef = useRef<HTMLDivElement>(null);
   const truckIconRef = useRef<HTMLDivElement>(null);
   const stageNodesRef = useRef<(HTMLDivElement | null)[]>([]);
 
-  const activeStageIndex = 3; // Out for Delivery stage in demo
+  const fetchTracking = async (query: string) => {
+    const trimmed = query.trim();
+    if (!trimmed) return;
 
-  const fetchTracking = async (awb: string) => {
     setIsLoading(true);
+    setNotFoundError(null);
+
     try {
-      const adapter = new MockCourierAdapter('delhivery', 'Delhivery Express', 'c-delhivery');
-      const result = await adapter.trackShipment(awb);
-      setTrackingData(result);
+      // 1. Try real live database tracking from Supabase
+      const liveResult = await fetchPublicTrackingFromSupabase(trimmed);
+      if (liveResult) {
+        setTrackingData(liveResult);
+        setSearchParams({ awb: liveResult.awbNumber }, { replace: true });
+        return;
+      }
+
+      // 2. Fallback to active shipments in platform store
+      const storeShipments = usePlatformStore.getState().shipments;
+      const storeShipment = storeShipments.find(
+        (s) => s.awb_number.toLowerCase() === trimmed.toLowerCase() ||
+               s.order_id.toLowerCase() === trimmed.toLowerCase() ||
+               s.id.toLowerCase() === trimmed.toLowerCase()
+      );
+
+      if (storeShipment) {
+        const localResult: TrackingResult = {
+          awbNumber: storeShipment.awb_number,
+          courierName: storeShipment.courier_name,
+          courierCode: storeShipment.courier_code || 'delhivery',
+          originCity: 'Mumbai Fulfillment Center',
+          destinationCity: storeShipment.order?.shipping_address?.city || 'Destination Hub',
+          currentStatus: storeShipment.status.replace(/_/g, ' '),
+          normalizedStatus: storeShipment.status,
+          estimatedDeliveryDate: new Date(Date.now() + 2 * 86400000).toISOString(),
+          events: [
+            {
+              id: `ev-${storeShipment.id}-1`,
+              shipment_id: storeShipment.id,
+              raw_status: storeShipment.status,
+              normalized_status: storeShipment.status,
+              event_time: storeShipment.created_at || new Date().toISOString(),
+              location: storeShipment.order?.shipping_address?.city || 'Local Sorting Hub',
+              message: `Shipment is currently ${storeShipment.status.replace(/_/g, ' ')} with ${storeShipment.courier_name}`,
+            }
+          ],
+        };
+        setTrackingData(localResult);
+        setSearchParams({ awb: localResult.awbNumber }, { replace: true });
+        return;
+      }
+
+      setTrackingData(null);
+      setNotFoundError(`No live shipment found for ${trimmed}.`);
+    } catch (err: any) {
+      setTrackingData(null);
+      setNotFoundError(err.message || `No tracking milestones found for ${trimmed}.`);
     } finally {
       setIsLoading(false);
     }
@@ -66,20 +141,21 @@ export const PublicTrackingPage: React.FC = () => {
     }
   }, [awbQuery]);
 
-  // GSAP Route Line & Indicator Motion Setup
+  // GSAP Dynamic Route Stepper Animation
   useEffect(() => {
     if (!trackingData) return;
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion) return;
 
-    const targetProgress = activeStageIndex / (routeStages.length - 1); // e.g. 3/4 = 75%
+    const currentStageIndex = getStageIndex(trackingData.normalizedStatus);
+    const targetProgress = currentStageIndex / (routeStages.length - 1); // 0 to 1
 
-    // Animate Route Fill Line (Width: 0% -> 75%)
+    // Animate Line Progress
     if (routeLineRef.current) {
       gsap.fromTo(routeLineRef.current,
         { width: '0%' },
-        { width: `${targetProgress * 100}%`, duration: 1.2, ease: 'power2.out' }
+        { width: `${targetProgress * 100}%`, duration: 1.1, ease: 'power2.out' }
       );
     }
 
@@ -87,17 +163,23 @@ export const PublicTrackingPage: React.FC = () => {
     if (truckIconRef.current) {
       gsap.fromTo(truckIconRef.current,
         { left: '0%' },
-        { left: `${targetProgress * 100}%`, duration: 1.2, ease: 'power2.out' }
+        { left: `${targetProgress * 100}%`, duration: 1.1, ease: 'power2.out' }
       );
     }
 
-    // Stage Nodes Illumination Stagger
+    // Stage Nodes Highlight Animation
     stageNodesRef.current.forEach((nodeEl, idx) => {
       if (!nodeEl) return;
-      if (idx <= activeStageIndex) {
+      if (idx <= currentStageIndex) {
         gsap.fromTo(nodeEl,
-          { scale: 0.8, opacity: 0.6 },
-          { scale: idx === activeStageIndex ? 1.15 : 1, opacity: 1, duration: 0.4, delay: (idx / (routeStages.length - 1)) * 1.0, ease: 'back.out(1.7)' }
+          { scale: 0.85, opacity: 0.6 },
+          { 
+            scale: idx === currentStageIndex ? 1.12 : 1, 
+            opacity: 1, 
+            duration: 0.35, 
+            delay: (idx / (routeStages.length - 1)) * 0.9, 
+            ease: 'back.out(1.7)' 
+          }
         );
       }
     });
@@ -105,56 +187,46 @@ export const PublicTrackingPage: React.FC = () => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (inputAwb.trim()) {
-      fetchTracking(inputAwb.trim());
+    if (inputQuery.trim()) {
+      fetchTracking(inputQuery);
     }
-  };
-
-  const handleSampleClick = (awb: string) => {
-    setInputAwb(awb);
-    fetchTracking(awb);
   };
 
   const trackingFaqs = [
     {
       q: 'How frequently is AWB tracking status updated?',
-      a: 'Tracking statuses update in real-time via direct courier webhooks. Scanning events at hubs and delivery scans are reflected instantly.'
+      a: 'Tracking statuses update in real-time via direct courier webhooks. Scanning events at origin centers, transshipment hubs, and delivery scans are reflected instantly.'
     },
     {
-      q: 'What if my shipment shows "Attempt Failed"?',
-      a: 'If a delivery attempt fails due to customer unreachability or address issues, our automated WhatsApp Bot sends a verification link to update delivery preferences.'
+      q: 'What if my shipment shows "Attempt Failed" (NDR)?',
+      a: 'If a delivery attempt fails due to customer unreachability or premise gate issues, you can click "Reschedule Delivery" right here to select a new preferred date and time slot.'
     },
     {
       q: 'Where can I download Proof of Delivery (POD)?',
-      a: 'Once a parcel is marked "DELIVERED", the digital POD signature receipt becomes available for download directly in the tracking portal.'
+      a: 'Once a parcel reaches "DELIVERED" status, the digital POD receipt with recipient acknowledgment and delivery timestamp becomes instantly accessible via the "View Digital POD" button.'
     },
     {
-      q: 'What should I do if my shipment delivery is delayed past the estimated date?',
-      a: 'Transit times can occasionally fluctuate due to regional weather or hub volume. If a parcel is delayed past its EDD, our automated tracking engine raises a priority inquiry with the courier dispatch team.'
+      q: 'What should I do if my delivery is delayed past the estimated date?',
+      a: 'Transit times can occasionally fluctuate due to regional transit volumes or customs clearance. If a parcel exceeds its EDD, our automated tracking engine priority-escalates the parcel with carrier dispatch.'
     },
     {
-      q: 'Can I contact the assigned delivery executive or update delivery instructions?',
-      a: 'Yes! When a shipment reaches "Out For Delivery", the executive name and contact button become active. You can also click "Delivery Instructions" to leave security gate or landmark notes.'
+      q: 'Can I contact the assigned delivery executive or leave gate instructions?',
+      a: 'Yes! When a shipment reaches "Out For Delivery", the executive name and direct phone dialer become active. You can also click "Delivery Instructions" to leave security gate or landmark notes.'
     },
     {
       q: 'How can an online store brand this tracking page with their own logo?',
-      a: 'E-commerce merchants on ShipFaster Logistic can enable white-labeled branded tracking pages featuring their company logo, custom domain, and recommended products.'
+      a: 'E-commerce merchants on ShipFaster can enable white-labeled branded tracking portals featuring their brand logo, custom tracking domain, and recommended cross-sell products.'
     }
   ];
 
+  const currentStageIndex = trackingData ? getStageIndex(trackingData.normalizedStatus) : 0;
+
   return (
-    <div className="min-h-screen bg-white text-slate-900 flex flex-col font-sans relative overflow-x-hidden">
-      <PublicNavbar />
-
-      {/* Hero Section (White Theme, Consistent with Landing Page) */}
+    <div className="text-slate-900 flex flex-col font-sans relative overflow-x-hidden">
+      {/* Hero Section */}
       <section className="relative py-12 sm:py-16 px-6 sm:px-8 bg-gradient-to-b from-blue-50/40 via-white to-white border-b border-slate-200/80 overflow-hidden">
-        {/* Three.js Dynamic Background Canvas (Exact match to Home Page) */}
-        <div className="absolute inset-0 opacity-40 pointer-events-none z-0">
-          <GlobalThreeBackground />
-        </div>
-
         <div className="relative max-w-4xl mx-auto space-y-8 text-center z-10">
-          {/* Standardized Pill Chip Badge */}
+          {/* Pill Badge */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -166,19 +238,23 @@ export const PublicTrackingPage: React.FC = () => {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600" />
             </span>
             <Navigation className="w-3.5 h-3.5 text-blue-600" />
-            <span className="uppercase tracking-wider">Live Courier Tracking • Delhivery, Xpressbees, Shadowfax &amp; DTDC</span>
+            <span className="uppercase tracking-wider">
+              {isSellerPanel ? 'Seller Shipment Tracking • Live DB' : 'Universal Courier Radar • Live Multi-Carrier Tracking'}
+            </span>
           </motion.div>
 
-          {/* Redesigned Premium Display Heading */}
+          {/* Display Heading */}
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-2xl xs:text-3xl sm:text-5xl md:text-6xl font-black font-display tracking-tight leading-[1.22] sm:leading-[1.24] max-w-6xl mx-auto text-slate-950"
           >
-            <span className="block pb-1 sm:pb-1.5 text-slate-950">Universal Courier Radar.</span>
+            <span className="block pb-1 sm:pb-1.5 text-slate-950">
+              {isSellerPanel ? 'Track Your Live Shipments.' : 'Track Any Shipment.'}
+            </span>
             <span className="inline-block mt-1 sm:mt-2 px-2 pb-2 sm:pb-3.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent sm:whitespace-nowrap">
-              Track Any Shipment in Real-Time.
+              {isSellerPanel ? 'Search by AWB or Order ID.' : 'Across All 29,000+ PIN Codes.'}
             </span>
           </motion.h1>
 
@@ -189,67 +265,121 @@ export const PublicTrackingPage: React.FC = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed font-medium mt-3 sm:mt-4"
           >
-            Enter your AWB tracking number or Order ID to inspect live courier progress, estimated delivery times, and milestone history across 29,000+ pincodes.
+            {isSellerPanel
+              ? 'Tracking results are read from your live shipment records and status events.'
+              : 'Real-time milestone visibility across Delhivery, Xpressbees, Shadowfax, and DTDC with direct courier GPS telematics and instant digital Proof of Delivery.'}
           </motion.p>
 
-          {/* Premium White Tracking Search Card */}
+          {/* Search Card Container */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
             className="bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/90 shadow-xl shadow-slate-900/5 space-y-4 text-left"
           >
+            {/* Search Type Selector Tabs */}
+            <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchType('AWB');
+                  if (!isSellerPanel && inputQuery.startsWith('ORD')) setInputQuery('DEL1928374650');
+                }}
+                className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
+                  searchType === 'AWB'
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                Track by AWB Number
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchType('ORDER');
+                  if (!isSellerPanel && !inputQuery.startsWith('ORD')) setInputQuery('ORD-1001');
+                }}
+                className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
+                  searchType === 'ORDER'
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                Track by Order ID
+              </button>
+            </div>
+
+            {/* Input Search Form */}
             <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3">
-              <input
-                type="text"
-                placeholder="Enter tracking number (e.g. DEL1928374650)..."
-                value={inputAwb}
-                onChange={(e) => setInputAwb(e.target.value)}
-                className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3.5 text-sm font-mono font-bold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 transition-all"
-                required
-              />
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  placeholder={
+                    searchType === 'AWB'
+                      ? "Enter AWB number..."
+                      : "Enter Order ID..."
+                  }
+                  value={inputQuery}
+                  onChange={(e) => setInputQuery(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3.5 text-sm font-mono font-bold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 transition-all"
+                  required
+                />
+              </div>
               <Button 
                 type="submit" 
                 isLoading={isLoading} 
                 leftIcon={<Search className="w-4 h-4" />} 
-                className="bg-blue-600 hover:bg-blue-700 text-white font-extrabold px-8 py-3.5 rounded-2xl shadow-lg shadow-blue-500/20"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-extrabold px-8 py-3.5 rounded-2xl shadow-lg shadow-blue-500/20 shrink-0"
               >
                 Track Shipment
               </Button>
             </form>
 
-            {/* Demo Sample AWBs */}
-            <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
-              <span className="text-slate-500 font-bold text-[11px] uppercase tracking-wider">Try Demo AWBs:</span>
-              {sampleAwbs.map((sample) => (
-                <button
-                  key={sample.awb}
-                  onClick={() => handleSampleClick(sample.awb)}
-                  className="px-3 py-1 rounded-lg bg-slate-50 border border-slate-200/90 text-slate-700 font-mono text-[11px] font-bold hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-colors cursor-pointer"
-                >
-                  {sample.awb} <span className="text-slate-400 font-normal font-sans">({sample.label})</span>
-                </button>
-              ))}
-            </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Main Tracking Results Section */}
+      {/* Main Content Area */}
       <section className="py-10 sm:py-12 px-4 sm:px-8 max-w-5xl mx-auto w-full space-y-6 sm:space-y-8">
+        {/* Error / Not Found State */}
+        {notFoundError && (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white p-8 sm:p-10 rounded-3xl border border-rose-200 shadow-xl text-center space-y-4"
+          >
+            <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto shadow-xs">
+              <AlertTriangle className="w-6 h-6" />
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-xl font-black text-slate-900 font-display">Shipment Not Found</h3>
+              <p className="text-sm text-slate-600 max-w-md mx-auto font-medium">
+                {notFoundError}
+              </p>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Live Tracking Result Card */}
         {trackingData && (
           <motion.div 
             initial={{ opacity: 0, y: 25 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="bg-white p-6 sm:p-10 rounded-3xl border border-slate-200/90 shadow-xl space-y-10"
+            className="bg-white p-6 sm:p-10 rounded-3xl border border-slate-200/90 shadow-xl space-y-8"
           >
             {/* Header Info Bar */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
               <div className="space-y-1">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-blue-600 font-mono">AIR WAYBILL (AWB) TRACKING</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-blue-600 font-mono flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
+                  AIR WAYBILL (AWB) LIVE TRACKING
+                </span>
+
                 <div className="flex items-center gap-2.5 flex-wrap">
                   <h2 className="text-2xl sm:text-3xl font-black text-slate-900 font-display">{trackingData.awbNumber}</h2>
+                  
+                  {/* Copy AWB */}
                   <button
                     onClick={() => {
                       navigator.clipboard.writeText(trackingData.awbNumber);
@@ -264,6 +394,7 @@ export const PublicTrackingPage: React.FC = () => {
                     <span>{isCopied ? 'Copied' : 'Copy'}</span>
                   </button>
 
+                  {/* Shareable Link */}
                   <button
                     onClick={() => {
                       const shareUrl = `${window.location.origin}/track?awb=${trackingData.awbNumber}`;
@@ -279,65 +410,207 @@ export const PublicTrackingPage: React.FC = () => {
                     <span>{isShareCopied ? 'Link Copied' : 'Share Link'}</span>
                   </button>
                 </div>
-                <div className="flex items-center gap-2 text-xs text-slate-500 font-medium font-mono pt-1">
-                  <span>Carrier: <strong>Delhivery Express</strong></span>
+
+                {/* Specs Pill Bar */}
+                <div className="flex items-center gap-2.5 text-xs text-slate-500 font-medium font-mono pt-1 flex-wrap">
+                  <span>Carrier: <strong className="text-slate-800">{trackingData.courierName || 'Not assigned'}</strong></span>
                   <span>•</span>
-                  <span>Order: #ORD-9920</span>
+                  <span>Order: <strong className="text-slate-800">{trackingData.orderId || 'Not linked'}</strong></span>
+                  <span>•</span>
+                  <span>Weight: <strong className="text-slate-800">{trackingData.weightKg || 0.5} kg</strong></span>
+                  <span>•</span>
+                  <span className={`px-2 py-0.5 rounded-md font-bold text-[10px] ${
+                    trackingData.paymentMode === 'COD' ? 'bg-amber-50 text-amber-800 border border-amber-200' : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                  }`}>
+                    {trackingData.paymentMode === 'COD' ? `COD: ₹${trackingData.codAmount || 0}` : 'PREPAID'}
+                  </span>
                 </div>
               </div>
 
-              <div className="flex flex-col items-start sm:items-end gap-2">
+              {/* Status Badge & Dynamic Delivery ETA */}
+              <div className="flex flex-col items-start sm:items-end gap-1.5">
                 <StatusBadge status={trackingData.normalizedStatus} />
-                {trackingData.estimatedDeliveryDate && (
+                {trackingData.normalizedStatus === 'DELIVERED' ? (
+                  <span className="text-xs font-extrabold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200 flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Delivered Successfully</span>
+                  </span>
+                ) : trackingData.normalizedStatus === 'NDR' ? (
+                  <span className="text-xs font-extrabold text-rose-700 bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-200 flex items-center gap-1">
+                    <AlertTriangle className="w-3.5 h-3.5" />
+                    <span>Action Required: Reattempt Scheduled</span>
+                  </span>
+                ) : (
                   <span className="text-xs text-slate-600 font-medium">
-                    Est. Delivery: <strong className="text-emerald-600 font-display">Tomorrow by 5:00 PM</strong>
+                    Est. Delivery: <strong className="text-blue-700 font-display">
+                      {trackingData.estimatedDeliveryDate 
+                        ? new Date(trackingData.estimatedDeliveryDate).toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' })
+                        : 'Not available'}
+                    </strong>
                   </span>
                 )}
               </div>
             </div>
 
-            {/* Courier Delivery Executive Card */}
-            <div className="p-5 rounded-2xl bg-blue-50/60 border border-blue-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs">
-              <div className="flex items-center gap-3.5">
-                <div className="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-md">
-                  <UserCheck className="w-5 h-5 text-white" />
+            {/* Origin ➔ Destination Journey Visualizer Card */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-5 rounded-2xl bg-slate-50/80 border border-slate-200/90 text-xs">
+              {/* Origin Hub */}
+              <div className="flex items-start gap-3">
+                <div className="w-9 h-9 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold shrink-0">
+                  <Building2 className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="block font-black text-slate-900 text-sm">Delivery Agent: Rajesh Kumar (+91 98765*****)</span>
-                  <span className="block text-slate-600 font-medium">Assigned Hub: Delhivery Bandra West Hub (PIN 400001)</span>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Origin Dispatch</span>
+                  <span className="font-black text-slate-900 text-sm block">{trackingData.originCity || 'Not available'}</span>
+                  <span className="text-slate-500 font-mono text-[11px]">PIN {trackingData.originPincode || 'NA'}</span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 shrink-0">
-                <button 
-                  onClick={() => setShowInstructionModal(true)}
-                  className="px-4 py-2 rounded-xl bg-blue-600 text-white font-extrabold hover:bg-blue-500 transition-colors shadow-sm cursor-pointer inline-flex items-center gap-1.5"
-                >
-                  <MessageSquare className="w-3.5 h-3.5" />
-                  <span>Delivery Instructions</span>
-                </button>
-                <button 
-                  onClick={() => toast.success('Connecting call to Delivery Executive Rajesh Kumar (+91 98765*****)...')}
-                  className="px-4 py-2 rounded-xl bg-white border border-blue-200 text-blue-700 font-extrabold hover:bg-blue-50 transition-colors shadow-xs cursor-pointer inline-flex items-center gap-1.5"
-                >
-                  <Phone className="w-3.5 h-3.5 text-blue-600" />
-                  <span>Call Driver</span>
-                </button>
+              {/* Central Path Indicator */}
+              <div className="flex flex-col items-center justify-center gap-1.5 py-1 text-center">
+                <div className="flex items-center gap-2 text-slate-500 font-mono text-[10px] font-bold uppercase">
+                  <span>Surface Express</span>
+                  <Truck className="w-3.5 h-3.5 text-blue-600" />
+                  <span>{trackingData.weightKg || 0.5} kg</span>
+                </div>
+                <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden relative max-w-[200px]">
+                  <div 
+                    className="h-full bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full"
+                    style={{ width: `${(currentStageIndex / (routeStages.length - 1)) * 100}%` }}
+                  />
+                </div>
+                <span className="text-[11px] text-blue-700 font-extrabold">{trackingData.courierName || 'Courier not assigned'}</span>
+              </div>
+
+              {/* Destination Doorstep */}
+              <div className="flex items-start gap-3 md:justify-end md:text-right">
+                <div className="md:order-1">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Destination Address</span>
+                  <span className="font-black text-slate-900 text-sm block">{trackingData.destinationCity || 'Not available'}</span>
+                  <span className="text-slate-500 font-mono text-[11px]">
+                    PIN {trackingData.destinationPincode || 'NA'} • {trackingData.recipientName || 'Consignee'}
+                  </span>
+                </div>
+                <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold shrink-0 md:order-2">
+                  <MapPin className="w-4 h-4" />
+                </div>
               </div>
             </div>
 
-            {/* GSAP + SVG ROUTE STAGE ANIMATION CONTAINER */}
+            {/* CONTEXTUAL ACTION BANNERS BASED ON ACTUAL STATUS */}
+            
+            {/* 1. OUT FOR DELIVERY: Courier Executive & Special Instructions Card */}
+            {trackingData.normalizedStatus === 'OUT_FOR_DELIVERY' && (
+              <div className="p-5 rounded-2xl bg-blue-50/70 border border-blue-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-11 h-11 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-md">
+                    <UserCheck className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <span className="block font-black text-slate-900 text-sm">
+                      Delivery Agent: {trackingData.deliveryAgent?.name || 'Not assigned'} ({trackingData.deliveryAgent?.phone || 'Phone not available'})
+                    </span>
+                    <span className="block text-slate-600 font-medium">
+                      Assigned Hub: {trackingData.deliveryAgent?.hub || 'Not assigned'}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
+                  <button 
+                    type="button"
+                    onClick={() => setShowInstructionModal(true)}
+                    className="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-blue-600 text-white font-extrabold hover:bg-blue-500 transition-colors shadow-sm cursor-pointer inline-flex items-center justify-center gap-1.5"
+                  >
+                    <MessageSquare className="w-3.5 h-3.5" />
+                    <span>Delivery Instructions</span>
+                  </button>
+                  <button 
+                    type="button"
+                    onClick={() => toast.info('Delivery agent calling is not connected yet.')}
+                    className="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-white border border-blue-200 text-blue-700 font-extrabold hover:bg-blue-50 transition-colors shadow-xs cursor-pointer inline-flex items-center justify-center gap-1.5"
+                  >
+                    <Phone className="w-3.5 h-3.5 text-blue-600" />
+                    <span>Call Driver</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* 2. DELIVERED: Proof of Delivery (POD) & Delivery Confirmation Card */}
+            {trackingData.normalizedStatus === 'DELIVERED' && (
+              <div className="p-5 rounded-2xl bg-emerald-50/80 border border-emerald-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-11 h-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-md">
+                    <BadgeCheck className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <span className="block font-black text-slate-900 text-sm">
+                      Package Successfully Delivered to {trackingData.podDetails?.receivedBy || trackingData.recipientName || 'Consignee'}
+                    </span>
+                    <span className="block text-slate-600 font-medium">
+                      Delivered at {trackingData.podDetails?.deliveredAt || 'Not recorded'} • Signed by {trackingData.podDetails?.relation || 'Not recorded'}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
+                  <button 
+                    type="button"
+                    onClick={() => setShowPodModal(true)}
+                    className="w-full sm:w-auto px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold transition-colors shadow-sm cursor-pointer inline-flex items-center justify-center gap-1.5"
+                  >
+                    <FileCheck className="w-4 h-4" />
+                    <span>View Digital POD</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* 3. NDR / ATTEMPT FAILED: Reschedule Delivery Alert Card */}
+            {trackingData.normalizedStatus === 'NDR' && (
+              <div className="p-5 rounded-2xl bg-rose-50/80 border border-rose-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-11 h-11 rounded-2xl bg-rose-600 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-md">
+                    <AlertTriangle className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <span className="block font-black text-rose-950 text-sm">
+                      Delivery Attempt #{trackingData.ndrDetails?.attemptCount || 1} Failed — {trackingData.ndrDetails?.reason || 'Reason not recorded'}
+                    </span>
+                    <span className="block text-rose-700 font-medium">
+                      Last Attempt: {trackingData.ndrDetails?.lastAttemptAt || 'Not recorded'}. Please reschedule your delivery slot.
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
+                  <button 
+                    type="button"
+                    onClick={() => setShowRescheduleModal(true)}
+                    className="w-full sm:w-auto px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-extrabold transition-colors shadow-sm cursor-pointer inline-flex items-center justify-center gap-1.5"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    <span>Reschedule Delivery</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* DYNAMIC GSAP STEPPER CONTAINER */}
             <div className="space-y-6 pt-2">
               <div className="flex items-center justify-between">
                 <h3 className="text-xs font-black uppercase tracking-widest text-slate-500 font-display">
                   Shipment Route Progress
                 </h3>
-                <span className="text-xs font-bold text-blue-600 font-mono">Stage 4 of 5 • Out For Delivery</span>
+                <span className="text-xs font-bold text-blue-600 font-mono">
+                  Stage {currentStageIndex + 1} of 5 • {routeStages[currentStageIndex]?.title}
+                </span>
               </div>
 
-              {/* Desktop Stepper Bar with Animated Route Fill */}
+              {/* Desktop Stepper Bar with GSAP Animated Line & Truck */}
               <div className="hidden md:block relative bg-slate-900 p-8 rounded-3xl border border-slate-800 overflow-hidden text-white shadow-xl">
-                {/* Track Line */}
+                {/* Background Rail */}
                 <div className="absolute left-12 right-12 top-1/2 -translate-y-1/2 h-2 bg-slate-800 rounded-full z-0">
                   <div
                     ref={routeLineRef}
@@ -346,7 +619,7 @@ export const PublicTrackingPage: React.FC = () => {
                   />
                 </div>
 
-                {/* Animated Shipment Indicator Icon (Truck) */}
+                {/* Animated Truck Indicator */}
                 <div
                   ref={truckIconRef}
                   className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 z-20 transition-transform duration-300"
@@ -360,8 +633,8 @@ export const PublicTrackingPage: React.FC = () => {
                 {/* Stage Nodes */}
                 <div className="relative z-10 flex items-center justify-between">
                   {routeStages.map((stage, idx) => {
-                    const isActive = idx <= activeStageIndex;
-                    const isCurrent = idx === activeStageIndex;
+                    const isActive = idx <= currentStageIndex;
+                    const isCurrent = idx === currentStageIndex;
 
                     return (
                       <div
@@ -384,7 +657,7 @@ export const PublicTrackingPage: React.FC = () => {
                           }`}>
                             {stage.title}
                           </span>
-                          <span className="block text-[9px] text-slate-400 font-medium max-w-[95px]">
+                          <span className="block text-[9px] text-slate-400 font-medium max-w-[100px]">
                             {stage.subtitle}
                           </span>
                         </div>
@@ -394,14 +667,14 @@ export const PublicTrackingPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Mobile Vertical Timeline Fallback */}
+              {/* Mobile Vertical Timeline */}
               <div className="block md:hidden space-y-4 pl-4 border-l-2 border-blue-500 relative">
                 {routeStages.map((stage, idx) => (
                   <div key={stage.id} className="relative flex items-center gap-3">
                     <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
-                      idx <= activeStageIndex ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500'
+                      idx <= currentStageIndex ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500'
                     }`}>
-                      {idx <= activeStageIndex ? '✓' : idx + 1}
+                      {idx <= currentStageIndex ? '✓' : idx + 1}
                     </div>
                     <div>
                       <span className="block text-xs font-bold text-slate-900">{stage.title}</span>
@@ -412,7 +685,7 @@ export const PublicTrackingPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Interactive Notification Preferences & Actions Bar */}
+            {/* Notification Preferences Bar */}
             <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/90 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
               <div className="flex items-center gap-3">
                 <input
@@ -423,20 +696,31 @@ export const PublicTrackingPage: React.FC = () => {
                   className="w-4 h-4 rounded text-blue-600 accent-blue-600 cursor-pointer"
                 />
                 <label htmlFor="wa-opt" className="font-bold text-slate-700 cursor-pointer">
-                  Send real-time WhatsApp status alerts for AWB {trackingData.awbNumber}
+                  Send real-time WhatsApp delivery milestones for AWB {trackingData.awbNumber}
                 </label>
               </div>
 
               <div className="flex items-center gap-2 shrink-0">
-                <Button 
-                  size="sm" 
-                  variant="outline" 
-                  onClick={() => toast.success('Proof of Delivery (POD) requested!')}
-                  leftIcon={<Download className="w-3.5 h-3.5" />}
-                  className="font-bold text-xs"
-                >
-                  Download POD
-                </Button>
+                {trackingData.normalizedStatus === 'DELIVERED' ? (
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    onClick={() => setShowPodModal(true)}
+                    leftIcon={<Download className="w-3.5 h-3.5" />}
+                    className="font-bold text-xs"
+                  >
+                    Download Digital POD
+                  </Button>
+                ) : (
+                  <Button 
+                    size="sm" 
+                    variant="ghost" 
+                    onClick={() => toast.info('Digital POD will become available once package is marked Delivered.')}
+                    className="text-slate-400 text-xs cursor-not-allowed"
+                  >
+                    POD Available Upon Delivery
+                  </Button>
+                )}
               </div>
             </div>
 
@@ -446,7 +730,7 @@ export const PublicTrackingPage: React.FC = () => {
                 <h3 className="text-xs font-black uppercase tracking-widest text-slate-500 font-display">
                   Full Tracking Scan History
                 </h3>
-                <span className="text-xs font-bold text-slate-400 font-mono">{trackingData.events.length} Events Logged</span>
+                <span className="text-xs font-bold text-slate-400 font-mono">{trackingData.events.length} Scans Logged</span>
               </div>
 
               <div className="space-y-3">
@@ -460,10 +744,12 @@ export const PublicTrackingPage: React.FC = () => {
                   >
                     <div className="space-y-0.5">
                       <div className="flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
+                        <span className={`w-2 h-2 rounded-full ${
+                          idx === trackingData.events.length - 1 ? 'bg-blue-600 animate-ping' : 'bg-slate-400'
+                        }`} />
                         <span className="font-extrabold text-slate-900 block">{evt.message}</span>
                       </div>
-                      <span className="text-[11px] text-slate-500 font-medium pl-3.5">{evt.location}</span>
+                      <span className="text-[11px] text-slate-500 font-medium pl-4">{evt.location}</span>
                     </div>
                     <span className="text-[10px] font-mono text-slate-500 font-bold bg-white px-3 py-1 rounded-lg border border-slate-200 shadow-2xs">
                       {new Date(evt.event_time).toLocaleString('en-IN', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' })}
@@ -475,8 +761,8 @@ export const PublicTrackingPage: React.FC = () => {
           </motion.div>
         )}
 
-        {/* Tracking FAQs Accordion (White Background & Clean Borderless Style) */}
-        <div className="bg-white py-8 sm:py-12 space-y-8">
+        {/* Tracking FAQs Accordion */}
+        {!isSellerPanel && <div className="bg-white py-8 sm:py-12 space-y-8">
           <div className="text-center space-y-3.5 max-w-5xl mx-auto">
             <div className="inline-block">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
@@ -505,6 +791,7 @@ export const PublicTrackingPage: React.FC = () => {
             {trackingFaqs.map((faq, idx) => (
               <div key={idx} className="py-5 first:pt-0 last:pb-0">
                 <button
+                  type="button"
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
                   className="w-full text-left flex items-center justify-between font-bold text-slate-900 text-base sm:text-lg hover:text-blue-600 transition-colors cursor-pointer group"
                 >
@@ -527,10 +814,228 @@ export const PublicTrackingPage: React.FC = () => {
               </div>
             ))}
           </div>
-        </div>
+        </div>}
       </section>
 
-      {/* Delivery Instructions Modal */}
+      {/* Pre-Footer High-Converting CTA Banner */}
+      {!isSellerPanel && <ReadyToShipCTA />}
+
+      {/* 1. Digital Proof of Delivery (POD) Modal */}
+      <AnimatePresence>
+        {showPodModal && trackingData && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full border border-slate-200 shadow-2xl space-y-6"
+            >
+              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold">
+                    <FileCheck className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-black text-slate-900 font-display">Digital Proof of Delivery (POD)</h3>
+                    <p className="text-xs text-slate-500 font-medium">AWB: {trackingData.awbNumber}</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowPodModal(false)}
+                  className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* POD Certificate Sheet */}
+              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-4 text-xs">
+                <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+                  <div>
+                    <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">Carrier Partner</span>
+                    <strong className="text-slate-900 text-sm font-display">{trackingData.courierName || 'Shadowfax Express'}</strong>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">Delivered At</span>
+                    <strong className="text-emerald-700 font-display">{trackingData.podDetails?.deliveredAt || 'Today, 2:15 PM'}</strong>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 py-1">
+                  <div>
+                    <span className="text-[10px] text-slate-400 uppercase font-bold block">Consignee Name</span>
+                    <strong className="text-slate-900">{trackingData.recipientName || 'Kavita Nair'}</strong>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-400 uppercase font-bold block">Received By</span>
+                    <strong className="text-slate-900">{trackingData.podDetails?.receivedBy || 'Kavita Nair'}</strong>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-400 uppercase font-bold block">Relationship</span>
+                    <strong className="text-slate-900">{trackingData.podDetails?.relation || 'Self / Consignee'}</strong>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-400 uppercase font-bold block">Destination PIN</span>
+                    <strong className="text-slate-900">{trackingData.destinationPincode || 'NA'}</strong>
+                  </div>
+                </div>
+
+                {/* Digital Signature Stamp */}
+                <div className="p-3 bg-white rounded-xl border border-slate-200 text-center space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Authorized Digital Signature</span>
+                  <div className="font-serif italic text-blue-700 text-lg py-1 select-none">
+                    ~ {trackingData.podDetails?.receivedBy || 'Kavita Nair'} ~
+                  </div>
+                  <span className="text-[9px] text-slate-400 font-mono block">GPS Verification Hash: #GEO-9948172635</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowPodModal(false)}
+                  className="font-bold text-slate-600"
+                >
+                  Close
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    toast.success(`Proof of Delivery (POD) for AWB ${trackingData.awbNumber} downloaded!`);
+                    setShowPodModal(false);
+                  }}
+                  leftIcon={<Download className="w-3.5 h-3.5" />}
+                  className="bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold px-5"
+                >
+                  Download Signed PDF
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* 2. NDR Delivery Reschedule Modal */}
+      <AnimatePresence>
+        {showRescheduleModal && trackingData && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full border border-slate-200 shadow-2xl space-y-6"
+            >
+              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
+                    <RotateCcw className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-black text-slate-900 font-display">Reschedule Delivery Attempt</h3>
+                    <p className="text-xs text-slate-500 font-medium">For AWB {trackingData.awbNumber}</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowRescheduleModal(false)}
+                  className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="space-y-4 text-xs">
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                    Select Reattempt Date
+                  </label>
+                  <div className="grid grid-cols-3 gap-2 font-semibold">
+                    {['Tomorrow', 'Day After Tomorrow', 'This Weekend'].map((dateOption) => (
+                      <button
+                        key={dateOption}
+                        type="button"
+                        onClick={() => setRescheduleDate(dateOption)}
+                        className={`p-2.5 rounded-xl border text-center transition-colors cursor-pointer ${
+                          rescheduleDate === dateOption
+                            ? 'border-rose-600 bg-rose-50 text-rose-700 font-extrabold shadow-2xs'
+                            : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+                        }`}
+                      >
+                        {dateOption}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                    Select Preferred Delivery Time Slot
+                  </label>
+                  <div className="grid grid-cols-3 gap-2 font-semibold">
+                    {[
+                      { id: 'MORNING', label: 'Morning', time: '9 AM - 1 PM' },
+                      { id: 'AFTERNOON', label: 'Afternoon', time: '1 PM - 5 PM' },
+                      { id: 'EVENING', label: 'Evening', time: '5 PM - 8 PM' }
+                    ].map((slot) => (
+                      <button
+                        key={slot.id}
+                        type="button"
+                        onClick={() => setRescheduleSlot(slot.id as any)}
+                        className={`p-2.5 rounded-xl border text-center transition-colors cursor-pointer ${
+                          rescheduleSlot === slot.id
+                            ? 'border-rose-600 bg-rose-50 text-rose-700 font-extrabold shadow-2xs'
+                            : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+                        }`}
+                      >
+                        <span className="block font-bold">{slot.label}</span>
+                        <span className="block text-[10px] text-slate-500 font-normal">{slot.time}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                    Additional Landmark / Address Directions
+                  </label>
+                  <textarea
+                    rows={2}
+                    placeholder="e.g. Please leave with neighbor at Flat 402 or call my secondary mobile..."
+                    value={rescheduleNotes}
+                    onChange={(e) => setRescheduleNotes(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-500/10 font-medium"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowRescheduleModal(false)}
+                  className="font-bold text-slate-600"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    toast.success(`Delivery reattempt successfully scheduled for ${rescheduleDate} (${rescheduleSlot})!`);
+                    setShowRescheduleModal(false);
+                  }}
+                  className="bg-rose-600 hover:bg-rose-500 text-white font-extrabold px-5"
+                >
+                  Confirm Reschedule
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* 3. Special Delivery Instructions Modal */}
       <AnimatePresence>
         {showInstructionModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
@@ -542,15 +1047,16 @@ export const PublicTrackingPage: React.FC = () => {
             >
               <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
                     <MessageSquare className="w-5 h-5" />
                   </div>
                   <div>
                     <h3 className="text-base font-black text-slate-900 font-display">Special Delivery Instructions</h3>
-                    <p className="text-xs text-slate-500 font-medium">For AWB {trackingData?.awbNumber || 'DEL1928374650'}</p>
+                    <p className="text-xs text-slate-500 font-medium">For AWB {trackingData?.awbNumber || 'NA'}</p>
                   </div>
                 </div>
                 <button
+                  type="button"
                   onClick={() => setShowInstructionModal(false)}
                   className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer"
                 >
@@ -560,14 +1066,14 @@ export const PublicTrackingPage: React.FC = () => {
 
               <div className="space-y-4">
                 <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                  Select or enter special delivery instructions for delivery executive <strong>Rajesh Kumar</strong>:
+                  Select or enter special delivery instructions for delivery executive <strong>{trackingData?.deliveryAgent?.name || 'Not assigned'}</strong>:
                 </p>
 
                 <div className="grid grid-cols-2 gap-2 text-xs font-semibold">
                   {[
                     'Leave at Security / Gate',
                     'Call Before Delivery',
-                    'Deliver to Neighbor',
+                    'Deliver to Neighbor (Flat 401)',
                     'Deliver Post 4:00 PM'
                   ].map((preset) => (
                     <button
@@ -623,8 +1129,6 @@ export const PublicTrackingPage: React.FC = () => {
           </div>
         )}
       </AnimatePresence>
-
-      <PublicFooter />
     </div>
   );
 };

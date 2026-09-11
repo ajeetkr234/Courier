@@ -2,48 +2,109 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Building2, FileText, Landmark, MapPin, CheckCircle2, 
-  ArrowRight, ArrowLeft, UploadCloud, ShieldCheck 
+  ArrowRight, ArrowLeft, UploadCloud, ShieldCheck, AlertCircle, Loader2 
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Input, Select } from '../../components/ui/Input';
 import { useAppStore } from '../../lib/store';
+import { usePlatformStore } from '../../services/store';
 import { toast } from 'sonner';
+import { usePincodeLookup } from '../../hooks/usePincodeLookup';
 
 export const OnboardingPage: React.FC = () => {
   const navigate = useNavigate();
   const { currentSeller, setCurrentSeller } = useAppStore();
+  const { addWarehouse, updateSellerBankDetails } = usePlatformStore();
 
   const [step, setStep] = useState<number>(1);
 
   // Form State
-  const [brandName, setBrandName] = useState(currentSeller?.brand_name || 'Apex Wear');
-  const [gstin, setGstin] = useState(currentSeller?.gstin || '07AABCA1234F1ZB');
-  const [pan, setPan] = useState(currentSeller?.pan || 'AABCA1234F');
+  const [brandName, setBrandName] = useState(currentSeller?.brand_name || '');
+  const [gstin, setGstin] = useState(currentSeller?.gstin || '');
+  const [pan, setPan] = useState(currentSeller?.pan || '');
   
-  const [bankAccount, setBankAccount] = useState('918273645019');
-  const [ifsc, setIfsc] = useState('HDFC0001234');
-  const [accountHolder, setAccountHolder] = useState('Apex Retail Tech Pvt Ltd');
-  const [bankName, setBankName] = useState('HDFC Bank');
+  const [bankAccount, setBankAccount] = useState('');
+  const [ifsc, setIfsc] = useState('');
+  const [accountHolder, setAccountHolder] = useState('');
+  const [bankName, setBankName] = useState('');
 
-  const [whName, setWhName] = useState('Delhi Central Logistics Hub');
-  const [whContact, setWhContact] = useState('Suresh Kumar');
-  const [whPhone, setWhPhone] = useState('+91 98112 33445');
-  const [whAddress, setWhAddress] = useState('Plot 42, Okhla Industrial Area Phase 3');
-  const [whCity, setWhCity] = useState('New Delhi');
-  const [whState, setWhState] = useState('Delhi');
-  const [whPincode, setWhPincode] = useState('110020');
+  const [whName, setWhName] = useState('');
+  const [whContact, setWhContact] = useState('');
+  const [whPhone, setWhPhone] = useState('');
+  const [whAddress, setWhAddress] = useState('');
+  const [whCity, setWhCity] = useState('');
+  const [whState, setWhState] = useState('');
+
+  const {
+    pincode: whPincode,
+    setPincode: setWhPincode,
+    status: whPinStatus,
+    result: whPinResult,
+    errorMsg: whPinError,
+    isLoading: isWhPinLoading,
+    isSuccess: isWhPinSuccess,
+  } = usePincodeLookup({
+    initialPincode: '',
+    onVerified: (data) => {
+      if (data.city) setWhCity(data.city);
+      if (data.state) setWhState(data.state);
+    },
+  });
 
   const handleNext = () => {
+    if (step === 1) {
+      if (!brandName.trim() || !gstin.trim() || !pan.trim()) {
+        toast.error('Please enter business details before continuing.');
+        return;
+      }
+    }
+    if (step === 3) {
+      if (!accountHolder.trim() || !bankName.trim() || !bankAccount.trim() || !ifsc.trim()) {
+        toast.error('Please enter bank details before continuing.');
+        return;
+      }
+      updateSellerBankDetails({
+        account_holder_name: accountHolder,
+        bank_name: bankName,
+        account_number: bankAccount,
+        ifsc_code: ifsc,
+        is_verified: true,
+      });
+    }
+    if (step === 4) {
+      if (!whName.trim() || !whContact.trim() || !whPhone.trim() || !whAddress.trim() || !whCity.trim() || !whState.trim() || !whPincode.trim()) {
+        toast.error('Please enter pickup warehouse details before continuing.');
+        return;
+      }
+      addWarehouse({
+        name: whName,
+        contact_name: whContact,
+        phone: whPhone,
+        email: 'dispatch@seller.store',
+        address_line1: whAddress,
+        pincode: whPincode,
+        city: whCity,
+        state: whState,
+        is_default: true,
+        seller_id: currentSeller?.id || '32d724db-23c4-4cba-a76f-f78e4022194e',
+      });
+    }
+
     toast.success(`Step ${step} details saved`);
     if (step < 5) {
       setStep(step + 1);
     } else {
       // Final activation
       if (currentSeller) {
-        setCurrentSeller({
+        const updated = {
           ...currentSeller,
-          status: 'ACTIVE'
-        });
+          brand_name: brandName || currentSeller.brand_name,
+          company_name: brandName || currentSeller.company_name,
+          gstin: gstin || currentSeller.gstin,
+          pan: pan || currentSeller.pan,
+          status: 'ACTIVE' as const,
+        };
+        setCurrentSeller(updated);
       }
       toast.success('KYC Approved! Your seller account is now ACTIVE.');
       navigate('/app/dashboard');
@@ -53,7 +114,6 @@ export const OnboardingPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-navy-950 text-slate-100 py-12 px-6 flex justify-center items-center">
       <div className="max-w-3xl w-full glass-panel p-8 sm:p-10 rounded-2xl border border-slate-800 space-y-8 shadow-2xl">
-        {/* Step Indicator Header */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-xs font-extrabold uppercase tracking-widest text-indigo-400 font-display">
@@ -209,10 +269,34 @@ export const OnboardingPage: React.FC = () => {
                 onChange={(e) => setWhAddress(e.target.value)}
                 required
               />
-              <div className="grid grid-cols-3 gap-4">
-                <Input label="City" value={whCity} onChange={(e) => setWhCity(e.target.value)} required />
-                <Input label="State" value={whState} onChange={(e) => setWhState(e.target.value)} required />
-                <Input label="Pincode" value={whPincode} onChange={(e) => setWhPincode(e.target.value)} required />
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <Input
+                  label="Pincode"
+                  value={whPincode}
+                  onChange={(e) => setWhPincode(e.target.value)}
+                  placeholder="e.g. 110001"
+                  maxLength={6}
+                  required
+                  rightIcon={
+                    isWhPinLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin text-indigo-400" />
+                    ) : isWhPinSuccess ? (
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    ) : whPinStatus === 'error' ? (
+                      <AlertCircle className="w-4 h-4 text-rose-400" />
+                    ) : undefined
+                  }
+                  error={whPinError || undefined}
+                  helperText={
+                    isWhPinLoading
+                      ? 'Verifying with India Post...'
+                      : isWhPinSuccess && whPinResult
+                      ? `✓ ${whPinResult.city}, ${whPinResult.state}`
+                      : 'Enter 6-digit PIN'
+                  }
+                />
+                <Input label="City" value={whCity} onChange={(e) => setWhCity(e.target.value)} placeholder="Auto-filled" required />
+                <Input label="State" value={whState} onChange={(e) => setWhState(e.target.value)} placeholder="Auto-filled" required />
               </div>
             </div>
           </div>

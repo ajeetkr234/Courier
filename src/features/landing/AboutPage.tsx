@@ -1,11 +1,9 @@
 import React from 'react';
-import { PublicNavbar, PublicFooter } from './PublicNav';
 import { Building2, Users, Award, ShieldCheck, Sparkles, MapPin, Truck } from 'lucide-react';
 
 export const AboutPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-white text-slate-900 flex flex-col font-sans">
-      <PublicNavbar />
+    <div className="text-slate-900 flex flex-col font-sans">
 
       {/* Hero Header */}
       <section className="py-12 sm:py-16 px-6 sm:px-8 bg-gradient-to-b from-blue-50/70 via-white to-white border-b border-slate-200 text-center">
@@ -121,8 +119,6 @@ export const AboutPage: React.FC = () => {
           </div>
         </div>
       </section>
-
-      <PublicFooter />
     </div>
   );
 };

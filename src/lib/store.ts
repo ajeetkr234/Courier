@@ -1,6 +1,25 @@
 import { create } from 'zustand';
 import { Seller, Warehouse, UserProfile } from '../types';
-import { MOCK_USER, INITIAL_SELLERS, MOCK_WAREHOUSES, MOCK_WALLETS } from './mockData';
+
+const DEFAULT_PRIMARY_SELLER: Seller = {
+  id: '32d724db-23c4-4cba-a76f-f78e4022194e',
+  company_name: 'Seller Account',
+  brand_name: 'Seller Account',
+  gstin: '',
+  pan: '',
+  status: 'ACTIVE',
+  created_at: '2026-09-08T07:55:49.261651+00:00',
+  updated_at: '2026-09-08T07:55:49.261651+00:00',
+};
+
+const DEFAULT_PRIMARY_USER: UserProfile = {
+  id: '00000000-0000-0000-0000-000000000001',
+  name: 'Seller User',
+  email: 'seller@shipfaster.local',
+  role: 'OWNER',
+  seller_id: '32d724db-23c4-4cba-a76f-f78e4022194e',
+  is_active: true,
+};
 
 interface AppState {
   currentUser: UserProfile | null;
@@ -19,11 +38,11 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>((set) => ({
-  currentUser: MOCK_USER,
-  currentSeller: INITIAL_SELLERS[0],
-  warehouses: MOCK_WAREHOUSES,
-  activeWarehouseId: MOCK_WAREHOUSES[0].id,
-  walletBalance: MOCK_WALLETS['seller-1'].balance,
+  currentUser: DEFAULT_PRIMARY_USER,
+  currentSeller: DEFAULT_PRIMARY_SELLER,
+  warehouses: [],
+  activeWarehouseId: null,
+  walletBalance: 0,
   isSidebarOpen: true,
 
   setCurrentUser: (user) => set({ currentUser: user }),

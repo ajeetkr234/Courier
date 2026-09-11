@@ -12,6 +12,8 @@ import { Input } from '../../components/ui/Input';
 import { rateEngine } from '../../services/couriers/rateEngine';
 import { RateQuote } from '../../types';
 import { toast } from 'sonner';
+import { usePlatformStore } from '../../services/store';
+import { getOfflinePincodeDetails } from '../../services/pincodeService';
 
 interface RecentSearch {
   id: string;
@@ -29,26 +31,27 @@ interface RecentSearch {
 
 export const RateCalculatorPage: React.FC = () => {
   const navigate = useNavigate();
+  const { currentSeller, warehouses } = usePlatformStore();
 
   // Tab State: Domestic vs International
   const [activeTab, setActiveTab] = useState<'DOMESTIC' | 'INTERNATIONAL'>('DOMESTIC');
 
   // Form Fields State
   const [shipmentType, setShipmentType] = useState<'FORWARD' | 'RETURN'>('FORWARD');
-  const [pickupPincode, setPickupPincode] = useState('462028');
-  const [deliveryPincode, setDeliveryPincode] = useState('841235');
-  const [actualWeight, setActualWeight] = useState('5');
+  const [pickupPincode, setPickupPincode] = useState('');
+  const [deliveryPincode, setDeliveryPincode] = useState('');
+  const [actualWeight, setActualWeight] = useState('');
   const [lengthCm, setLengthCm] = useState('');
   const [widthCm, setWidthCm] = useState('');
   const [heightCm, setHeightCm] = useState('');
   const [paymentType, setPaymentType] = useState<'PREPAID' | 'COD'>('PREPAID');
-  const [shipmentValue, setShipmentValue] = useState('60000');
+  const [shipmentValue, setShipmentValue] = useState('');
   const [isDangerousGoods, setIsDangerousGoods] = useState<'YES' | 'NO'>('NO');
   const [isSmartOrder, setIsSmartOrder] = useState<'YES' | 'NO'>('YES');
 
   // Location Details lookup simulation
-  const [pickupCityState, setPickupCityState] = useState('Bhopal, MP');
-  const [deliveryCityState, setDeliveryCityState] = useState('Siwan, Bihar');
+  const [pickupCityState, setPickupCityState] = useState('');
+  const [deliveryCityState, setDeliveryCityState] = useState('');
 
   // Calculated weights
   const [volumetricWeight, setVolumetricWeight] = useState(0);
@@ -62,60 +65,15 @@ export const RateCalculatorPage: React.FC = () => {
   const [formError, setFormError] = useState('');
 
   // Recent searches list
-  const [recentSearches, setRecentSearches] = useState<RecentSearch[]>([
-    {
-      id: 'rs-1',
-      type: 'FORWARD',
-      pickupPincode: '462028',
-      deliveryPincode: '841235',
-      deliveryCity: 'Siwan',
-      weightKg: 5,
-      shipmentValue: 60000,
-      paymentMode: 'PREPAID',
-      isDangerous: false,
-      isSecured: true,
-      timestamp: 'Just now'
-    },
-    {
-      id: 'rs-2',
-      type: 'FORWARD',
-      pickupPincode: '110020',
-      deliveryPincode: '400001',
-      deliveryCity: 'Mumbai',
-      weightKg: 1,
-      shipmentValue: 2500,
-      paymentMode: 'COD',
-      isDangerous: false,
-      isSecured: true,
-      timestamp: '2 hours ago'
-    },
-    {
-      id: 'rs-3',
-      type: 'FORWARD',
-      pickupPincode: '560001',
-      deliveryPincode: '700001',
-      deliveryCity: 'Kolkata',
-      weightKg: 2,
-      shipmentValue: 12000,
-      paymentMode: 'PREPAID',
-      isDangerous: false,
-      isSecured: true,
-      timestamp: 'Yesterday'
-    },
-    {
-      id: 'rs-4',
-      type: 'FORWARD',
-      pickupPincode: '110001',
-      deliveryPincode: '600001',
-      deliveryCity: 'Chennai',
-      weightKg: 0.5,
-      shipmentValue: 999,
-      paymentMode: 'COD',
-      isDangerous: false,
-      isSecured: false,
-      timestamp: '3 days ago'
+  const [recentSearches, setRecentSearches] = useState<RecentSearch[]>([]);
+
+  useEffect(() => {
+    const defaultWarehouse = warehouses.find((warehouse) => warehouse.is_default) || warehouses[0];
+    if (!pickupPincode && defaultWarehouse?.pincode) {
+      setPickupPincode(defaultWarehouse.pincode);
+      setPickupCityState(`${defaultWarehouse.city}, ${defaultWarehouse.state}`);
     }
-  ]);
+  }, [pickupPincode, warehouses]);
 
   // Recalculate Volumetric & Applicable Weights on inputs change
   useEffect(() => {
@@ -134,19 +92,31 @@ export const RateCalculatorPage: React.FC = () => {
     setApplicableWeight(finalW > 0 ? finalW : 0.5);
   }, [actualWeight, lengthCm, widthCm, heightCm]);
 
-  // Pincode to City/State mapper
+  // Dynamic Pincode to City/State mapper
   useEffect(() => {
-    if (pickupPincode === '462028') setPickupCityState('Bhopal, Madhya Pradesh');
-    else if (pickupPincode === '110020' || pickupPincode === '110001') setPickupCityState('New Delhi, Delhi');
-    else if (pickupPincode === '400001') setPickupCityState('Mumbai, Maharashtra');
-    else if (pickupPincode === '560001') setPickupCityState('Bengaluru, Karnataka');
-    else if (pickupPincode.length === 6) setPickupCityState(`Zone-${pickupPincode.slice(0, 3)} Hub`);
+    const cleanPickup = pickupPincode.replace(/\D/g, '').trim();
+    if (cleanPickup.length === 6) {
+      const details = getOfflinePincodeDetails(cleanPickup);
+      if (details.isValid && details.city && details.state) {
+        setPickupCityState(`${details.city}, ${details.state}`);
+      } else {
+        setPickupCityState(`Zone-${cleanPickup.slice(0, 3)} Hub`);
+      }
+    } else {
+      setPickupCityState('');
+    }
 
-    if (deliveryPincode === '841235') setDeliveryCityState('Siwan, Bihar');
-    else if (deliveryPincode === '400001') setDeliveryCityState('Mumbai, Maharashtra');
-    else if (deliveryPincode === '700001') setDeliveryCityState('Kolkata, West Bengal');
-    else if (deliveryPincode === '600001') setDeliveryCityState('Chennai, Tamil Nadu');
-    else if (deliveryPincode.length === 6) setDeliveryCityState(`Zone-${deliveryPincode.slice(0, 3)} Destination`);
+    const cleanDelivery = deliveryPincode.replace(/\D/g, '').trim();
+    if (cleanDelivery.length === 6) {
+      const details = getOfflinePincodeDetails(cleanDelivery);
+      if (details.isValid && details.city && details.state) {
+        setDeliveryCityState(`${details.city}, ${details.state}`);
+      } else {
+        setDeliveryCityState(`Zone-${cleanDelivery.slice(0, 3)} Destination`);
+      }
+    } else {
+      setDeliveryCityState('');
+    }
   }, [pickupPincode, deliveryPincode]);
 
   const handleCalculate = async (e?: React.FormEvent) => {
@@ -179,7 +149,7 @@ export const RateCalculatorPage: React.FC = () => {
     try {
       // Fetch engine quotes
       const rawQuotes = await rateEngine.fetchComparisonQuotes({
-        sellerId: 'current-seller',
+        sellerId: currentSeller?.id || '',
         pickupPincode,
         deliveryPincode,
         weightKg: applicableWeight,
@@ -238,14 +208,15 @@ export const RateCalculatorPage: React.FC = () => {
 
   const handleReset = () => {
     setShipmentType('FORWARD');
-    setPickupPincode('462028');
-    setDeliveryPincode('841235');
-    setActualWeight('5');
+    const defaultWarehouse = warehouses.find((warehouse) => warehouse.is_default) || warehouses[0];
+    setPickupPincode(defaultWarehouse?.pincode || '');
+    setDeliveryPincode('');
+    setActualWeight('');
     setLengthCm('');
     setWidthCm('');
     setHeightCm('');
     setPaymentType('PREPAID');
-    setShipmentValue('60000');
+    setShipmentValue('');
     setIsDangerousGoods('NO');
     setIsSmartOrder('YES');
     setHasCalculated(false);

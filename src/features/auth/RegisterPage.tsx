@@ -8,7 +8,7 @@ import { ShipFasterLogo } from '../../components/ui/ShipFasterLogo';
 
 export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { register } = useAuth();
 
   const [companyName, setCompanyName] = useState('');
   const [email, setEmail] = useState('');
@@ -17,8 +17,12 @@ export const RegisterPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await login(email || 'new.seller@brand.com');
-    navigate('/onboarding');
+    try {
+      await register(email, password, companyName, phone);
+      navigate('/app/dashboard');
+    } catch {
+      // Error handled by toast in AuthProvider
+    }
   };
 
   return (

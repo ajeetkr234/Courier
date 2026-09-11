@@ -1,33 +1,58 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   LayoutDashboard, ShoppingBag, Truck, CalendarCheck, MapPin, 
   AlertTriangle, RotateCcw, Scale, Wallet, FileText, Globe, 
-  BarChart3, Code2, Users, Settings, ChevronDown, LogOut, 
-  Menu, X, Building2, PlusCircle, Upload, ShieldCheck, Search, Activity, Calculator
+  BarChart3, Code2, Users, Settings, ChevronDown,
+  Menu, X, Building2, PlusCircle, Upload, ShieldCheck, Search, Activity, Calculator,
+  Palette
 } from 'lucide-react';
 import { usePlatformStore } from '../../services/store';
 import { useAuth } from '../../app/providers/AuthProvider';
 import { Button } from '../ui/Button';
 import { CommandPalette } from '../ui/CommandPalette';
+import { PageLoadingFallback } from '../ui/PageLoadingFallback';
 
 import { ShipFasterLogo } from '../ui/ShipFasterLogo';
 
 export const SellerLayout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { walletBalance, warehouses } = usePlatformStore();
-  const { user, logout, switchDemoRole } = useAuth();
+  const { 
+    walletBalance, 
+    warehouses, 
+    ndrCases, 
+    weightDiscrepancies, 
+    loadSupabaseData, 
+    initRealtimeSubscription, 
+    realtimeStatus,
+    currentSeller 
+  } = usePlatformStore();
+  const { user, switchDemoRole } = useAuth();
 
   const mainRef = useRef<HTMLElement>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [activeWarehouseId, setActiveWarehouseId] = useState(warehouses[0]?.id || 'wh-mumbai');
+  const [activeWarehouseId, setActiveWarehouseId] = useState(warehouses[0]?.id || '');
   const [ordersOpen, setOrdersOpen] = useState(location.pathname.startsWith('/app/orders'));
   const [financeOpen, setFinanceOpen] = useState(location.pathname.startsWith('/app/finance') || location.pathname.startsWith('/app/wallet'));
   const [isCmdKOpen, setIsCmdKOpen] = useState(false);
   const [isHeaderHidden, setIsHeaderHidden] = useState(false);
   const lastMainScrollY = useRef(0);
+
+  useEffect(() => {
+    loadSupabaseData();
+    const unsub = initRealtimeSubscription();
+    return () => {
+      unsub();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (warehouses.length > 0 && !warehouses.some((warehouse) => warehouse.id === activeWarehouseId)) {
+      setActiveWarehouseId(warehouses.find((warehouse) => warehouse.is_default)?.id || warehouses[0].id);
+    }
+  }, [activeWarehouseId, warehouses]);
 
   useEffect(() => {
     if (mainRef.current) {
@@ -130,21 +155,18 @@ export const SellerLayout: React.FC = () => {
               onChange={(e) => setActiveWarehouseId(e.target.value)}
               className="w-full bg-white border border-slate-300 text-xs font-semibold text-slate-800 rounded-xl px-2.5 py-2 focus:ring-2 focus:ring-indigo-500 cursor-pointer shadow-xs"
             >
+              {warehouses.length === 0 && <option value="">No warehouse configured</option>}
               {warehouses.map(w => (
                 <option key={w.id} value={w.id}>
-                  {w.name} ({w.pincode})
+                  {w.name} ({w.city})
                 </option>
               ))}
             </select>
           </div>
         </div>
 
-        {/* Nav Items Scroll Area */}
-        <nav onClick={(e) => {
-          if ((e.target as HTMLElement).closest('a')) {
-            setIsSidebarOpen(false);
-          }
-        }} className="flex-1 overflow-y-auto p-4 space-y-1 text-xs font-semibold">
+        {/* Navigation */}
+        <nav className="flex-1 overflow-y-auto px-4 py-4 space-y-1 text-sm font-semibold">
           {/* Home */}
           <Link
             to="/app/home"
@@ -238,6 +260,20 @@ export const SellerLayout: React.FC = () => {
             <span>Tracking</span>
           </Link>
 
+          {/* Branded Tracking Customizer */}
+          <Link
+            to="/app/tracking/customizer"
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
+              isActive('/app/tracking/customizer') ? 'bg-indigo-50 text-indigo-700 font-bold border border-indigo-200' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+            }`}
+          >
+            <Palette className="w-4 h-4" />
+            <div className="flex items-center justify-between flex-1">
+              <span>Branded Tracking</span>
+              <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-violet-100 text-violet-700">New</span>
+            </div>
+          </Link>
+
           {/* NDR */}
           <Link
             to="/app/ndr"
@@ -249,7 +285,9 @@ export const SellerLayout: React.FC = () => {
               <AlertTriangle className="w-4 h-4 text-rose-600" />
               <span>NDR Action</span>
             </div>
-            <span className="px-1.5 py-0.5 text-[10px] font-black bg-rose-100 text-rose-700 rounded-full">1</span>
+            {ndrCases.length > 0 && (
+              <span className="px-1.5 py-0.5 text-[10px] font-black bg-rose-100 text-rose-700 rounded-full">{ndrCases.length}</span>
+            )}
           </Link>
 
           {/* Returns */}
@@ -266,12 +304,19 @@ export const SellerLayout: React.FC = () => {
           {/* Weight Disputes */}
           <Link
             to="/app/weight-disputes"
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
+            className={`flex items-center justify-between px-3 py-2.5 rounded-xl transition-all ${
               isActive('/app/weight-disputes') ? 'bg-indigo-50 text-indigo-700 font-bold border border-indigo-200' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
             }`}
           >
-            <Scale className="w-4 h-4" />
-            <span>Weight Disputes</span>
+            <div className="flex items-center gap-3">
+              <Scale className="w-4 h-4" />
+              <span>Weight Disputes</span>
+            </div>
+            {weightDiscrepancies.filter(w => w.status === 'PENDING').length > 0 && (
+              <span className="px-1.5 py-0.5 text-[10px] font-black bg-amber-100 text-amber-800 rounded-full">
+                {weightDiscrepancies.filter(w => w.status === 'PENDING').length}
+              </span>
+            )}
           </Link>
 
           {/* Rate Calculator */}
@@ -288,7 +333,6 @@ export const SellerLayout: React.FC = () => {
           {/* Finance Parent */}
           <div>
             <button
-              onClick={() => setFinanceOpen(!financeOpen)}
               className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all cursor-pointer"
             >
               <div className="flex items-center gap-3">
@@ -393,11 +437,7 @@ export const SellerLayout: React.FC = () => {
                 <span className="block text-[10px] text-slate-500 font-semibold truncate">{user?.role}</span>
               </div>
             </div>
-            <button onClick={logout} title="Sign Out" className="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg cursor-pointer">
-              <LogOut className="w-4 h-4" />
-            </button>
           </div>
-
           <div className="pt-2 border-t border-slate-200">
             <button
               onClick={() => {
@@ -449,6 +489,12 @@ export const SellerLayout: React.FC = () => {
               {isActive('/app/team') && 'Team Management & RBAC'}
               {isActive('/app/settings') && 'Account & Warehouse Settings'}
             </h1>
+            {currentSeller && (
+              <span className="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold">
+                <Building2 className="w-3.5 h-3.5 text-indigo-600" />
+                <span>{currentSeller.brand_name || currentSeller.company_name}</span>
+              </span>
+            )}
           </div>
 
           <div className="flex items-center gap-3">
@@ -464,10 +510,14 @@ export const SellerLayout: React.FC = () => {
               </kbd>
             </button>
 
-            {/* Live Carrier Latency Pulse Pill */}
-            <div className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-extrabold text-emerald-800">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>All 4 Couriers Live (180ms)</span>
+            {/* Live Supabase Realtime Indicator Pill */}
+            <div className={`hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-extrabold transition-colors ${
+              realtimeStatus === 'CONNECTED'
+                ? 'bg-emerald-50 border border-emerald-200 text-emerald-800'
+                : 'bg-amber-50 border border-amber-200 text-amber-800'
+            }`}>
+              <span className={`w-2 h-2 rounded-full ${realtimeStatus === 'CONNECTED' ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`}></span>
+              <span>{realtimeStatus === 'CONNECTED' ? 'Realtime DB Live' : 'Connecting Realtime...'}</span>
             </div>
 
             <Link to="/app/wallet" className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 hover:border-indigo-300 transition-all shadow-xs">
@@ -490,11 +540,11 @@ export const SellerLayout: React.FC = () => {
 
         {/* Scrollable Page Content Body */}
         <main ref={mainRef} className="flex-1 overflow-y-auto p-4 md:p-6 w-full max-w-none">
-          <Outlet />
+          <Suspense fallback={<PageLoadingFallback />}>
+            <Outlet />
+          </Suspense>
         </main>
       </div>
     </div>
   );
 };
-
-

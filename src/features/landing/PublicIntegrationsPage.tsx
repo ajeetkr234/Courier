@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { PublicNavbar, PublicFooter } from './PublicNav';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Globe, ChevronDown, Layers, HelpCircle, ArrowRight
@@ -7,7 +6,9 @@ import {
 import { Link } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
 import { ConnectorsGridSection } from './components/ConnectorsGridSection';
-import { GlobalThreeBackground } from '../../components/ui/GlobalThreeBackground';
+import { IntegrationsNetworkVisualizer } from './components/IntegrationsNetworkVisualizer';
+import { DeveloperApiSandbox } from './components/DeveloperApiSandbox';
+import { ReadyToShipCTA } from './components/ReadyToShipCTA';
 
 export const PublicIntegrationsPage: React.FC = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -40,15 +41,9 @@ export const PublicIntegrationsPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white font-sans text-slate-900 flex flex-col relative selection:bg-blue-500 selection:text-white">
-      <PublicNavbar />
-
+    <div className="text-slate-900 flex flex-col relative selection:bg-blue-500 selection:text-white">
       {/* Hero Section (White Theme, Consistent with Landing Page) */}
       <section className="relative py-12 sm:py-16 px-6 sm:px-8 bg-gradient-to-b from-blue-50/40 via-white to-white border-b border-slate-200/80 overflow-hidden">
-        {/* Three.js Dynamic Background Canvas (Exact match to Home Page) */}
-        <div className="absolute inset-0 opacity-40 pointer-events-none z-0">
-          <GlobalThreeBackground />
-        </div>
 
         <div className="relative max-w-7xl mx-auto space-y-8 text-center z-10">
           {/* Standardized Pill Chip Badge */}
@@ -133,17 +128,45 @@ export const PublicIntegrationsPage: React.FC = () => {
               <span>Code Setup Needed</span>
             </div>
           </motion.div>
+
+          {/* Quick Section Jump Navigation Bar */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            className="pt-4 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 max-w-5xl mx-auto"
+          >
+            {[
+              { label: 'Store Connectors', href: '#connectors' },
+              { label: 'Live Network Mesh & Telemetry', href: '#architecture' },
+              { label: 'Developer Code Sandbox', href: '#developer-sandbox' },
+              { label: 'Integration FAQs', href: '#faqs' },
+            ].map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                className="text-[11px] font-bold font-mono px-3 py-1.5 rounded-full bg-white/90 border border-slate-200/90 text-slate-600 hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50/60 transition-all shadow-2xs whitespace-nowrap"
+              >
+                {item.label}
+              </a>
+            ))}
+          </motion.div>
         </div>
       </section>
 
       {/* Main Grid: Supported Integration Cards */}
       <ConnectorsGridSection />
 
-      {/* Integration FAQs & CTA Section */}
-      <section className="py-12 sm:py-16 px-6 sm:px-8 max-w-7xl mx-auto w-full space-y-12">
-        {/* Integration FAQs — Hairline Accordion (No Boxed Cards) */}
-        <div className="py-8 border-t border-slate-200/80 space-y-8">
-          <div className="text-center space-y-3.5 max-w-5xl mx-auto">
+      {/* 3D Telemetry Studio: Interactive Architecture Mesh, Live Event Ticker, Gateway Matrix */}
+      <IntegrationsNetworkVisualizer />
+
+      {/* Developer REST API & Webhooks Code Sandbox */}
+      <DeveloperApiSandbox />
+
+      {/* Integration FAQs Section */}
+      <section id="faqs" className="py-8 sm:py-12 px-6 sm:px-8 max-w-7xl mx-auto w-full space-y-8 scroll-mt-20">
+        <div className="pt-6 border-t border-slate-200/80 space-y-8">
+          <div className="text-center space-y-3 max-w-5xl mx-auto">
             <div className="inline-block">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
                 <span className="flex h-2 w-2 relative">
@@ -162,20 +185,25 @@ export const PublicIntegrationsPage: React.FC = () => {
               </span>
             </h2>
 
-            <p className="text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
+            <p className="text-sm sm:text-base text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
               Everything you need to know about connecting storefronts, webhook lifecycles, and REST API authentication.
             </p>
           </div>
 
-          <div className="divide-y divide-slate-200/80 max-w-3xl mx-auto">
+          {/* 2-Column Responsive FAQ Grid (Zero Side Empty Space) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4 max-w-5xl mx-auto w-full pt-2">
             {integrationFaqs.map((faq, idx) => (
-              <div key={idx} className="py-5 first:pt-0 last:pb-0">
+              <div 
+                key={idx} 
+                className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-2xs hover:border-blue-200 transition-colors flex flex-col justify-start"
+              >
                 <button
+                  type="button"
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                  className="w-full text-left flex items-center justify-between font-bold text-slate-900 text-base sm:text-lg hover:text-blue-600 transition-colors cursor-pointer group"
+                  className="w-full text-left flex items-start justify-between gap-3 font-bold text-slate-900 text-sm sm:text-base hover:text-blue-600 transition-colors cursor-pointer group"
                 >
-                  <span className="pr-4 group-hover:translate-x-0.5 transition-transform">{faq.q}</span>
-                  <ChevronDown className={`w-5 h-5 text-slate-400 shrink-0 transition-transform duration-200 ${openFaq === idx ? 'rotate-180 text-blue-600' : ''}`} />
+                  <span className="group-hover:translate-x-0.5 transition-transform leading-snug">{faq.q}</span>
+                  <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 mt-1 transition-transform duration-200 ${openFaq === idx ? 'rotate-180 text-blue-600' : ''}`} />
                 </button>
                 <AnimatePresence>
                   {openFaq === idx && (
@@ -184,7 +212,7 @@ export const PublicIntegrationsPage: React.FC = () => {
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.2 }}
-                      className="pt-3 text-sm text-slate-600 leading-relaxed font-medium"
+                      className="pt-2.5 text-xs sm:text-sm text-slate-600 leading-relaxed font-medium"
                     >
                       {faq.a}
                     </motion.div>
@@ -196,7 +224,8 @@ export const PublicIntegrationsPage: React.FC = () => {
         </div>
       </section>
 
-      <PublicFooter />
+      {/* Pre-Footer High-Converting CTA Banner */}
+      <ReadyToShipCTA />
     </div>
   );
 };

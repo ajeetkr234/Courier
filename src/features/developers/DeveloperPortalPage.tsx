@@ -8,13 +8,17 @@ import { APIKey, WebhookEndpoint } from '../../types';
 import { toast } from 'sonner';
 
 export const DeveloperPortalPage: React.FC = () => {
-  const { apiKeys, webhooks, createAPIKey, addWebhookEndpoint } = usePlatformStore();
+  const { apiKeys, webhooks, createAPIKey, addWebhookEndpoint, loadSupabaseData, isLoadingData } = usePlatformStore();
 
   const [isKeyModalOpen, setIsKeyModalOpen] = useState(false);
   const [isWebhookModalOpen, setIsWebhookModalOpen] = useState(false);
 
   const [keyName, setKeyName] = useState('');
   const [webhookUrl, setWebhookUrl] = useState('https://api.mybrand.com/webhooks/shipping');
+
+  React.useEffect(() => {
+    loadSupabaseData();
+  }, []);
 
   const handleGenerateKey = (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,19 +67,27 @@ export const DeveloperPortalPage: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium">
-              {apiKeys.map((k) => (
-                <tr key={k.id} className="hover:bg-slate-50 transition-colors">
-                  <td className="p-3.5 font-bold text-slate-900">{k.name}</td>
-                  <td className="p-3.5 font-mono font-bold text-indigo-600">{k.secret_key_masked || k.key_prefix + '••••'}</td>
-                  <td className="p-3.5 font-bold text-slate-600">{k.scopes.join(', ')}</td>
-                  <td className="p-3.5 text-slate-600">{k.last_used_at ? new Date(k.last_used_at).toLocaleDateString('en-IN') : 'Never'}</td>
-                  <td className="p-3.5 text-right">
-                    <Button size="sm" variant="outline" className="text-xs" onClick={() => toast.success('API Key copied to clipboard')}>
-                      <Copy className="w-3.5 h-3.5" />
-                    </Button>
+              {apiKeys.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="text-center py-8 text-slate-400">
+                    No active API keys found. Generate a key to integrate your backend or storefront.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                apiKeys.map((k) => (
+                  <tr key={k.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="p-3.5 font-bold text-slate-900">{k.name}</td>
+                    <td className="p-3.5 font-mono font-bold text-indigo-600">{k.secret_key_masked || k.key_prefix + '••••'}</td>
+                    <td className="p-3.5 font-bold text-slate-600">{k.scopes.join(', ')}</td>
+                    <td className="p-3.5 text-slate-600">{k.last_used_at ? new Date(k.last_used_at).toLocaleDateString('en-IN') : 'Never'}</td>
+                    <td className="p-3.5 text-right">
+                      <Button size="sm" variant="outline" className="text-xs" onClick={() => toast.success('API Key copied to clipboard')}>
+                        <Copy className="w-3.5 h-3.5" />
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
@@ -104,18 +116,26 @@ export const DeveloperPortalPage: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium">
-              {webhooks.map((w) => (
-                <tr key={w.id} className="hover:bg-slate-50 transition-colors">
-                  <td className="p-3.5 font-mono font-bold text-slate-900">{w.url}</td>
-                  <td className="p-3.5 font-mono text-slate-600">{w.secret.slice(0, 10)}••••</td>
-                  <td className="p-3.5 font-bold text-indigo-600">{w.subscribed_events.join(', ')}</td>
-                  <td className="p-3.5">
-                    <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 font-extrabold text-xs border border-emerald-200">
-                      Active
-                    </span>
+              {webhooks.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="text-center py-8 text-slate-400">
+                    No webhooks registered. Add a webhook URL to receive automated event payloads.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                webhooks.map((w) => (
+                  <tr key={w.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="p-3.5 font-mono font-bold text-slate-900">{w.url}</td>
+                    <td className="p-3.5 font-mono text-slate-600">{w.secret.slice(0, 10)}••••</td>
+                    <td className="p-3.5 font-bold text-indigo-600">{w.subscribed_events.join(', ')}</td>
+                    <td className="p-3.5">
+                      <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 font-extrabold text-xs border border-emerald-200">
+                        {w.is_active ? 'Active' : 'Disabled'}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

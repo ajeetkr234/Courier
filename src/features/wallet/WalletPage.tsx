@@ -8,17 +8,21 @@ import { LedgerEntry } from '../../types';
 import { toast } from 'sonner';
 
 export const WalletPage: React.FC = () => {
-  const { walletBalance, ledgerEntries, creditWallet } = usePlatformStore();
+  const { walletBalance, ledgerEntries, creditWallet, loadSupabaseData, isLoadingData } = usePlatformStore();
   const [isRechargeModalOpen, setIsRechargeModalOpen] = useState(false);
-  const [rechargeAmount, setRechargeAmount] = useState('5000');
+  const [rechargeAmount, setRechargeAmount] = useState('');
+
+  React.useEffect(() => {
+    loadSupabaseData();
+  }, []);
 
   const handleRecharge = (e: React.FormEvent) => {
     e.preventDefault();
     const amount = parseFloat(rechargeAmount) || 0;
     if (amount <= 0) return;
 
-    creditWallet(amount, `Online Payment Gateway Top-up #REC-${Date.now()}`);
-    toast.success(`Wallet recharged with ₹${amount.toLocaleString('en-IN')}!`);
+    creditWallet(amount, `Manual verified wallet credit #REC-${Date.now()}`);
+    toast.success(`Wallet credited with ₹${amount.toLocaleString('en-IN')}.`);
     setIsRechargeModalOpen(false);
   };
 
@@ -63,8 +67,15 @@ export const WalletPage: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium">
-              {ledgerEntries.map((tx: LedgerEntry) => (
-                <tr key={tx.id} className="hover:bg-slate-50 transition-colors">
+              {ledgerEntries.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="text-center py-8 text-slate-400">
+                    No ledger transactions recorded yet. Recharge your wallet to get started!
+                  </td>
+                </tr>
+              ) : (
+                ledgerEntries.map((tx: LedgerEntry) => (
+                  <tr key={tx.id} className="hover:bg-slate-50 transition-colors">
                   <td className="p-3.5 font-mono font-bold text-slate-900">{tx.id}</td>
                   <td className="p-3.5">
                     <span className="px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-[10px] uppercase font-bold text-slate-800">
@@ -85,7 +96,7 @@ export const WalletPage: React.FC = () => {
                     )}
                   </td>
                 </tr>
-              ))}
+              )))}
             </tbody>
           </table>
         </div>
@@ -96,7 +107,7 @@ export const WalletPage: React.FC = () => {
         isOpen={isRechargeModalOpen}
         onClose={() => setIsRechargeModalOpen(false)}
         title="Recharge Wallet Balance"
-        subtitle="Select amount to credit via UPI, NetBanking, or Razorpay"
+        subtitle="Payment gateway is not configured yet. This records a verified wallet credit in the live ledger."
       >
         <form onSubmit={handleRecharge} className="space-y-4">
           <Input
@@ -140,7 +151,7 @@ export const WalletPage: React.FC = () => {
 
           <div className="pt-4 border-t border-slate-200 flex justify-end gap-3">
             <Button type="button" variant="ghost" onClick={() => setIsRechargeModalOpen(false)}>Cancel</Button>
-            <Button type="submit">Proceed to Payment Gateway</Button>
+            <Button type="submit">Record Verified Credit</Button>
           </div>
         </form>
       </Modal>

@@ -94,15 +94,12 @@ import {
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
-import { PublicNavbar, PublicFooter } from './PublicNav';
+import { IndustryOrbitVisualizer } from './components/IndustryOrbitVisualizer';
 import { ComparisonSection } from './components/ComparisonSection';
 import { HowItWorksSection } from './components/HowItWorksSection';
-import { IndustryOrbitVisualizer } from './components/IndustryOrbitVisualizer';
 import { AnimatedCounter } from '../../components/ui/AnimatedCounter';
-import { GlobalThreeBackground } from '../../components/ui/GlobalThreeBackground';
 import { rateEngine } from '../../services/couriers/rateEngine';
 import { RateQuote } from '../../types';
-import { MOCK_COURIERS } from '../../lib/mockData';
 import { toast } from 'sonner';
 import { useAuth } from '../../app/providers/AuthProvider';
 import { ServiceabilityCheckForm } from '../../components/shipping/ServiceabilityCheckForm';
@@ -131,17 +128,11 @@ export const LandingPage: React.FC = () => {
     if (hash) {
       const targetElement = document.querySelector(hash);
       if (targetElement) {
-        setTimeout(() => {
-          targetElement.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
+        targetElement.scrollIntoView({ behavior: 'smooth' });
         return;
       }
     }
-
-    scrollToTop();
-    requestAnimationFrame(scrollToTop);
-    setTimeout(scrollToTop, 0);
-    setTimeout(scrollToTop, 50);
+    window.scrollTo(0, 0);
   }, []);
 
   // Freight Calculator Inputs State
@@ -888,15 +879,9 @@ export const LandingPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 flex flex-col font-sans relative">
-      <PublicNavbar />
-
+    <div className="text-slate-900 flex flex-col font-sans relative">
       {/* Hero Section */}
       <section className="relative pt-10 sm:pt-12 pb-8 sm:pb-12 px-4 sm:px-8 lg:px-12 bg-gradient-to-b from-blue-50/40 via-white to-white overflow-hidden">
-        {/* Three.js Dynamic Background Canvas */}
-        <div className="absolute inset-0 opacity-40 pointer-events-none z-0">
-          <GlobalThreeBackground />
-        </div>
 
         <motion.div
           className="w-full mx-auto text-center relative z-10 space-y-5 sm:space-y-6 px-4 sm:px-8 lg:px-12"
@@ -920,7 +905,7 @@ export const LandingPage: React.FC = () => {
           {/* 2. Responsive Animated Heading */}
           <motion.h1
             variants={heroHeadingWordContainerVariants}
-            className="text-2xl xs:text-3xl sm:text-5xl md:text-6xl lg:text-[66px] xl:text-[72px] font-black text-slate-950 tracking-tight leading-tight sm:leading-none font-display max-w-[1350px] mx-auto flex items-center justify-center flex-wrap sm:flex-nowrap gap-x-2 sm:gap-x-3.5 py-1 px-2"
+            className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-[72px] font-black text-slate-950 tracking-tight leading-tight lg:leading-none font-display max-w-[1350px] mx-auto flex items-center justify-center flex-wrap lg:flex-nowrap gap-x-2 sm:gap-x-3.5 py-1 px-2"
           >
             <motion.span variants={heroHeadingWordVariants} className="inline-block text-slate-950 shrink-0">
               Ship
@@ -975,7 +960,7 @@ export const LandingPage: React.FC = () => {
           </motion.div>
 
           {/* 4b. Mobile Quick Shortcut Pills */}
-          <div className="flex sm:hidden items-center justify-center gap-2 pt-1 px-1 text-xs font-bold font-mono">
+          <div className="flex sm:hidden items-center justify-center gap-2 pt-1 px-1 text-xs font-bold font-mono flex-wrap">
             <a href="#track" className="px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-800 flex items-center gap-1.5 shadow-2xs">
               <Search className="w-3 h-3 text-blue-600" />
               <span>Track AWB</span>
@@ -994,20 +979,22 @@ export const LandingPage: React.FC = () => {
           <motion.div
             id="track"
             variants={heroTrackingVariants}
-            className="mt-6 sm:mt-7 max-w-[540px] mx-auto"
+            className="mt-6 sm:mt-7 max-w-[540px] mx-auto w-full"
           >
-            <form onSubmit={handleTrackSubmit} className="bg-white p-2 rounded-2xl flex items-center gap-2 shadow-lg shadow-slate-900/5 border border-slate-200/90 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all">
-              <Search className="w-5 h-5 text-slate-400 ml-3 shrink-0" />
-              <input
-                type="text"
-                placeholder="Enter tracking number..."
-                value={trackInput}
-                onChange={(e) => setTrackInput(e.target.value)}
-                className="w-full bg-transparent border-none text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none px-2 font-medium"
-                aria-label="Enter AWB or Tracking Number"
-              />
-              <motion.div whileHover={{ y: -1 }}>
-                <Button type="submit" size="sm" variant="primary" className="shrink-0 font-bold">
+            <form onSubmit={handleTrackSubmit} className="bg-white p-1.5 xs:p-2 rounded-2xl flex flex-col xs:flex-row items-stretch xs:items-center gap-2 shadow-lg shadow-slate-900/5 border border-slate-200/90 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all">
+              <div className="flex items-center flex-1 min-w-0">
+                <Search className="w-5 h-5 text-slate-400 ml-2.5 xs:ml-3 shrink-0" />
+                <input
+                  type="text"
+                  placeholder="Enter tracking number..."
+                  value={trackInput}
+                  onChange={(e) => setTrackInput(e.target.value)}
+                  className="w-full bg-transparent border-none text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none px-2 font-medium"
+                  aria-label="Enter AWB or Tracking Number"
+                />
+              </div>
+              <motion.div whileHover={{ y: -1 }} className="shrink-0">
+                <Button type="submit" size="sm" variant="primary" className="w-full xs:w-auto font-bold justify-center">
                   Track Shipment
                 </Button>
               </motion.div>
@@ -1047,7 +1034,7 @@ export const LandingPage: React.FC = () => {
         />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[280px] bg-blue-600/10 blur-[120px] rounded-full pointer-events-none" />
 
-        <div className="relative w-full mx-auto px-4 sm:px-8 lg:px-12 space-y-8">
+        <div className="relative w-full mx-auto space-y-8">
 
           {/* Header Block (Standardized Chip & Gradient Heading) */}
           <div className="text-center space-y-3.5 max-w-4xl mx-auto">
@@ -1136,7 +1123,7 @@ export const LandingPage: React.FC = () => {
         <IndustryOrbitVisualizer />
       </div>
 
-      {/* Why ShipSmarter? Section */}
+      {/* Why ShipFaster? Section */}
       <ComparisonSection />
 
 
@@ -1490,7 +1477,7 @@ export const LandingPage: React.FC = () => {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-8 items-stretch">
             {/* STARTER PLAN */}
             <motion.div
               initial={{ opacity: 0, y: 25 }}
@@ -1498,7 +1485,7 @@ export const LandingPage: React.FC = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.1 }}
               whileHover={{ y: -6, scale: 1.015 }}
-              className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm hover:border-blue-300 hover:shadow-xl flex flex-col justify-between space-y-6 transition-all duration-300 group"
+              className="bg-white p-5 sm:p-7 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm hover:border-blue-300 hover:shadow-xl flex flex-col justify-between space-y-6 transition-all duration-300 group"
             >
               <div className="space-y-6">
                 <div>
@@ -1543,7 +1530,7 @@ export const LandingPage: React.FC = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
               whileHover={{ y: -6, scale: 1.015 }}
-              className="bg-white p-8 rounded-3xl border-2 border-blue-600 shadow-2xl flex flex-col justify-between space-y-6 relative z-10 group"
+              className="bg-white p-5 sm:p-7 lg:p-8 rounded-2xl sm:rounded-3xl border-2 border-blue-600 shadow-2xl flex flex-col justify-between space-y-6 relative z-10 group"
             >
               <div className="absolute -top-3.5 right-6 px-3.5 py-1 rounded-full bg-blue-600 text-white text-[10px] font-extrabold uppercase tracking-widest shadow-md z-20">
                 RECOMMENDED
@@ -1596,7 +1583,7 @@ export const LandingPage: React.FC = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.3 }}
               whileHover={{ y: -6, scale: 1.015 }}
-              className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm hover:border-blue-300 hover:shadow-xl flex flex-col justify-between space-y-6 transition-all duration-300 group"
+              className="bg-white p-5 sm:p-7 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm hover:border-blue-300 hover:shadow-xl flex flex-col justify-between space-y-6 transition-all duration-300 group"
             >
               <div className="space-y-6">
                 <div>
@@ -1836,7 +1823,7 @@ export const LandingPage: React.FC = () => {
         className="py-10 sm:py-12 px-4 sm:px-8 lg:px-12 bg-slate-50 border-b border-slate-200 overflow-hidden relative"
       >
 
-        <div className="relative w-full mx-auto space-y-8 sm:space-y-10 px-4 sm:px-8 lg:px-12">
+        <div className="relative w-full mx-auto space-y-8 sm:space-y-10">
           {/* Header Block */}
           <motion.div
             initial={{ opacity: 0, y: 25 }}
@@ -2430,7 +2417,7 @@ export const LandingPage: React.FC = () => {
 
       {/* Talk to Our Logistics Experts / Book a Demo Section (#contact) */}
       <section id="contact" className="py-10 sm:py-12 px-4 sm:px-8 lg:px-12 bg-slate-50 border-b border-slate-200 overflow-hidden">
-        <div className="w-full mx-auto space-y-6 sm:space-y-8 px-4 sm:px-8 lg:px-12">
+        <div className="w-full mx-auto space-y-6 sm:space-y-8">
           <div className="text-center space-y-3.5 max-w-5xl mx-auto">
             <div className="inline-block">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
@@ -2455,7 +2442,7 @@ export const LandingPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 items-start">
             <div className="md:col-span-5 space-y-6">
               <h3 className="text-xl font-black text-slate-900 font-display">Corporate Support Desk</h3>
 
@@ -2486,7 +2473,7 @@ export const LandingPage: React.FC = () => {
               </div>
             </div>
 
-            <form onSubmit={handleDemoFormSubmit} className="md:col-span-7 bg-white p-8 rounded-3xl border border-slate-200 shadow-xl space-y-4">
+            <form onSubmit={handleDemoFormSubmit} className="md:col-span-7 bg-white p-5 sm:p-7 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xl space-y-4">
               <h3 className="text-xl font-black text-slate-900 font-display">Schedule a Product Consultation</h3>
 
               {demoFormError && (
@@ -2640,9 +2627,9 @@ export const LandingPage: React.FC = () => {
       </AnimatePresence>
 
       {/* Sticky Mobile Floating Conversion CTA Bar */}
-      <div className="sm:hidden fixed bottom-4 left-4 right-4 z-40 bg-slate-950/95 backdrop-blur-md p-3 rounded-2xl border border-slate-800 shadow-2xl flex items-center justify-between text-white">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center font-bold text-white text-xs shadow-xs">
+      <div className="sm:hidden fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-3 right-3 xs:left-4 xs:right-4 z-40 bg-slate-950/95 backdrop-blur-md p-2.5 xs:p-3 rounded-2xl border border-slate-800 shadow-2xl flex items-center justify-between text-white">
+        <div className="flex items-center gap-2 xs:gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center font-bold text-white text-xs shadow-xs shrink-0">
             <Truck className="w-4 h-4 text-white" />
           </div>
           <div>
@@ -2651,14 +2638,12 @@ export const LandingPage: React.FC = () => {
           </div>
         </div>
         <Link to="/register">
-          <button className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs shadow-lg shadow-blue-600/30 flex items-center gap-1.5 cursor-pointer">
+          <button className="px-3 xs:px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-[11px] xs:text-xs shadow-lg shadow-blue-600/30 flex items-center gap-1.5 cursor-pointer shrink-0">
             <span>Start Shipping</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </Link>
       </div>
-
-      <PublicFooter />
     </div>
   );
 };

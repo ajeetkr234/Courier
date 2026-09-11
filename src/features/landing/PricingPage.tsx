@@ -1,20 +1,93 @@
 import React, { useState } from 'react';
-import { PublicNavbar, PublicFooter } from './PublicNav';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Check, ArrowRight, Sparkles, Calculator, CheckCircle2, Tag, 
-  ChevronDown, Scale, Zap, ShieldCheck, TrendingUp, HelpCircle, 
-  DollarSign, Wallet, Truck, Layers, Globe, Building2, Clock, 
-  Headset, ArrowUpRight, BarChart3, PackageCheck
+  ChevronDown, TrendingUp, HelpCircle, Truck, Clock, 
+  Box, Scale, Info, Download
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Link } from 'react-router-dom';
-import { GlobalThreeBackground } from '../../components/ui/GlobalThreeBackground';
+import { ReadyToShipCTA } from './components/ReadyToShipCTA';
+import { PincodeRateWidget } from './components/PincodeRateWidget';
+import { WalletBonusSection } from './components/WalletBonusSection';
+import { AncillaryChargesSection } from './components/AncillaryChargesSection';
 
 export const PricingPage: React.FC = () => {
   const [monthlyVolume, setMonthlyVolume] = useState<number>(2000);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [selectedShippingMode, setSelectedShippingMode] = useState<'surface' | 'express'>('surface');
+  const [selectedCarrier, setSelectedCarrier] = useState<'all' | 'delhivery' | 'xpressbees' | 'shadowfax' | 'dtdc'>('all');
+  const [includeGst, setIncludeGst] = useState<boolean>(false);
+
+  // Volumetric Weight Estimator State
+  const [pkgLength, setPkgLength] = useState<number>(20);
+  const [pkgWidth, setPkgWidth] = useState<number>(15);
+  const [pkgHeight, setPkgHeight] = useState<number>(10);
+  const [pkgDeadWeight, setPkgDeadWeight] = useState<number>(0.5);
+
+  const volumetricWeight = Number(((pkgLength * pkgWidth * pkgHeight) / 5000).toFixed(2));
+  const chargeableWeight = Number(Math.max(pkgDeadWeight, volumetricWeight).toFixed(2));
+  const isVolumetricHigher = volumetricWeight > pkgDeadWeight;
+  const weightSlabs = Math.max(1, Math.ceil(chargeableWeight / 0.5));
+
+  // Carrier benchmark rate matrix
+  const carrierRateData: Record<string, { name: string; tag: string; rates: { surface: string; express: string }[] }> = {
+    all: {
+      name: 'All Carriers (Lowest Available Rate)',
+      tag: 'Best Rate Engine',
+      rates: [
+        { surface: '₹38', express: '₹49' },
+        { surface: '₹44', express: '₹59' },
+        { surface: '₹49', express: '₹72' },
+        { surface: '₹56', express: '₹84' },
+        { surface: '₹68', express: '₹110' },
+      ]
+    },
+    delhivery: {
+      name: 'Delhivery Surface & Express',
+      tag: 'Pan-India Reach',
+      rates: [
+        { surface: '₹41', express: '₹54' },
+        { surface: '₹47', express: '₹62' },
+        { surface: '₹52', express: '₹75' },
+        { surface: '₹61', express: '₹89' },
+        { surface: '₹72', express: '₹118' },
+      ]
+    },
+    xpressbees: {
+      name: 'Xpressbees Logistics',
+      tag: 'Fastest D2C Transit',
+      rates: [
+        { surface: '₹39', express: '₹51' },
+        { surface: '₹45', express: '₹59' },
+        { surface: '₹50', express: '₹74' },
+        { surface: '₹58', express: '₹86' },
+        { surface: '₹70', express: '₹114' },
+      ]
+    },
+    shadowfax: {
+      name: 'Shadowfax E-Commerce',
+      tag: 'Hyper-Local & Intra-City',
+      rates: [
+        { surface: '₹38', express: '₹49' },
+        { surface: '₹44', express: '₹58' },
+        { surface: '₹51', express: '₹73' },
+        { surface: '₹59', express: '₹87' },
+        { surface: '₹74', express: '₹120' },
+      ]
+    },
+    dtdc: {
+      name: 'DTDC Courier & Cargo',
+      tag: 'Deep Regional Network',
+      rates: [
+        { surface: '₹43', express: '₹56' },
+        { surface: '₹48', express: '₹64' },
+        { surface: '₹55', express: '₹78' },
+        { surface: '₹63', express: '₹92' },
+        { surface: '₹75', express: '₹122' },
+      ]
+    },
+  };
 
   // Freight savings estimation calculation
   const avgFreightRate = selectedShippingMode === 'surface' ? 58 : 84;
@@ -27,12 +100,49 @@ export const PricingPage: React.FC = () => {
 
   // Zone-wise benchmark rate matrix
   const zoneRateCards = [
-    { zone: 'Intra-City (Local)', desc: 'Within municipal city boundaries', surfaceStarting: '₹39', expressStarting: '₹49', sla: 'Same / Next Day' },
-    { zone: 'Within State (Regional)', desc: 'Across districts in the same state', surfaceStarting: '₹45', expressStarting: '₹59', sla: '1 - 2 Days' },
-    { zone: 'Metro to Metro (National)', desc: 'Between Delhi, Mumbai, BLR, HYD, etc.', surfaceStarting: '₹52', expressStarting: '₹74', sla: '2 - 3 Days' },
-    { zone: 'Rest of India (Tier 2/3)', desc: 'All standard pincodes nationwide', surfaceStarting: '₹59', expressStarting: '₹89', sla: '3 - 4 Days' },
-    { zone: 'Special & North-East (J&K, NE)', desc: 'Hilly and remote pin regions', surfaceStarting: '₹69', expressStarting: '₹115', sla: '4 - 6 Days' },
+    { zone: 'Intra-City (Local)', desc: 'Within municipal city boundaries', sla: 'Same / Next Day' },
+    { zone: 'Within State (Regional)', desc: 'Across districts in the same state', sla: '1 - 2 Days' },
+    { zone: 'Metro to Metro (National)', desc: 'Between Delhi, Mumbai, BLR, HYD, etc.', sla: '2 - 3 Days' },
+    { zone: 'Rest of India (Tier 2/3)', desc: 'All standard pincodes nationwide', sla: '3 - 4 Days' },
+    { zone: 'Special & North-East (J&K, NE)', desc: 'Hilly and remote pin regions', sla: '4 - 6 Days' },
   ];
+
+  // Download CSV Rate Card Function
+  const downloadRateCardCsv = () => {
+    const headers = ['Delivery Zone', 'Coverage Description', 'Transit SLA', 'Courier Partner', 'Shipping Mode', 'Rate (Excl. GST)', 'Rate (Incl. 18% GST)'];
+    const rows: string[][] = [];
+
+    const carriers: (keyof typeof carrierRateData)[] = ['all', 'delhivery', 'xpressbees', 'shadowfax', 'dtdc'];
+
+    carriers.forEach((carrierKey) => {
+      const carrier = carrierRateData[carrierKey];
+      zoneRateCards.forEach((zone, idx) => {
+        (['surface', 'express'] as const).forEach((mode) => {
+          const rateStr = carrier.rates[idx][mode];
+          const numVal = parseInt(rateStr.replace(/\D/g, ''), 10);
+          const gstVal = Math.round(numVal * 1.18);
+          rows.push([
+            `"${zone.zone}"`,
+            `"${zone.desc}"`,
+            `"${zone.sla}"`,
+            `"${carrier.name}"`,
+            `"${mode === 'surface' ? 'Surface Logistics' : 'Express Air Priority'}"`,
+            `"₹${numVal}"`,
+            `"₹${gstVal}"`
+          ]);
+        });
+      });
+    });
+
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', 'ShipFaster_Rate_Card_2026.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   // Comprehensive feature matrix with categories
   const featureCategories = [
@@ -113,15 +223,9 @@ export const PricingPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white font-sans text-slate-900 flex flex-col relative selection:bg-blue-500 selection:text-white">
-      <PublicNavbar />
-
+    <div className="text-slate-900 flex flex-col relative selection:bg-blue-500 selection:text-white">
       {/* Hero Section (Standardized Height, Breadth, and Dynamic Three.js Background) */}
       <section className="relative py-12 sm:py-16 px-6 sm:px-8 bg-gradient-to-b from-blue-50/40 via-white to-white border-b border-slate-200/80 overflow-hidden">
-        {/* Three.js Dynamic Background Canvas */}
-        <div className="absolute inset-0 opacity-40 pointer-events-none z-0">
-          <GlobalThreeBackground />
-        </div>
 
         <div className="relative max-w-7xl mx-auto space-y-8 text-center z-10">
           {/* Standardized Pill Chip Badge */}
@@ -206,6 +310,34 @@ export const PricingPage: React.FC = () => {
               <span>Direct Bank COD Payout</span>
             </div>
           </motion.div>
+
+          {/* Quick Section Jump Navigation Bar */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            className="pt-4 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 max-w-5xl mx-auto"
+          >
+            {[
+              { label: 'Plans & Tiers', href: '#plans' },
+              { label: 'Live Pincode Check', href: '#pincode-calc' },
+              { label: 'Zone Benchmark Rates', href: '#rate-cards' },
+              { label: 'Volumetric Estimator', href: '#volumetric' },
+              { label: 'Wallet Bonus Slabs', href: '#wallet-bonus' },
+              { label: 'Store Savings', href: '#calculator' },
+              { label: 'Ancillary & VAS Fees', href: '#ancillary' },
+              { label: 'Full Comparison', href: '#features' },
+              { label: 'Billing FAQs', href: '#faqs' },
+            ].map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                className="text-[11px] font-bold font-mono px-3 py-1.5 rounded-full bg-white/90 border border-slate-200/90 text-slate-600 hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50/60 transition-all shadow-2xs whitespace-nowrap"
+              >
+                {item.label}
+              </a>
+            ))}
+          </motion.div>
         </div>
       </section>
 
@@ -213,7 +345,7 @@ export const PricingPage: React.FC = () => {
       <section className="py-12 sm:py-16 px-6 sm:px-8 max-w-7xl mx-auto w-full space-y-16">
         
         {/* Section 1: Redesigned Compact Equal-Height Pricing Cards */}
-        <div className="space-y-6">
+        <div id="plans" className="space-y-6 scroll-mt-24">
           <div className="text-center space-y-3.5 max-w-5xl mx-auto">
             <div className="inline-block">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
@@ -460,8 +592,11 @@ export const PricingPage: React.FC = () => {
           </div>
         </div>
 
+        {/* Section 1.5: Interactive Live Pincode Rate Calculator Widget */}
+        <PincodeRateWidget includeGst={includeGst} onToggleGst={setIncludeGst} />
+
         {/* Section 2: Transparent Zone Rate Cards (Real Practical Benchmark Value) */}
-        <div className="space-y-6 pt-8 border-t border-slate-200/80">
+        <div id="rate-cards" className="space-y-6 pt-8 border-t border-slate-200/80 scroll-mt-24">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="space-y-3.5 max-w-3xl text-left">
               <div className="inline-block">
@@ -483,33 +618,100 @@ export const PricingPage: React.FC = () => {
               </h2>
 
               <p className="text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed">
-                Transparent starting rates per 500g slab across Delhivery, Xpressbees, Shadowfax, and DTDC.
+                Compare baseline commercial starting rates per 500g slab across Delhivery, Xpressbees, Shadowfax, and DTDC.
               </p>
             </div>
 
-            {/* Surface vs Express Mode Toggle */}
-            <div className="inline-flex p-1 rounded-xl bg-slate-100 border border-slate-200/80 shrink-0 self-start md:self-end">
+            {/* Actions: Download CSV, Surface/Express Toggle, GST Toggle */}
+            <div className="flex flex-wrap items-center gap-2.5 self-start md:self-end">
               <button
-                onClick={() => setSelectedShippingMode('surface')}
-                className={`px-4 py-2 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${
-                  selectedShippingMode === 'surface'
-                    ? 'bg-white text-blue-600 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
+                type="button"
+                onClick={downloadRateCardCsv}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-extrabold bg-white border border-slate-200/90 text-slate-700 hover:bg-slate-50 hover:border-blue-300 shadow-2xs transition-all cursor-pointer"
+                title="Download comprehensive rate matrix as CSV"
               >
-                Surface Logistics
+                <Download className="w-3.5 h-3.5 text-blue-600" />
+                <span>Download Rate Card (CSV)</span>
               </button>
-              <button
-                onClick={() => setSelectedShippingMode('express')}
-                className={`px-4 py-2 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${
-                  selectedShippingMode === 'express'
-                    ? 'bg-white text-blue-600 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                Express Air Priority
-              </button>
+
+              {/* Surface vs Express Mode Toggle */}
+              <div className="inline-flex p-1 rounded-xl bg-slate-100 border border-slate-200/80 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setSelectedShippingMode('surface')}
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${
+                    selectedShippingMode === 'surface'
+                      ? 'bg-white text-blue-600 shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Surface Logistics
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedShippingMode('express')}
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${
+                    selectedShippingMode === 'express'
+                      ? 'bg-white text-blue-600 shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Express Air Priority
+                </button>
+              </div>
+
+              {/* GST Toggle */}
+              <div className="inline-flex p-1 rounded-xl bg-slate-100 border border-slate-200/80 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setIncludeGst(false)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${
+                    !includeGst
+                      ? 'bg-slate-900 text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Excl. GST
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIncludeGst(true)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${
+                    includeGst
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Incl. 18% GST
+                </button>
+              </div>
             </div>
+          </div>
+
+          {/* Carrier Partner Filter Tabs */}
+          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-white border border-slate-200/90 shadow-2xs overflow-x-auto">
+            {(['all', 'delhivery', 'xpressbees', 'shadowfax', 'dtdc'] as const).map((carrierKey) => (
+              <button
+                key={carrierKey}
+                type="button"
+                onClick={() => setSelectedCarrier(carrierKey)}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer whitespace-nowrap ${
+                  selectedCarrier === carrierKey
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                }`}
+              >
+                {carrierKey === 'all'
+                  ? 'All Carriers (Lowest)'
+                  : carrierKey === 'delhivery'
+                  ? 'Delhivery'
+                  : carrierKey === 'xpressbees'
+                  ? 'Xpressbees'
+                  : carrierKey === 'shadowfax'
+                  ? 'Shadowfax'
+                  : 'DTDC'}
+              </button>
+            ))}
           </div>
 
           <div className="overflow-x-auto rounded-3xl border border-slate-200/90 shadow-sm bg-white">
@@ -519,7 +721,9 @@ export const PricingPage: React.FC = () => {
                   <th className="p-4 sm:p-5 font-black uppercase text-xs tracking-wider text-slate-700">Delivery Zone</th>
                   <th className="p-4 sm:p-5 font-black uppercase text-xs tracking-wider text-slate-700">Coverage Description</th>
                   <th className="p-4 sm:p-5 font-black uppercase text-xs tracking-wider text-slate-700">Transit SLA</th>
-                  <th className="p-4 sm:p-5 font-black uppercase text-xs tracking-wider text-blue-600 text-right">Starting Rate (per 500g)</th>
+                  <th className="p-4 sm:p-5 font-black uppercase text-xs tracking-wider text-blue-600 text-right">
+                    {carrierRateData[selectedCarrier].name.split('(')[0]} Starting Rate (500g)
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 font-medium">
@@ -538,9 +742,14 @@ export const PricingPage: React.FC = () => {
                     </td>
                     <td className="p-4 sm:p-5 text-right">
                       <span className="text-base sm:text-lg font-black font-display text-blue-600">
-                        {selectedShippingMode === 'surface' ? r.surfaceStarting : r.expressStarting}
+                        ₹{includeGst
+                          ? Math.round(parseInt(carrierRateData[selectedCarrier].rates[idx][selectedShippingMode].replace(/\D/g, ''), 10) * 1.18)
+                          : parseInt(carrierRateData[selectedCarrier].rates[idx][selectedShippingMode].replace(/\D/g, ''), 10)
+                        }
                       </span>
-                      <span className="text-xs text-slate-400 font-normal"> / 0.5 kg</span>
+                      <span className="text-xs text-slate-400 font-normal">
+                        {includeGst ? ' (incl. GST)' : ' (excl. GST)'} / 0.5 kg
+                      </span>
                     </td>
                   </tr>
                 ))}
@@ -572,6 +781,252 @@ export const PricingPage: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Section 2.5: Interactive Volumetric Weight & Chargeable Freight Estimator */}
+        <div id="volumetric" className="space-y-6 pt-8 border-t border-slate-200/80 scroll-mt-24">
+          <div className="text-center space-y-3.5 max-w-5xl mx-auto">
+            <div className="inline-block">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
+                <span className="flex h-2 w-2 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
+                </span>
+                <Scale className="w-3.5 h-3.5 text-blue-600" />
+                <span className="uppercase tracking-wider">Volumetric vs Dead Weight Calculator</span>
+              </div>
+            </div>
+
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.24] max-w-4xl mx-auto">
+              Calculate Package{' '}
+              <span className="inline-block pb-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
+                Chargeable Freight Weight
+              </span>
+            </h2>
+
+            <p className="text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
+              Couriers bill on whichever is higher: actual physical weight or volumetric weight ((L × W × H) / 5000). Test your parcel dimensions to avoid weight dispute surprises.
+            </p>
+          </div>
+
+          <div className="bg-slate-50/80 border border-slate-200/90 rounded-3xl p-6 sm:p-10 shadow-sm">
+            {/* Quick Fill Presets */}
+            <div className="space-y-3 pb-6 border-b border-slate-200/80">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 font-mono block">
+                Quick-Select Common Package Sizes:
+              </span>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                {[
+                  { label: 'Apparel Polybag', l: 20, w: 15, h: 5, weight: 0.4 },
+                  { label: 'Footwear / Shoe Box', l: 32, w: 20, h: 12, weight: 0.9 },
+                  { label: 'Electronics & Gadgets', l: 25, w: 18, h: 8, weight: 0.6 },
+                  { label: 'Home Decor / Bulky', l: 40, w: 30, h: 25, weight: 1.8 }
+                ].map((preset) => (
+                  <button
+                    key={preset.label}
+                    type="button"
+                    onClick={() => {
+                      setPkgLength(preset.l);
+                      setPkgWidth(preset.w);
+                      setPkgHeight(preset.h);
+                      setPkgDeadWeight(preset.weight);
+                    }}
+                    className={`p-2.5 rounded-xl border text-left text-xs transition-all cursor-pointer ${
+                      pkgLength === preset.l && pkgWidth === preset.w && pkgHeight === preset.h && pkgDeadWeight === preset.weight
+                        ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
+                        : 'bg-white border-slate-200/90 text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    <span className="font-extrabold block truncate">{preset.label}</span>
+                    <span className="text-[10px] opacity-80 font-mono">
+                      {preset.l}×{preset.w}×{preset.h} cm • {preset.weight}kg
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start pt-6">
+              {/* Left Column: Dimensions & Dead Weight Input */}
+              <div className="lg:col-span-7 space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {/* Length */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-700 block">Length (cm)</label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        min="1"
+                        max="200"
+                        step="1"
+                        value={pkgLength}
+                        onChange={(e) => setPkgLength(Math.max(1, Number(e.target.value) || 1))}
+                        className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 shadow-2xs"
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-mono text-slate-400">cm</span>
+                    </div>
+                  </div>
+
+                  {/* Width */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-700 block">Width (cm)</label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        min="1"
+                        max="200"
+                        step="1"
+                        value={pkgWidth}
+                        onChange={(e) => setPkgWidth(Math.max(1, Number(e.target.value) || 1))}
+                        className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 shadow-2xs"
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-mono text-slate-400">cm</span>
+                    </div>
+                  </div>
+
+                  {/* Height */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-700 block">Height (cm)</label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        min="1"
+                        max="200"
+                        step="1"
+                        value={pkgHeight}
+                        onChange={(e) => setPkgHeight(Math.max(1, Number(e.target.value) || 1))}
+                        className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 shadow-2xs"
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-mono text-slate-400">cm</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Dead Weight Slider & Number */}
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-slate-700">Actual Dead Weight (Scale Reading)</label>
+                    <span className="text-xs font-mono font-extrabold text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-100">
+                      {pkgDeadWeight.toFixed(2)} kg
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0.1"
+                    max="15"
+                    step="0.1"
+                    value={pkgDeadWeight}
+                    onChange={(e) => setPkgDeadWeight(Number(e.target.value))}
+                    className="w-full h-2.5 bg-slate-200 rounded-full appearance-none cursor-pointer accent-blue-600"
+                  />
+                  <div className="flex justify-between text-[11px] font-mono text-slate-400">
+                    <span>100g (Light)</span>
+                    <span>2.5 kg</span>
+                    <span>5.0 kg</span>
+                    <span>15.0 kg (Heavy)</span>
+                  </div>
+                </div>
+
+                {/* Formula Explanation Callout */}
+                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 flex items-start gap-3 shadow-2xs">
+                  <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                  <div className="space-y-1 text-xs text-slate-600">
+                    <span className="font-extrabold text-slate-900 block font-mono">
+                      IATA Volumetric Formula: ({pkgLength} × {pkgWidth} × {pkgHeight}) ÷ 5000 = {volumetricWeight} kg
+                    </span>
+                    <p className="leading-relaxed">
+                      {isVolumetricHigher
+                        ? `Because the volumetric weight (${volumetricWeight} kg) exceeds actual weight (${pkgDeadWeight} kg), couriers will charge based on ${chargeableWeight} kg (${weightSlabs} × 500g slabs).`
+                        : `Because the dead weight (${pkgDeadWeight} kg) exceeds volumetric weight (${volumetricWeight} kg), couriers will charge based on actual ${chargeableWeight} kg (${weightSlabs} × 500g slabs).`}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Chargeable Weight & Zone Rate Estimation */}
+              <div className="lg:col-span-5 rounded-3xl p-6 sm:p-7 bg-slate-950 text-white shadow-xl space-y-5 border border-slate-800">
+                <div className="space-y-2">
+                  <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400 block">
+                    Chargeable Billing Calculation
+                  </span>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl sm:text-5xl font-black font-mono text-blue-400">
+                      {chargeableWeight} kg
+                    </span>
+                    <span className="text-xs font-mono font-bold text-slate-400">
+                      ({weightSlabs} slab{weightSlabs > 1 ? 's' : ''})
+                    </span>
+                  </div>
+
+                  {/* Status Indicator Tag */}
+                  <div className="pt-1">
+                    {isVolumetricHigher ? (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-bold border border-amber-500/30">
+                        <Box className="w-3.5 h-3.5 text-amber-400" />
+                        <span>Volumetric Weight Applied (Bulky Box)</span>
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30">
+                        <Scale className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>Actual Dead Weight Applied</span>
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Zone-by-Zone Estimated Starting Quotes */}
+                <div className="pt-4 border-t border-slate-800 space-y-2.5">
+                  <div className="flex items-center justify-between text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
+                    <span>Estimated Freight for this Parcel:</span>
+                    <span className="text-blue-400 text-[10px] lowercase font-normal">
+                      {carrierRateData[selectedCarrier].name.split('(')[0]} • {selectedShippingMode}
+                    </span>
+                  </div>
+                  <div className="space-y-1.5 text-xs font-mono">
+                    {(() => {
+                      const carrierObj = carrierRateData[selectedCarrier];
+                      const factors = [0.7, 0.72, 0.75, 0.78, 0.8];
+                      const zoneNames = [
+                        'Zone A (Intra-City)',
+                        'Zone B (Intra-State)',
+                        'Zone C (Metro to Metro)',
+                        'Zone D (Rest of India)',
+                        'Zone E (Special / NE)'
+                      ];
+
+                      return zoneNames.map((name, zIdx) => {
+                        const baseVal = parseInt(carrierObj.rates[zIdx][selectedShippingMode].replace(/\D/g, ''), 10);
+                        const calculatedFreight = Math.round(baseVal * (1 + (weightSlabs - 1) * factors[zIdx]));
+                        const finalPrice = includeGst ? Math.round(calculatedFreight * 1.18) : calculatedFreight;
+
+                        return (
+                          <div key={name} className="flex items-center justify-between p-2 rounded-xl bg-slate-900/80 border border-slate-800">
+                            <span className="text-slate-300">{name}</span>
+                            <span className="font-black text-emerald-400 text-sm">
+                              ₹{finalPrice}
+                              <span className="text-[10px] text-slate-400 font-normal ml-1">
+                                {includeGst ? 'incl. GST' : 'excl. GST'}
+                              </span>
+                            </span>
+                          </div>
+                        );
+                      });
+                    })()}
+                  </div>
+                </div>
+
+                <Link to="/register" className="block pt-1">
+                  <button className="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+                    <span>Ship This Package Now</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Section 2.8: Prepaid Wallet Recharge Bonus & Cashback Slabs */}
+        <WalletBonusSection />
 
         {/* Section 3: Interactive Volume Savings Calculator (Clean Spacious Studio Layout) */}
         <div id="calculator" className="pt-8 border-t border-slate-200/80 space-y-8 scroll-mt-24">
@@ -777,8 +1232,11 @@ export const PricingPage: React.FC = () => {
           </div>
         </div>
 
+        {/* Section 3.5: Value Added Services (VAS) & Transparent Ancillary Fees */}
+        <AncillaryChargesSection />
+
         {/* Section 4: Full Categorized Feature Comparison Matrix */}
-        <div className="space-y-8 pt-8 border-t border-slate-200/80">
+        <div id="features" className="space-y-8 pt-8 border-t border-slate-200/80 scroll-mt-24">
           <div className="text-center space-y-3.5 max-w-5xl mx-auto">
             <div className="inline-block">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
@@ -884,7 +1342,7 @@ export const PricingPage: React.FC = () => {
         </div>
 
         {/* Section 5: Pricing FAQs (Matching PublicIntegrationsPage, FeaturesPage) */}
-        <div className="py-8 border-t border-slate-200/80 space-y-8">
+        <div id="faqs" className="py-8 border-t border-slate-200/80 space-y-8 scroll-mt-24">
           <div className="text-center space-y-3.5 max-w-5xl mx-auto">
             <div className="inline-block">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
@@ -909,15 +1367,20 @@ export const PricingPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="divide-y divide-slate-200/80 max-w-3xl mx-auto">
+          {/* 2-Column Responsive FAQ Grid (Zero Side Empty Space) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4 max-w-5xl mx-auto w-full pt-2">
             {pricingFaqs.map((faq, idx) => (
-              <div key={idx} className="py-5 first:pt-0 last:pb-0">
+              <div 
+                key={idx} 
+                className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-2xs hover:border-blue-200 transition-colors flex flex-col justify-start"
+              >
                 <button
+                  type="button"
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                  className="w-full text-left flex items-center justify-between font-bold text-slate-900 text-base sm:text-lg hover:text-blue-600 transition-colors cursor-pointer group"
+                  className="w-full text-left flex items-start justify-between gap-3 font-bold text-slate-900 text-sm sm:text-base hover:text-blue-600 transition-colors cursor-pointer group"
                 >
-                  <span className="pr-4 group-hover:translate-x-0.5 transition-transform">{faq.q}</span>
-                  <ChevronDown className={`w-5 h-5 text-slate-400 shrink-0 transition-transform duration-200 ${openFaq === idx ? 'rotate-180 text-blue-600' : ''}`} />
+                  <span className="group-hover:translate-x-0.5 transition-transform leading-snug">{faq.q}</span>
+                  <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 mt-1 transition-transform duration-200 ${openFaq === idx ? 'rotate-180 text-blue-600' : ''}`} />
                 </button>
                 <AnimatePresence>
                   {openFaq === idx && (
@@ -926,7 +1389,7 @@ export const PricingPage: React.FC = () => {
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.2 }}
-                      className="pt-3 text-sm text-slate-600 leading-relaxed font-medium"
+                      className="pt-2.5 text-xs sm:text-sm text-slate-600 leading-relaxed font-medium"
                     >
                       {faq.a}
                     </motion.div>
@@ -938,7 +1401,8 @@ export const PricingPage: React.FC = () => {
         </div>
       </section>
 
-      <PublicFooter />
+      {/* Pre-Footer High-Converting CTA Banner */}
+      <ReadyToShipCTA />
     </div>
   );
 };

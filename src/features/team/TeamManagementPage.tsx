@@ -149,7 +149,7 @@ export const TeamManagementPage: React.FC = () => {
                 <input
                   type="text"
                   required
-                  placeholder="Rahul Sharma"
+                  placeholder="Team member name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"

@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, ShoppingBag, Truck, AlertTriangle, Users, MapPin, Wallet, ArrowRight, X, Command } from 'lucide-react';
+import { 
+  Search, ShoppingBag, Truck, AlertTriangle, Users, MapPin, 
+  Wallet, ArrowRight, X, Command, Calculator, FileSpreadsheet, 
+  RotateCcw, Scale, ShieldCheck, Settings, Database, Activity, 
+  Layers, Palette, Home, Sparkles 
+} from 'lucide-react';
 import { usePlatformStore } from '../../services/store';
 
 interface CommandPaletteProps {
@@ -10,7 +15,7 @@ interface CommandPaletteProps {
 
 export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
-  const { orders, shipments, ndrCases } = usePlatformStore();
+  const { orders, shipments } = usePlatformStore();
   const [query, setQuery] = useState('');
 
   useEffect(() => {
@@ -33,22 +38,44 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
       (o.external_order_id && o.external_order_id.toLowerCase().includes(query.toLowerCase())) ||
       (o.customer?.name && o.customer.name.toLowerCase().includes(query.toLowerCase())) ||
       o.shipping_address.city.toLowerCase().includes(query.toLowerCase())
-  ).slice(0, 4);
+  ).slice(0, 5);
 
   const filteredShipments = shipments.filter(
     (s) =>
       s.awb_number.toLowerCase().includes(query.toLowerCase()) ||
-      s.courier_name?.toLowerCase().includes(query.toLowerCase())
-  ).slice(0, 4);
+      s.courier_name?.toLowerCase().includes(query.toLowerCase()) ||
+      s.order_id.toLowerCase().includes(query.toLowerCase())
+  ).slice(0, 5);
 
   const pages = [
-    { title: 'Dashboard', path: '/app/dashboard', icon: <ShoppingBag className="w-4 h-4 text-indigo-500" /> },
-    { title: 'Create New Order', path: '/app/orders/new', icon: <ShoppingBag className="w-4 h-4 text-emerald-500" /> },
-    { title: 'Shipments & AWBs', path: '/app/shipments', icon: <Truck className="w-4 h-4 text-sky-500" /> },
-    { title: 'NDR Resolution Hub', path: '/app/ndr', icon: <AlertTriangle className="w-4 h-4 text-rose-500" /> },
-    { title: 'Wallet & Ledger', path: '/app/wallet', icon: <Wallet className="w-4 h-4 text-amber-500" /> },
-    { title: 'Team & RBAC', path: '/app/team', icon: <Users className="w-4 h-4 text-purple-500" /> },
-  ].filter((p) => p.title.toLowerCase().includes(query.toLowerCase()));
+    // Seller Hub
+    { title: 'Seller Home & Quick Launch', path: '/app/home', category: 'Seller', icon: <Home className="w-4 h-4 text-indigo-400" /> },
+    { title: 'Analytics Dashboard', path: '/app/dashboard', category: 'Seller', icon: <Activity className="w-4 h-4 text-sky-400" /> },
+    { title: 'All Orders Log', path: '/app/orders', category: 'Seller', icon: <ShoppingBag className="w-4 h-4 text-emerald-400" /> },
+    { title: 'Create Single Order', path: '/app/orders/new', category: 'Seller', icon: <Sparkles className="w-4 h-4 text-amber-400" /> },
+    { title: 'Bulk Import CSV Orders', path: '/app/orders/import', category: 'Seller', icon: <FileSpreadsheet className="w-4 h-4 text-indigo-400" /> },
+    { title: 'Shipments, Labels & Manifests', path: '/app/shipments', category: 'Seller', icon: <Truck className="w-4 h-4 text-blue-400" /> },
+    { title: 'Live AWB Tracking', path: '/app/tracking', category: 'Seller', icon: <MapPin className="w-4 h-4 text-emerald-400" /> },
+    { title: 'Branded Tracking Page Customizer', path: '/app/tracking/customizer', category: 'Seller', icon: <Palette className="w-4 h-4 text-purple-400" /> },
+    { title: 'Shipping Rate Calculator', path: '/app/rate-calculator', category: 'Seller', icon: <Calculator className="w-4 h-4 text-cyan-400" /> },
+    { title: 'NDR Exception Resolution Hub', path: '/app/ndr', category: 'Seller', icon: <AlertTriangle className="w-4 h-4 text-rose-400" /> },
+    { title: 'RTO Return Management', path: '/app/rto', category: 'Seller', icon: <RotateCcw className="w-4 h-4 text-orange-400" /> },
+    { title: 'Customer Returns Hub', path: '/app/returns', category: 'Seller', icon: <Layers className="w-4 h-4 text-amber-400" /> },
+    { title: 'Weight Discrepancy Disputes', path: '/app/weight-disputes', category: 'Seller', icon: <Scale className="w-4 h-4 text-yellow-400" /> },
+    { title: 'Wallet & Passbook Ledger', path: '/app/wallet', category: 'Seller', icon: <Wallet className="w-4 h-4 text-emerald-400" /> },
+    { title: 'COD Remittance & Payouts', path: '/app/cod', category: 'Seller', icon: <Wallet className="w-4 h-4 text-teal-400" /> },
+    { title: 'Store Integrations (Shopify, Woo)', path: '/app/integrations', category: 'Seller', icon: <Database className="w-4 h-4 text-indigo-400" /> },
+    { title: 'Developer APIs & Webhooks', path: '/app/developers', category: 'Seller', icon: <Command className="w-4 h-4 text-slate-400" /> },
+    { title: 'Team & RBAC Roles', path: '/app/team', category: 'Seller', icon: <Users className="w-4 h-4 text-violet-400" /> },
+    { title: 'Warehouse & Pickup Settings', path: '/app/settings', category: 'Seller', icon: <Settings className="w-4 h-4 text-slate-400" /> },
+    // Super Admin Control Tower
+    { title: 'Super Admin: Live Orders & Seller Activity Monitor', path: '/admin/orders', category: 'Super Admin', icon: <ShoppingBag className="w-4 h-4 text-emerald-400" /> },
+    { title: 'Super Admin: Sellers Directory & KYC', path: '/admin/sellers', category: 'Super Admin', icon: <ShieldCheck className="w-4 h-4 text-indigo-400" /> },
+    { title: 'Super Admin: Carrier Integrations Matrix', path: '/admin/couriers', category: 'Super Admin', icon: <Truck className="w-4 h-4 text-blue-400" /> },
+    { title: 'Super Admin: Rate Cards & Margin Engine', path: '/admin/rates', category: 'Super Admin', icon: <Calculator className="w-4 h-4 text-cyan-400" /> },
+    { title: 'Super Admin: Freight Reconciliation', path: '/admin/reconciliation', category: 'Super Admin', icon: <Activity className="w-4 h-4 text-amber-400" /> },
+    { title: 'Super Admin: Platform Audit Trail', path: '/admin/audit', category: 'Super Admin', icon: <Database className="w-4 h-4 text-rose-400" /> },
+  ].filter((p) => p.title.toLowerCase().includes(query.toLowerCase()) || p.category.toLowerCase().includes(query.toLowerCase()));
 
   const handleSelect = (path: string) => {
     navigate(path);
@@ -113,7 +140,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                 {filteredOrders.map((ord) => (
                   <button
                     key={ord.id}
-                    onClick={() => handleSelect(`/app/orders`)}
+                    onClick={() => handleSelect(`/app/orders?shipOrderId=${ord.id}`)}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-800 border border-slate-800/60 transition text-slate-200 cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
@@ -137,7 +164,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                 {filteredShipments.map((shp) => (
                   <button
                     key={shp.id}
-                    onClick={() => handleSelect(`/app/shipments`)}
+                    onClick={() => handleSelect(`/app/tracking?awb=${shp.awb_number}`)}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-800 border border-slate-800/60 transition text-slate-200 cursor-pointer"
                   >
                     <div className="flex items-center gap-2">

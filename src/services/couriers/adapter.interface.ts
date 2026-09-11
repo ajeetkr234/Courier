@@ -81,6 +81,33 @@ export interface TrackingResult {
   currentStatus: string;
   estimatedDeliveryDate?: string;
   events: TrackingEvent[];
+  courierName?: string;
+  courierCode?: string;
+  orderId?: string;
+  originCity?: string;
+  originPincode?: string;
+  destinationCity?: string;
+  destinationPincode?: string;
+  recipientName?: string;
+  weightKg?: number;
+  paymentMode?: 'PREPAID' | 'COD';
+  codAmount?: number;
+  deliveryAgent?: {
+    name: string;
+    phone: string;
+    hub: string;
+  };
+  podDetails?: {
+    deliveredAt: string;
+    receivedBy: string;
+    relation?: string;
+    signatureUrl?: string;
+  };
+  ndrDetails?: {
+    attemptCount: number;
+    reason: string;
+    lastAttemptAt: string;
+  };
 }
 
 export interface CourierAdapter {

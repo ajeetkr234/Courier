@@ -15,11 +15,15 @@ export const LoginPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await login(email);
-    if (email.includes('admin')) {
-      navigate('/admin');
-    } else {
-      navigate('/app/dashboard');
+    try {
+      await login(email, password);
+      if (email.includes('admin')) {
+        navigate('/admin');
+      } else {
+        navigate('/app/dashboard');
+      }
+    } catch {
+      // Error handled and toasted in AuthProvider
     }
   };
 

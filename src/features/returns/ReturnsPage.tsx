@@ -13,7 +13,11 @@ import { Order, ReturnOrder } from '../../types';
 import { toast } from 'sonner';
 
 export const ReturnsPage: React.FC = () => {
-  const { orders, returnRequests, createReturnRequest } = usePlatformStore();
+  const { orders, warehouses, returnRequests, createReturnRequest, loadSupabaseData, isLoadingData } = usePlatformStore();
+
+  React.useEffect(() => {
+    loadSupabaseData();
+  }, []);
 
   // Active Main Status Tab
   const [activeTab, setActiveTab] = useState<
@@ -28,9 +32,15 @@ export const ReturnsPage: React.FC = () => {
 
   // Add Return Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedOrderId, setSelectedOrderId] = useState(orders[0]?.id || 'ord-101');
-  const [returnReason, setReturnReason] = useState('Size mismatch / Defective product');
-  const [refundAmount, setRefundAmount] = useState('799');
+  const [selectedOrderId, setSelectedOrderId] = useState(orders[0]?.id || '');
+  const [returnReason, setReturnReason] = useState('Size mismatch');
+  const [refundAmount, setRefundAmount] = useState('');
+
+  React.useEffect(() => {
+    if (orders.length > 0 && !orders.some((order) => order.id === selectedOrderId)) {
+      setSelectedOrderId(orders[0].id);
+    }
+  }, [orders, selectedOrderId]);
 
   // Filter return orders based on active tab, reason, and search term
   const filteredReturns = returnRequests.filter((ret) => {
@@ -84,9 +94,43 @@ export const ReturnsPage: React.FC = () => {
 
   const handleCreateReturn = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!selectedOrderId) {
+      toast.error('Please select an order for return');
+      return;
+    }
     createReturnRequest(selectedOrderId, returnReason);
-    toast.success('Reverse Return Request Created! Reverse AWB generated.');
+    toast.success('Reverse return request created from live order data.');
     setIsModalOpen(false);
+  };
+
+  const handleExportReturns = () => {
+    if (filteredReturns.length === 0) {
+      toast.info('No returns available to export');
+      return;
+    }
+    const escape = (value: unknown) => `"${String(value ?? '').replace(/"/g, '""')}"`;
+    const rows = filteredReturns.map((ret) => {
+      const order = ret.original_order || orders.find((item) => item.id === ret.original_order_id);
+      return [
+        ret.id,
+        ret.reverse_awb_number || ret.return_awb || '',
+        ret.original_order_id,
+        order?.shipping_address?.name || '',
+        order?.shipping_address?.phone || '',
+        ret.return_reason || ret.reason || '',
+        ret.status,
+        ret.created_at,
+      ].map(escape).join(',');
+    });
+    const csv = ['Return ID,Reverse AWB,Original Order ID,Customer,Phone,Reason,Status,Created At', ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `returns-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast.success(`${filteredReturns.length} returns exported`);
   };
 
   return (
@@ -210,7 +254,7 @@ export const ReturnsPage: React.FC = () => {
 
             <div className="flex items-center gap-2 border-l border-slate-200 pl-3">
               <button
-                onClick={() => toast.info('Exporting return orders CSV data...')}
+                onClick={handleExportReturns}
                 className="p-2 text-slate-600 hover:bg-slate-100 rounded-xl border border-slate-200 transition cursor-pointer"
                 title="Export Data"
               >
@@ -218,7 +262,10 @@ export const ReturnsPage: React.FC = () => {
               </button>
 
               <button
-                onClick={() => toast.success('Returns data refreshed!')}
+                onClick={() => {
+                  loadSupabaseData();
+                  toast.success('Returns data refreshed from database');
+                }}
                 className="p-2 text-slate-600 hover:bg-slate-100 rounded-xl border border-slate-200 transition cursor-pointer"
                 title="Refresh Table"
               >
@@ -230,7 +277,7 @@ export const ReturnsPage: React.FC = () => {
                 disabled={selectedReturnIds.length === 0}
                 onChange={(e) => {
                   if (e.target.value) {
-                    toast.info(`Executing bulk action "${e.target.value}" on ${selectedReturnIds.length} returns...`);
+                    toast.info('Bulk return updates need backend status endpoints before they can be enabled.');
                     e.target.value = '';
                   }
                 }}
@@ -309,7 +356,12 @@ export const ReturnsPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 font-medium">
-                {filteredReturns.map((ret) => (
+                {filteredReturns.map((ret) => {
+                  const originalOrder = ret.original_order || orders.find((order) => order.id === ret.original_order_id);
+                  const warehouse = originalOrder ? warehouses.find((item) => item.id === originalOrder.warehouse_id) : undefined;
+                  const firstItem = originalOrder?.items?.[0];
+
+                  return (
                   <tr key={ret.id} className="hover:bg-indigo-50/30 transition-colors">
                     <td className="p-4">
                       <input
@@ -336,23 +388,23 @@ export const ReturnsPage: React.FC = () => {
                     {/* Buyer Details */}
                     <td className="p-4">
                       <span className="font-bold text-slate-900 block">
-                        Aniket Roy
+                        {originalOrder?.customer?.name || originalOrder?.shipping_address?.name || 'Customer not linked'}
                       </span>
                       <span className="text-[11px] font-mono text-slate-600 block">
-                        +91 9876549988
+                        {originalOrder?.customer?.phone || originalOrder?.shipping_address?.phone || 'Phone not linked'}
                       </span>
                       <span className="text-[10px] text-slate-500 truncate block max-w-[140px]">
-                        Pune, Maharashtra - 411001
+                        {[originalOrder?.shipping_address?.city, originalOrder?.shipping_address?.state].filter(Boolean).join(', ') || 'Address not linked'} {originalOrder?.shipping_address?.pincode ? `- ${originalOrder.shipping_address.pincode}` : ''}
                       </span>
                     </td>
 
                     {/* Product Details */}
                     <td className="p-4">
                       <span className="font-bold text-slate-800 block text-xs">
-                        Cotton Premium T-Shirt
+                        {firstItem?.name || 'No item linked'}
                       </span>
                       <span className="text-[10px] text-slate-500 font-mono block">
-                        SKU: APX-TSHIRT-L (Qty: 1)
+                        SKU: {firstItem?.sku || 'NA'} (Qty: {firstItem?.quantity || 0})
                       </span>
                       <span className="text-[10px] text-amber-700 font-bold bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 mt-1 inline-block">
                         Reason: {ret.reason || ret.return_reason}
@@ -362,27 +414,29 @@ export const ReturnsPage: React.FC = () => {
                     {/* Dimensions */}
                     <td className="p-4">
                       <span className="font-bold text-slate-800 block">
-                        0.8 kg
+                        {originalOrder?.weight_kg || 0} kg
                       </span>
                       <span className="text-[10px] text-slate-500 font-mono block">
-                        20x15x10 cm
+                        {[originalOrder?.length_cm, originalOrder?.width_cm, originalOrder?.height_cm].every(Boolean)
+                          ? `${originalOrder?.length_cm}x${originalOrder?.width_cm}x${originalOrder?.height_cm} cm`
+                          : 'Dimensions not set'}
                       </span>
                     </td>
 
                     {/* Warehouse Address */}
                     <td className="p-4">
                       <span className="font-bold text-slate-800 block text-xs">
-                        Central Hub
+                        {warehouse?.name || 'Warehouse not linked'}
                       </span>
                       <span className="text-[10px] font-mono text-slate-500 block">
-                        PIN: 462028
+                        PIN: {warehouse?.pincode || 'NA'}
                       </span>
                     </td>
 
                     {/* Refund Details */}
                     <td className="p-4">
                       <span className="font-black text-slate-900 font-mono block">
-                        ₹799.00
+                        Rs {Number(originalOrder?.total_amount || refundAmount || 0).toLocaleString('en-IN')}
                       </span>
                       <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200 inline-block mt-0.5">
                         Pending Refund
@@ -400,7 +454,8 @@ export const ReturnsPage: React.FC = () => {
                       </Button>
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>

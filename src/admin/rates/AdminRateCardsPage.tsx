@@ -14,6 +14,18 @@ export const AdminRateCardsPage: React.FC = () => {
   const [codFlatMin, setCodFlatMin] = useState('20');
   const [rtoMultiplier, setRtoMultiplier] = useState('1.0');
 
+  // Wholesale Margin Calculator State
+  const [baseCarrierCost, setBaseCarrierCost] = useState('34.00');
+  const [platformMarginCut, setPlatformMarginCut] = useState('9.00');
+  const [projectedMonthlyVolume, setProjectedMonthlyVolume] = useState('12500');
+
+  const baseNum = parseFloat(baseCarrierCost) || 34;
+  const marginNum = parseFloat(platformMarginCut) || 9;
+  const volNum = parseInt(projectedMonthlyVolume) || 10000;
+  const sellerPrice = baseNum + marginNum;
+  const marginPercent = ((marginNum / sellerPrice) * 100).toFixed(1);
+  const projectedGrossProfit = Math.round(marginNum * volNum);
+
   const handleCreateRateCard = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name) {
@@ -52,10 +64,10 @@ export const AdminRateCardsPage: React.FC = () => {
       <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shadow-xl">
         <div>
           <h2 className="text-xl font-bold text-white font-display flex items-center gap-2">
-            <Layers className="h-6 w-6 text-indigo-400" /> Platform Rate Card Engine
+            <Layers className="h-6 w-6 text-indigo-400" /> Platform Rate Card Engine &amp; Wholesale Margin Control
           </h2>
           <p className="text-xs text-slate-400 mt-1">
-            Build dynamic rate matrices for Zone A-E, weight slab increments, COD fee percentages, and RTO charges
+            Build dynamic rate matrices for Zone A-E, weight slab increments, COD fee percentages, and platform net revenue margins
           </p>
         </div>
 
@@ -65,6 +77,78 @@ export const AdminRateCardsPage: React.FC = () => {
         >
           <Plus className="h-4 w-4" /> Create New Rate Card
         </button>
+      </div>
+
+      {/* Wholesale Margin & Unit Economics Calculator */}
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+          <div>
+            <h3 className="text-sm font-bold text-white uppercase tracking-wider font-display flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              Wholesale Base Cost vs Platform Selling Margin Simulator
+            </h3>
+            <span className="text-xs text-slate-400">Calculate net platform profitability per 500g slab</span>
+          </div>
+          <span className="text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+            Net Margin: {marginPercent}%
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+          <div>
+            <label className="block text-slate-400 font-bold mb-1">Contract Carrier Cost (₹/500g)</label>
+            <input
+              type="number"
+              step="0.5"
+              value={baseCarrierCost}
+              onChange={(e) => setBaseCarrierCost(e.target.value)}
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono font-bold focus:ring-2 focus:ring-indigo-500"
+            />
+            <span className="text-[10px] text-slate-500">Master Delhivery/Bluedart contracted rate</span>
+          </div>
+
+          <div>
+            <label className="block text-slate-400 font-bold mb-1">Platform Markup Margin (₹)</label>
+            <input
+              type="number"
+              step="0.5"
+              value={platformMarginCut}
+              onChange={(e) => setPlatformMarginCut(e.target.value)}
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-emerald-400 font-mono font-black focus:ring-2 focus:ring-indigo-500"
+            />
+            <span className="text-[10px] text-slate-500">Direct aggregator margin retained</span>
+          </div>
+
+          <div>
+            <label className="block text-slate-400 font-bold mb-1">Projected Monthly Shipments</label>
+            <input
+              type="number"
+              step="500"
+              value={projectedMonthlyVolume}
+              onChange={(e) => setProjectedMonthlyVolume(e.target.value)}
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono font-bold focus:ring-2 focus:ring-indigo-500"
+            />
+            <span className="text-[10px] text-slate-500">Across all onboarded active sellers</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3.5 bg-slate-950 rounded-xl border border-slate-800/80 text-xs font-mono">
+          <div>
+            <span className="text-[10px] text-slate-400 uppercase font-bold block">Final Seller Quoted Price</span>
+            <strong className="text-white text-base">₹{sellerPrice.toFixed(2)}</strong>
+            <span className="text-[10px] text-slate-500 block">per 500g forward shipment</span>
+          </div>
+          <div>
+            <span className="text-[10px] text-emerald-400 uppercase font-bold block">Platform Net Profit/Shipment</span>
+            <strong className="text-emerald-400 text-base font-black">+₹{marginNum.toFixed(2)}</strong>
+            <span className="text-[10px] text-slate-500 block">{marginPercent}% gross margin</span>
+          </div>
+          <div>
+            <span className="text-[10px] text-indigo-400 uppercase font-bold block">Monthly Recurring Net Profit</span>
+            <strong className="text-indigo-400 text-base font-black">₹{projectedGrossProfit.toLocaleString('en-IN')}</strong>
+            <span className="text-[10px] text-slate-500 block">based on {volNum.toLocaleString('en-IN')} orders</span>
+          </div>
+        </div>
       </div>
 
       {/* Existing Rate Cards List */}

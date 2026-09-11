@@ -25,7 +25,7 @@ export const ComparisonSection: React.FC = () => {
 
   return (
     <section
-      id="why-shipsmarter"
+      id="why-shipfaster"
       className="pt-12 sm:pt-14 pb-20 px-4 sm:px-8 lg:px-12 bg-slate-50 border-b border-slate-200 overflow-hidden"
     >
       <div className="max-w-7xl mx-auto space-y-12">
@@ -64,8 +64,8 @@ export const ComparisonSection: React.FC = () => {
         </motion.div>
 
         {/* Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
-          {/* Left Card: Without ShipSmarter */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-stretch">
+          {/* Left Card: Without ShipFaster */}
           <motion.div
             initial={{ opacity: 0, x: shouldReduceMotion ? 0 : -50 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -75,7 +75,7 @@ export const ComparisonSection: React.FC = () => {
               boxShadow: '0 12px 30px -5px rgba(225, 29, 72, 0.1)',
               transition: { duration: 0.18 },
             }}
-            className="bg-rose-50/50 p-8 rounded-3xl border border-rose-200 shadow-sm space-y-6 flex flex-col justify-between"
+            className="bg-rose-50/50 p-5 sm:p-7 lg:p-8 rounded-2xl sm:rounded-3xl border border-rose-200 shadow-sm space-y-6 flex flex-col justify-between"
           >
             <div className="space-y-6">
               {/* Card Header */}
@@ -127,7 +127,7 @@ export const ComparisonSection: React.FC = () => {
               boxShadow: '0 25px 35px -5px rgba(16, 185, 129, 0.18), 0 10px 10px -5px rgba(16, 185, 129, 0.04)',
               transition: { duration: 0.18 },
             }}
-            className="bg-white p-8 rounded-3xl border-2 border-emerald-500 shadow-xl space-y-6 flex flex-col justify-between relative"
+            className="bg-white p-5 sm:p-7 lg:p-8 rounded-2xl sm:rounded-3xl border-2 border-emerald-500 shadow-xl space-y-6 flex flex-col justify-between relative"
           >
             {/* Recommended Badge */}
             <div className="absolute -top-3.5 right-6 px-3.5 py-1 rounded-full bg-emerald-600 text-white text-[10px] font-extrabold uppercase tracking-widest shadow-md z-10">

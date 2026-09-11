@@ -3,9 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import * as THREE from 'three';
 import { 
   Zap, ArrowRight, CheckCircle2, Globe, Layers, Activity, 
-  Terminal, Cpu, Server, RefreshCw, Radio, Code2, Sparkles, 
-  Check, Gauge, Play, Pause, ChevronRight, ShieldCheck, Box,
-  Copy, ExternalLink, CornerDownRight, Wifi
+  Terminal, Cpu, Server, Radio, Code2, 
+  Check, Gauge, Play, Pause, ShieldCheck, 
+  Copy, Wifi
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -137,7 +137,14 @@ const carrierMetrics = [
 export const IntegrationsNetworkVisualizer: React.FC = () => {
   const mountRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
-  const [webglSupported, setWebglSupported] = useState<boolean>(true);
+  const [webglSupported] = useState<boolean>(() => {
+    try {
+      const canvas = document.createElement('canvas');
+      return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
+    } catch {
+      return false;
+    }
+  });
   const [activeTab, setActiveTab] = useState<'visualizer' | 'webhooks' | 'matrix'>('visualizer');
   const [selectedNode, setSelectedNode] = useState<NetworkNode>(networkNodes[0]);
   const [isLiveStreaming, setIsLiveStreaming] = useState<boolean>(true);
@@ -161,17 +168,7 @@ export const IntegrationsNetworkVisualizer: React.FC = () => {
   };
 
   useEffect(() => {
-    try {
-      const canvas = document.createElement('canvas');
-      const hasWebGL = !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
-      if (!hasWebGL) {
-        setWebglSupported(false);
-        return;
-      }
-    } catch (e) {
-      setWebglSupported(false);
-      return;
-    }
+    if (!webglSupported) return;
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion || !mountRef.current || activeTab !== 'visualizer') return;
@@ -328,13 +325,13 @@ export const IntegrationsNetworkVisualizer: React.FC = () => {
       }
       renderer.dispose();
     };
-  }, [activeTab]);
+  }, [activeTab, webglSupported]);
 
   return (
     <section 
       ref={sectionRef} 
-      id="integrations" 
-      className="py-14 sm:py-18 px-4 sm:px-8 lg:px-12 bg-white border-b border-slate-200/80 relative overflow-hidden"
+      id="architecture" 
+      className="py-14 sm:py-18 px-4 sm:px-8 lg:px-12 bg-white border-b border-slate-200/80 relative overflow-hidden scroll-mt-20"
     >
       {/* Subtle Atmospheric Radial Glows */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[500px] bg-gradient-to-tr from-blue-100/40 via-indigo-100/30 to-teal-50/20 rounded-full blur-3xl pointer-events-none -z-10" />

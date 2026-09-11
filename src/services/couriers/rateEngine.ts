@@ -1,64 +1,80 @@
-import { CourierAdapter, RateInput } from './adapter.interface';
-import { MockCourierAdapter } from './mock.adapter';
+import { RateInput } from './adapter.interface';
 import { RateQuote } from '../../types';
+import { supabase, getEffectiveSellerId } from '../../lib/supabase';
+
+type RateSlabRow = {
+  id: string;
+  courier_id: string;
+  zone: string;
+  base_weight_kg: number | string;
+  base_freight_rate: number | string;
+  additional_weight_step_kg: number | string;
+  additional_freight_rate: number | string;
+  cod_flat_fee: number | string;
+  cod_percent_fee: number | string;
+  couriers: { id: string; code: string; name: string; is_active: boolean } | null;
+};
+
+function calculateZone(pickup: string, delivery: string): string {
+  if (pickup.slice(0, 3) === delivery.slice(0, 3)) return 'LOCAL';
+  if (pickup[0] === delivery[0]) return 'ZONAL';
+  return 'NATIONAL';
+}
 
 export class RateEngine {
-  private adapters: CourierAdapter[] = [];
-
-  constructor() {
-    // Register V1 adapters
-    this.adapters = [
-      new MockCourierAdapter('delhivery', 'Delhivery Direct', 'c-delhivery', 1.0, 0),
-      new MockCourierAdapter('xpressbees', 'Xpressbees Express', 'c-xpressbees', 1.15, -1),
-      new MockCourierAdapter('ecom', 'Ecom Express', 'c-ecom', 0.92, 1),
-      new MockCourierAdapter('shadowfax', 'Shadowfax Local', 'c-shadowfax', 1.05, 0),
-    ];
-  }
-
   async fetchComparisonQuotes(input: RateInput): Promise<RateQuote[]> {
-    const promises = this.adapters.map(adapter => adapter.getRates(input));
-    const results = await Promise.allSettled(promises);
+    const sellerId = await getEffectiveSellerId(input.sellerId);
+    const requestedZone = calculateZone(input.pickupPincode, input.deliveryPincode);
+    const { data, error } = await supabase
+      .from('rate_slabs')
+      .select('*, couriers!inner(id, code, name, is_active)')
+      .eq('couriers.is_active', true);
 
-    const quotes: RateQuote[] = [];
+    if (error) throw new Error(`Unable to load live courier rates: ${error.message}`);
 
-    results.forEach(res => {
-      if (res.status === 'fulfilled' && res.value.length > 0) {
-        quotes.push(...res.value);
-      }
-    });
+    const rows = (data || []) as unknown as RateSlabRow[];
+    const zoneRows = rows.some((row) => row.zone.toUpperCase() === requestedZone)
+      ? rows.filter((row) => row.zone.toUpperCase() === requestedZone)
+      : rows;
+    const expiresAt = new Date(Date.now() + 15 * 60_000).toISOString();
 
-    if (quotes.length === 0) return [];
-
-    // Sort to determine recommendation badges
-    // 1. Find cheapest
-    let cheapestQuote = quotes[0];
-    let fastestQuote = quotes[0];
-
-    quotes.forEach(q => {
-      if (q.total_rate < cheapestQuote.total_rate) {
-        cheapestQuote = q;
-      }
-      if (q.estimated_days < fastestQuote.estimated_days) {
-        fastestQuote = q;
-      }
-    });
-
-    // Tag quotes
-    return quotes.map(q => {
-      let badge: RateQuote['recommendation_badge'];
-      if (q.id === cheapestQuote.id) {
-        badge = 'Cheapest';
-      } else if (q.id === fastestQuote.id) {
-        badge = 'Fastest';
-      } else if (q.courier_code === 'delhivery') {
-        badge = 'Recommended';
-      }
-
+    const quotes = zoneRows.map((row): RateQuote => {
+      const baseWeight = Number(row.base_weight_kg);
+      const step = Math.max(Number(row.additional_weight_step_kg), 0.001);
+      const extraSteps = Math.max(0, Math.ceil((input.weightKg - baseWeight) / step));
+      const baseRate = Number(row.base_freight_rate) + extraSteps * Number(row.additional_freight_rate);
+      const codCharge = input.paymentType === 'COD'
+        ? Math.max(Number(row.cod_flat_fee), input.orderValue * Number(row.cod_percent_fee) / 100)
+        : 0;
+      const taxAmount = (baseRate + codCharge) * 0.18;
+      const courier = row.couriers!;
       return {
-        ...q,
-        recommendation_badge: badge
+        id: row.id,
+        seller_id: sellerId,
+        order_id: input.orderId,
+        courier_id: courier.id,
+        courier_name: courier.name,
+        courier_code: courier.code,
+        service_name: row.zone,
+        base_rate: baseRate,
+        cod_charge: codCharge,
+        surcharges: 0,
+        tax_amount: taxAmount,
+        total_rate: baseRate + codCharge + taxAmount,
+        estimated_days: requestedZone === 'LOCAL' ? 1 : requestedZone === 'ZONAL' ? 3 : 5,
+        expires_at: expiresAt,
       };
     });
+
+    if (!quotes.length) return [];
+    const cheapest = quotes.reduce((a, b) => a.total_rate <= b.total_rate ? a : b);
+    const fastest = quotes.reduce((a, b) => a.estimated_days <= b.estimated_days ? a : b);
+    return quotes.map((quote) => ({
+      ...quote,
+      recommendation_badge: quote.id === cheapest.id
+        ? 'Cheapest'
+        : quote.id === fastest.id ? 'Fastest' : undefined,
+    }));
   }
 }
 
