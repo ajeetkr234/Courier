@@ -259,48 +259,48 @@ export const ConnectorsGridSection: React.FC = () => {
   });
 
   return (
-    <section id="connectors" className="py-10 sm:py-14 px-4 sm:px-8 lg:px-12 max-w-7xl mx-auto w-full space-y-6 sm:space-y-8">
+    <section id="connectors" className="py-8 sm:py-14 px-3 xs:px-4 sm:px-8 lg:px-12 max-w-7xl mx-auto w-full space-y-6 sm:space-y-8">
       {/* Standardized Header Block */}
-      <div className="text-center space-y-3.5 max-w-5xl mx-auto">
+      <div className="text-center space-y-3 sm:space-y-3.5 max-w-5xl mx-auto">
         <div className="inline-block">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
-            <span className="flex h-2 w-2 relative">
+          <div className="inline-flex items-center gap-1.5 xs:gap-2 px-3 py-1 xs:px-3.5 xs:py-1.5 rounded-full bg-blue-50 text-blue-700 text-[10px] xs:text-xs font-extrabold border border-blue-200/80 shadow-xs max-w-full">
+            <span className="flex h-2 w-2 relative shrink-0">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
             </span>
-            <Zap className="w-3.5 h-3.5 text-blue-600" />
-            <span className="uppercase tracking-wider">SUPPORTED CONNECTORS • 50+ PRE-BUILT INTEGRATIONS</span>
+            <Zap className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+            <span className="uppercase tracking-wider truncate">SUPPORTED CONNECTORS • 50+ PRE-BUILT INTEGRATIONS</span>
           </div>
         </div>
 
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
+        <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto px-1 xs:px-2">
           Plug &amp; Play{' '}
           <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
             E-Commerce Connectors
           </span>
         </h2>
 
-        <p className="text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
+        <p className="text-xs xs:text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto px-1 xs:px-2">
           Connect your storefront, ERP, or custom software stack in minutes with zero coding required. Click any connector for setup instructions.
         </p>
       </div>
 
       {/* Filter and Search Controls Block */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-200/80">
-        <div className="text-xs text-slate-500 font-bold uppercase tracking-wider font-mono">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 pb-4 border-b border-slate-200/80">
+        <div className="text-[11px] xs:text-xs text-slate-500 font-bold uppercase tracking-wider font-mono">
           Showing {filteredConnectors.length} Channels
         </div>
 
         {/* Search Input & Category Pills */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 shrink-0">
           {/* Category Filter Pills */}
-          <div className="flex items-center gap-1.5 bg-white p-1 rounded-xl border border-slate-200 shadow-2xs overflow-x-auto">
+          <div className="flex items-center gap-1 xs:gap-1.5 bg-white p-1 rounded-xl border border-slate-200 shadow-2xs overflow-x-auto max-w-full">
             {(['All', 'E-Commerce', 'Developer', 'Enterprise'] as const).map((cat) => (
               <button
                 key={cat}
                 type="button"
                 onClick={() => setActiveCategory(cat)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer whitespace-nowrap ${
+                className={`px-2.5 xs:px-3 py-1 xs:py-1.5 rounded-lg text-[11px] xs:text-xs font-extrabold transition-all cursor-pointer whitespace-nowrap ${
                   activeCategory === cat
                     ? 'bg-blue-600 text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
@@ -330,13 +330,13 @@ export const ConnectorsGridSection: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-3xl border border-slate-200/90 p-8 sm:p-12 text-center max-w-lg mx-auto shadow-2xs space-y-4"
+          className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 p-6 sm:p-12 text-center max-w-lg mx-auto shadow-2xs space-y-4"
         >
-          <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center mx-auto text-blue-600">
-            <SearchX className="w-7 h-7 text-blue-600" />
+          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center mx-auto text-blue-600">
+            <SearchX className="w-6 h-6 sm:w-7 sm:h-7 text-blue-600" />
           </div>
           <div className="space-y-1.5">
-            <h3 className="text-lg font-black text-slate-900 font-display">
+            <h3 className="text-base sm:text-lg font-black text-slate-900 font-display">
               No Connectors Found for &quot;{searchQuery}&quot;
             </h3>
             <p className="text-xs text-slate-500 font-medium leading-relaxed">
@@ -351,7 +351,7 @@ export const ConnectorsGridSection: React.FC = () => {
                 setIsRequestSubmitted(false);
                 setIsRequestModalOpen(true);
               }}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-md shadow-blue-500/20 cursor-pointer"
+              className="inline-flex items-center gap-2 px-3.5 xs:px-4 py-2 xs:py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-md shadow-blue-500/20 cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Request &quot;{searchQuery}&quot; Connector</span>
@@ -362,7 +362,7 @@ export const ConnectorsGridSection: React.FC = () => {
                 setSearchQuery('');
                 setActiveCategory('All');
               }}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
+              className="inline-flex items-center gap-2 px-3.5 xs:px-4 py-2 xs:py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Reset Search</span>
@@ -375,7 +375,7 @@ export const ConnectorsGridSection: React.FC = () => {
       {filteredConnectors.length > 0 && (
         <motion.div 
           layout
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6"
         >
           <AnimatePresence mode="popLayout">
             {filteredConnectors.map((channel, idx) => (
@@ -388,15 +388,15 @@ export const ConnectorsGridSection: React.FC = () => {
                 transition={{ duration: 0.3, delay: idx * 0.04 }}
                 whileHover={{ y: -4, scale: 1.01 }}
                 onClick={() => setSelectedConnector(channel)}
-                className="group bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-lg hover:border-blue-300 transition-all duration-300 flex flex-col justify-between relative overflow-hidden cursor-pointer"
+                className="group bg-white p-4 xs:p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-lg hover:border-blue-300 transition-all duration-300 flex flex-col justify-between relative overflow-hidden cursor-pointer"
               >
                 {/* Top Accent Line on Hover */}
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                <div className="space-y-4">
+                <div className="space-y-3.5 xs:space-y-4">
                   {/* Header: Brand Icon & Badge */}
                   <div className="flex items-center justify-between">
-                    <div className={`w-10 h-10 rounded-xl ${channel.iconBg} border ${channel.iconColor} flex items-center justify-center group-hover:scale-105 transition-transform duration-300`}>
+                    <div className={`w-9 h-9 xs:w-10 xs:h-10 rounded-xl ${channel.iconBg} border ${channel.iconColor} flex items-center justify-center group-hover:scale-105 transition-transform duration-300`}>
                       {channel.icon}
                     </div>
 
@@ -407,10 +407,10 @@ export const ConnectorsGridSection: React.FC = () => {
 
                   {/* Title & Category */}
                   <div>
-                    <h3 className="text-base font-black text-slate-900 font-display group-hover:text-blue-600 transition-colors leading-tight">
+                    <h3 className="text-sm xs:text-base font-black text-slate-900 font-display group-hover:text-blue-600 transition-colors leading-tight">
                       {channel.title}
                     </h3>
-                    <span className="text-[11px] font-bold text-slate-400 block mt-0.5">
+                    <span className="text-[10px] xs:text-[11px] font-bold text-slate-400 block mt-0.5">
                       {channel.categoryLabel}
                     </span>
                   </div>
@@ -432,14 +432,14 @@ export const ConnectorsGridSection: React.FC = () => {
                 </div>
 
                 {/* Card Footer Actions */}
-                <div className="pt-4 border-t border-slate-100 flex items-center gap-2">
+                <div className="pt-3.5 sm:pt-4 border-t border-slate-100 flex flex-col xs:flex-row items-stretch xs:items-center gap-2">
                   <button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
                       setSelectedConnector(channel);
                     }}
-                    className="flex-1 py-2 px-3 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200/80 hover:border-blue-200 text-slate-700 hover:text-blue-700 font-extrabold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="w-full xs:flex-1 py-2 px-3 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200/80 hover:border-blue-200 text-slate-700 hover:text-blue-700 font-extrabold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <span>Setup Guide</span>
                     <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
@@ -447,7 +447,7 @@ export const ConnectorsGridSection: React.FC = () => {
                   <Link 
                     to="/register"
                     onClick={(e) => e.stopPropagation()}
-                    className="py-2 px-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-xs transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                    className="w-full xs:w-auto py-2 px-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-xs transition-colors flex items-center justify-center gap-1 cursor-pointer"
                   >
                     <span>Connect</span>
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -465,11 +465,11 @@ export const ConnectorsGridSection: React.FC = () => {
                 setIsRequestSubmitted(false);
                 setIsRequestModalOpen(true);
               }}
-              className="group bg-gradient-to-br from-blue-50/70 via-indigo-50/40 to-white p-5 sm:p-6 rounded-2xl border-2 border-dashed border-blue-300 shadow-2xs hover:shadow-lg hover:border-blue-500 transition-all duration-300 flex flex-col justify-between relative overflow-hidden cursor-pointer"
+              className="group bg-gradient-to-br from-blue-50/70 via-indigo-50/40 to-white p-4 xs:p-5 sm:p-6 rounded-2xl border-2 border-dashed border-blue-300 shadow-2xs hover:shadow-lg hover:border-blue-500 transition-all duration-300 flex flex-col justify-between relative overflow-hidden cursor-pointer"
             >
-              <div className="space-y-4">
+              <div className="space-y-3.5 xs:space-y-4">
                 <div className="flex items-center justify-between">
-                  <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-600/20">
+                  <div className="w-9 h-9 xs:w-10 xs:h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-600/20">
                     <Sparkles className="w-5 h-5" />
                   </div>
                   <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-blue-100 text-blue-800 border border-blue-200">
@@ -478,10 +478,10 @@ export const ConnectorsGridSection: React.FC = () => {
                 </div>
 
                 <div>
-                  <h3 className="text-base font-black text-slate-900 font-display group-hover:text-blue-600 transition-colors leading-tight">
+                  <h3 className="text-sm xs:text-base font-black text-slate-900 font-display group-hover:text-blue-600 transition-colors leading-tight">
                     Don&apos;t See Your Platform?
                   </h3>
-                  <span className="text-[11px] font-bold text-slate-500 block mt-0.5">
+                  <span className="text-[10px] xs:text-[11px] font-bold text-slate-500 block mt-0.5">
                     Wix, Dukaan, Salesforce, PrestaShop, Custom ERP
                   </span>
                 </div>
@@ -502,7 +502,7 @@ export const ConnectorsGridSection: React.FC = () => {
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-blue-100">
+              <div className="pt-3.5 sm:pt-4 border-t border-blue-100">
                 <button
                   type="button"
                   className="w-full py-2.5 px-3.5 rounded-xl bg-blue-600 group-hover:bg-blue-700 text-white font-extrabold text-xs shadow-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
@@ -520,7 +520,7 @@ export const ConnectorsGridSection: React.FC = () => {
       <AnimatePresence>
         {selectedConnector && (
           <div 
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md overflow-y-auto"
+            className="fixed inset-0 z-50 flex items-center justify-center p-2.5 xs:p-4 bg-slate-950/70 backdrop-blur-md overflow-y-auto"
             onClick={() => setSelectedConnector(null)}
           >
             <motion.div
@@ -529,21 +529,21 @@ export const ConnectorsGridSection: React.FC = () => {
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               transition={{ duration: 0.25 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-3xl p-6 sm:p-8 max-w-2xl w-full border border-slate-200 shadow-2xl space-y-6 relative my-8 max-h-[90vh] overflow-y-auto text-left"
+              className="bg-white rounded-2xl sm:rounded-3xl p-4 xs:p-6 sm:p-8 max-w-2xl w-full border border-slate-200 shadow-2xl space-y-4 sm:space-y-6 relative my-4 sm:my-8 max-h-[92vh] overflow-y-auto text-left"
             >
               {/* Close Button */}
               <button
                 type="button"
                 onClick={() => setSelectedConnector(null)}
-                className="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                className="absolute top-3.5 right-3.5 xs:top-5 xs:right-5 p-1.5 xs:p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors z-10 cursor-pointer"
                 aria-label="Close modal"
               >
                 <X className="w-5 h-5" />
               </button>
 
               {/* Modal Header */}
-              <div className="flex items-center gap-3.5 pr-8">
-                <div className={`w-12 h-12 rounded-2xl ${selectedConnector.iconBg} border ${selectedConnector.iconColor} flex items-center justify-center shrink-0`}>
+              <div className="flex items-center gap-2.5 xs:gap-3.5 pr-8 xs:pr-9">
+                <div className={`w-10 h-10 xs:w-12 xs:h-12 rounded-xl xs:rounded-2xl ${selectedConnector.iconBg} border ${selectedConnector.iconColor} flex items-center justify-center shrink-0`}>
                   {selectedConnector.icon}
                 </div>
                 <div>
@@ -551,52 +551,52 @@ export const ConnectorsGridSection: React.FC = () => {
                     <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider border font-display ${selectedConnector.badgeColor}`}>
                       {selectedConnector.badge}
                     </span>
-                    <span className="text-xs font-mono text-slate-400">
+                    <span className="text-[11px] xs:text-xs font-mono text-slate-400">
                       {selectedConnector.categoryLabel}
                     </span>
                   </div>
-                  <h3 className="text-xl font-black text-slate-900 font-display mt-0.5">
+                  <h3 className="text-base xs:text-lg sm:text-xl font-black text-slate-900 font-display mt-0.5">
                     {selectedConnector.title}
                   </h3>
                 </div>
               </div>
 
               {/* Description */}
-              <p className="text-sm text-slate-600 leading-relaxed font-medium">
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium">
                 {selectedConnector.desc}
               </p>
 
               {/* Key Specs Bar */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 xs:gap-3 p-3 xs:p-3.5 rounded-xl xs:rounded-2xl bg-slate-50 border border-slate-200/80 text-xs">
                 <div className="space-y-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                  <span className="text-[9px] xs:text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
                     <Clock className="w-3 h-3 text-blue-500" /> Setup Time
                   </span>
-                  <p className="font-extrabold text-slate-900">{selectedConnector.setupTime}</p>
+                  <p className="font-extrabold text-slate-900 text-xs xs:text-sm">{selectedConnector.setupTime}</p>
                 </div>
                 <div className="space-y-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                  <span className="text-[9px] xs:text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
                     <RefreshCw className="w-3 h-3 text-emerald-500" /> Sync Speed
                   </span>
-                  <p className="font-extrabold text-slate-900 truncate">{selectedConnector.syncFrequency}</p>
+                  <p className="font-extrabold text-slate-900 truncate text-xs xs:text-sm">{selectedConnector.syncFrequency}</p>
                 </div>
                 <div className="col-span-2 sm:col-span-1 space-y-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                  <span className="text-[9px] xs:text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
                     <ShieldCheck className="w-3 h-3 text-indigo-500" /> Security
                   </span>
-                  <p className="font-extrabold text-slate-900">OAuth / Signed HMAC</p>
+                  <p className="font-extrabold text-slate-900 text-xs xs:text-sm">OAuth / Signed HMAC</p>
                 </div>
               </div>
 
               {/* Setup Prerequisites */}
-              <div className="space-y-2.5">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 font-mono">
+              <div className="space-y-2 xs:space-y-2.5">
+                <h4 className="text-[11px] xs:text-xs font-bold uppercase tracking-wider text-slate-500 font-mono">
                   Prerequisites Checklist
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {selectedConnector.prerequisites.map((req, rIdx) => (
-                    <div key={rIdx} className="flex items-center gap-2 p-2.5 rounded-xl bg-emerald-50/50 border border-emerald-100 text-xs font-bold text-slate-800">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <div key={rIdx} className="flex items-center gap-2 p-2 xs:p-2.5 rounded-xl bg-emerald-50/50 border border-emerald-100 text-[11px] xs:text-xs font-bold text-slate-800">
+                      <CheckCircle2 className="w-3.5 h-3.5 xs:w-4 xs:h-4 text-emerald-600 shrink-0" />
                       <span>{req}</span>
                     </div>
                   ))}
@@ -604,19 +604,19 @@ export const ConnectorsGridSection: React.FC = () => {
               </div>
 
               {/* 3-Step Setup Walkthrough */}
-              <div className="space-y-3">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 font-mono">
+              <div className="space-y-2.5 xs:space-y-3">
+                <h4 className="text-[11px] xs:text-xs font-bold uppercase tracking-wider text-slate-500 font-mono">
                   3-Step Quick Setup Guide
                 </h4>
-                <div className="space-y-2.5">
+                <div className="space-y-2 xs:space-y-2.5">
                   {selectedConnector.setupSteps.map((step, sIdx) => (
-                    <div key={sIdx} className="flex gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200/80">
-                      <div className="w-6 h-6 rounded-full bg-blue-600 text-white font-extrabold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                    <div key={sIdx} className="flex gap-2.5 xs:gap-3 p-2.5 xs:p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+                      <div className="w-5 h-5 xs:w-6 xs:h-6 rounded-full bg-blue-600 text-white font-extrabold text-[10px] xs:text-xs flex items-center justify-center shrink-0 mt-0.5">
                         {sIdx + 1}
                       </div>
                       <div className="space-y-0.5 text-xs">
-                        <p className="font-extrabold text-slate-900">{step.title}</p>
-                        <p className="text-slate-600 font-medium leading-relaxed">{step.desc}</p>
+                        <p className="font-extrabold text-slate-900 text-[11px] xs:text-xs">{step.title}</p>
+                        <p className="text-slate-600 font-medium leading-relaxed text-[10px] xs:text-[11px]">{step.desc}</p>
                       </div>
                     </div>
                   ))}
@@ -625,16 +625,16 @@ export const ConnectorsGridSection: React.FC = () => {
 
               {/* Technical Specifications */}
               <div className="space-y-1.5 p-3 rounded-xl bg-slate-900 text-slate-200 text-xs font-mono">
-                <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Architecture Note</span>
-                <p className="text-[11px] leading-relaxed text-slate-300 font-normal">
+                <span className="text-[9px] xs:text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Architecture Note</span>
+                <p className="text-[10px] xs:text-[11px] leading-relaxed text-slate-300 font-normal">
                   {selectedConnector.specs}
                 </p>
               </div>
 
               {/* Modal Action Buttons */}
-              <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
+              <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 xs:gap-3">
                 <Link to="/register" className="w-full sm:flex-1">
-                  <button className="w-full py-3 px-5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer">
+                  <button className="w-full py-2.5 xs:py-3 px-4 xs:px-5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs xs:text-sm shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer">
                     <span>Connect In Dashboard</span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
@@ -642,7 +642,7 @@ export const ConnectorsGridSection: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setSelectedConnector(null)}
-                  className="w-full sm:w-auto py-3 px-5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-sm transition-colors cursor-pointer"
+                  className="w-full sm:w-auto py-2.5 xs:py-3 px-4 xs:px-5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-xs xs:text-sm transition-colors cursor-pointer"
                 >
                   Close
                 </button>
@@ -656,7 +656,7 @@ export const ConnectorsGridSection: React.FC = () => {
       <AnimatePresence>
         {isRequestModalOpen && (
           <div 
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md overflow-y-auto"
+            className="fixed inset-0 z-50 flex items-center justify-center p-2.5 xs:p-4 bg-slate-950/70 backdrop-blur-md overflow-y-auto"
             onClick={() => setIsRequestModalOpen(false)}
           >
             <motion.div
@@ -665,38 +665,38 @@ export const ConnectorsGridSection: React.FC = () => {
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               transition={{ duration: 0.25 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full border border-slate-200 shadow-2xl space-y-5 relative my-8 text-left"
+              className="bg-white rounded-2xl sm:rounded-3xl p-4 xs:p-6 sm:p-8 max-w-lg w-full border border-slate-200 shadow-2xl space-y-4 sm:space-y-5 relative my-4 sm:my-8 text-left"
             >
               <button
                 type="button"
                 onClick={() => setIsRequestModalOpen(false)}
-                className="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                className="absolute top-3.5 right-3.5 xs:top-5 xs:right-5 p-1.5 xs:p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors z-10 cursor-pointer"
                 aria-label="Close modal"
               >
                 <X className="w-5 h-5" />
               </button>
 
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600">
+              <div className="flex items-center gap-2.5 xs:gap-3 pr-8 xs:pr-9">
+                <div className="w-9 h-9 xs:w-10 xs:h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0">
                   <Sparkles className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-black text-slate-900 font-display">
+                  <h3 className="text-base xs:text-lg font-black text-slate-900 font-display">
                     Request a Custom Connector
                   </h3>
-                  <p className="text-xs text-slate-500 font-medium">
+                  <p className="text-[11px] xs:text-xs text-slate-500 font-medium">
                     Tell us what software stack or storefront you need connected.
                   </p>
                 </div>
               </div>
 
               {isRequestSubmitted ? (
-                <div className="p-6 rounded-2xl bg-emerald-50 border border-emerald-200 text-center space-y-3">
-                  <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto font-black text-lg">
+                <div className="p-4 xs:p-6 rounded-2xl bg-emerald-50 border border-emerald-200 text-center space-y-3">
+                  <div className="w-10 h-10 xs:w-12 xs:h-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto font-black text-base xs:text-lg">
                     ✓
                   </div>
                   <div className="space-y-1">
-                    <h4 className="text-base font-extrabold text-slate-900 font-display">
+                    <h4 className="text-sm xs:text-base font-extrabold text-slate-900 font-display">
                       Request Received!
                     </h4>
                     <p className="text-xs text-slate-600 font-medium">
@@ -718,7 +718,7 @@ export const ConnectorsGridSection: React.FC = () => {
                     if (!requestEmail) return;
                     setIsRequestSubmitted(true);
                   }}
-                  className="space-y-3.5"
+                  className="space-y-3 xs:space-y-3.5"
                 >
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-slate-700 block">Platform or System Name</label>
@@ -728,7 +728,7 @@ export const ConnectorsGridSection: React.FC = () => {
                       placeholder="e.g. Wix, Dukaan, Salesforce, SAP, Odoo"
                       value={requestPlatform}
                       onChange={(e) => setRequestPlatform(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 shadow-2xs"
+                      className="w-full px-3 xs:px-3.5 py-2 xs:py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 shadow-2xs"
                     />
                   </div>
 
@@ -739,7 +739,7 @@ export const ConnectorsGridSection: React.FC = () => {
                       placeholder="https://yourstore.com"
                       value={requestUrl}
                       onChange={(e) => setRequestUrl(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 shadow-2xs"
+                      className="w-full px-3 xs:px-3.5 py-2 xs:py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 shadow-2xs"
                     />
                   </div>
 
@@ -748,7 +748,7 @@ export const ConnectorsGridSection: React.FC = () => {
                     <select
                       value={requestVolume}
                       onChange={(e) => setRequestVolume(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 shadow-2xs"
+                      className="w-full px-3 xs:px-3.5 py-2 xs:py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 shadow-2xs"
                     >
                       <option>100 – 1,000 orders/mo</option>
                       <option>1,000 – 5,000 orders/mo</option>
@@ -765,13 +765,13 @@ export const ConnectorsGridSection: React.FC = () => {
                       placeholder="founder@yourbrand.com"
                       value={requestEmail}
                       onChange={(e) => setRequestEmail(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 shadow-2xs"
+                      className="w-full px-3 xs:px-3.5 py-2 xs:py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 shadow-2xs"
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer mt-2"
+                    className="w-full py-2.5 xs:py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer mt-2"
                   >
                     <Send className="w-3.5 h-3.5" />
                     <span>Submit Integration Request</span>

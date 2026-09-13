@@ -43,22 +43,22 @@ export const PublicIntegrationsPage: React.FC = () => {
   return (
     <div className="text-slate-900 flex flex-col relative selection:bg-blue-500 selection:text-white">
       {/* Hero Section (White Theme, Consistent with Landing Page) */}
-      <section className="relative py-12 sm:py-16 px-6 sm:px-8 bg-gradient-to-b from-blue-50/40 via-white to-white border-b border-slate-200/80 overflow-hidden">
+      <section className="relative py-10 sm:py-16 px-3 xs:px-4 sm:px-8 lg:px-12 bg-gradient-to-b from-blue-50/40 via-white to-white border-b border-slate-200/80 overflow-hidden">
 
-        <div className="relative max-w-7xl mx-auto space-y-8 text-center z-10">
+        <div className="relative max-w-7xl mx-auto space-y-6 sm:space-y-8 text-center z-10">
           {/* Standardized Pill Chip Badge */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs"
+            className="inline-flex items-center gap-1.5 xs:gap-2 px-3 py-1 xs:px-3.5 xs:py-1.5 rounded-full bg-blue-50 text-blue-700 text-[10px] xs:text-xs font-extrabold border border-blue-200/80 shadow-xs max-w-full"
           >
-            <span className="flex h-2 w-2 relative">
+            <span className="flex h-2 w-2 relative shrink-0">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600" />
             </span>
-            <Globe className="w-3.5 h-3.5 text-blue-600 animate-spin" style={{ animationDuration: '10s' }} />
-            <span className="uppercase tracking-wider">Store Connectors • Developer REST API Engine</span>
+            <Globe className="w-3.5 h-3.5 text-blue-600 animate-spin shrink-0" style={{ animationDuration: '10s' }} />
+            <span className="uppercase tracking-wider truncate">Store Connectors • Developer REST API Engine</span>
           </motion.div>
 
           {/* Redesigned Premium Display Heading */}
@@ -66,10 +66,10 @@ export const PublicIntegrationsPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-2xl xs:text-3xl sm:text-5xl md:text-6xl font-black font-display tracking-tight leading-[1.22] sm:leading-[1.24] max-w-6xl mx-auto text-slate-950"
+            className="text-2xl xs:text-3xl sm:text-5xl md:text-6xl font-black font-display tracking-tight leading-[1.22] sm:leading-[1.24] max-w-6xl mx-auto text-slate-950 px-1 xs:px-2"
           >
             <span className="block pb-1 sm:pb-1.5 text-slate-950">Connect Any Storefront.</span>
-            <span className="inline-block mt-1 sm:mt-2 px-2 pb-2 sm:pb-3.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent sm:whitespace-nowrap">
+            <span className="inline-block mt-1 sm:mt-2 px-2 pb-2 sm:pb-3.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
               Automate Multi-Carrier Shipping in 60s.
             </span>
           </motion.h1>
@@ -79,7 +79,7 @@ export const PublicIntegrationsPage: React.FC = () => {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed font-medium"
+            className="text-xs xs:text-sm sm:text-base md:text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed font-medium px-1 xs:px-2"
           >
             1-click integrations for Shopify, WooCommerce, Amazon &amp; custom REST APIs. Auto-sync orders, generate carrier AWBs, and push live tracking links without writing code.
           </motion.p>
@@ -89,16 +89,16 @@ export const PublicIntegrationsPage: React.FC = () => {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex flex-wrap justify-center gap-4 pt-2"
+            className="flex flex-col xs:flex-row items-stretch xs:items-center justify-center gap-2.5 sm:gap-4 pt-2 w-full max-w-md mx-auto xs:max-w-none"
           >
-            <Link to="/register">
-              <Button size="lg" className="shadow-lg shadow-blue-500/20 bg-blue-600 hover:bg-blue-700 text-white font-extrabold" rightIcon={<ArrowRight className="w-5 h-5" />}>
+            <Link to="/register" className="w-full xs:w-auto">
+              <Button size="lg" className="w-full xs:w-auto shadow-lg shadow-blue-500/20 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs xs:text-sm" rightIcon={<ArrowRight className="w-4 h-4 xs:w-5 xs:h-5" />}>
                 Start Integration Free
               </Button>
             </Link>
-            <a href="#connectors">
-              <button className="inline-flex items-center justify-center font-extrabold rounded-xl transition-all duration-200 text-sm px-6 py-3 gap-2.5 bg-white border border-slate-200/90 text-slate-800 hover:bg-slate-50 hover:border-blue-300 shadow-xs cursor-pointer">
-                <Layers className="w-5 h-5 text-blue-600 shrink-0" />
+            <a href="#connectors" className="w-full xs:w-auto">
+              <button className="w-full xs:w-auto inline-flex items-center justify-center font-extrabold rounded-xl transition-all duration-200 text-xs xs:text-sm px-4 xs:px-6 py-3 gap-2 xs:gap-2.5 bg-white border border-slate-200/90 text-slate-800 hover:bg-slate-50 hover:border-blue-300 shadow-xs cursor-pointer">
+                <Layers className="w-4 h-4 xs:w-5 xs:h-5 text-blue-600 shrink-0" />
                 <span>Explore Connectors</span>
               </button>
             </a>
@@ -109,21 +109,21 @@ export const PublicIntegrationsPage: React.FC = () => {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="pt-6 border-t border-slate-200/80 flex flex-wrap items-center justify-center gap-3 sm:gap-5 text-xs font-mono text-slate-600 max-w-4xl mx-auto"
+            className="pt-5 sm:pt-6 border-t border-slate-200/80 flex flex-wrap items-center justify-center gap-2 xs:gap-2.5 sm:gap-4 text-[11px] xs:text-xs font-mono text-slate-600 max-w-4xl mx-auto"
           >
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-slate-200/90 shadow-2xs">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+            <div className="flex items-center gap-1.5 xs:gap-2 px-2.5 xs:px-3 py-1 xs:py-1.5 rounded-full bg-white border border-slate-200/90 shadow-2xs">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping shrink-0"></span>
               <span className="text-slate-900 font-bold">50+ Pre-built Connectors</span>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-slate-200/90 shadow-2xs">
+            <div className="flex items-center gap-1.5 xs:gap-2 px-2.5 xs:px-3 py-1 xs:py-1.5 rounded-full bg-white border border-slate-200/90 shadow-2xs">
               <span className="text-blue-600 font-bold">&lt;60s</span>
               <span>1-Click Pairing</span>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-slate-200/90 shadow-2xs">
+            <div className="flex items-center gap-1.5 xs:gap-2 px-2.5 xs:px-3 py-1 xs:py-1.5 rounded-full bg-white border border-slate-200/90 shadow-2xs">
               <span className="text-emerald-600 font-bold">99.99%</span>
               <span>Webhook Uptime SLA</span>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-slate-200/90 shadow-2xs">
+            <div className="flex items-center gap-1.5 xs:gap-2 px-2.5 xs:px-3 py-1 xs:py-1.5 rounded-full bg-white border border-slate-200/90 shadow-2xs">
               <span className="text-indigo-600 font-bold">Zero</span>
               <span>Code Setup Needed</span>
             </div>
@@ -134,7 +134,7 @@ export const PublicIntegrationsPage: React.FC = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.5 }}
-            className="pt-4 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 max-w-5xl mx-auto"
+            className="pt-3 sm:pt-4 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 max-w-5xl mx-auto"
           >
             {[
               { label: 'Store Connectors', href: '#connectors' },
@@ -145,7 +145,7 @@ export const PublicIntegrationsPage: React.FC = () => {
               <a
                 key={item.href}
                 href={item.href}
-                className="text-[11px] font-bold font-mono px-3 py-1.5 rounded-full bg-white/90 border border-slate-200/90 text-slate-600 hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50/60 transition-all shadow-2xs whitespace-nowrap"
+                className="text-[10px] xs:text-[11px] font-bold font-mono px-2.5 xs:px-3 py-1 xs:py-1.5 rounded-full bg-white/90 border border-slate-200/90 text-slate-600 hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50/60 transition-all shadow-2xs whitespace-nowrap"
               >
                 {item.label}
               </a>
@@ -164,43 +164,43 @@ export const PublicIntegrationsPage: React.FC = () => {
       <DeveloperApiSandbox />
 
       {/* Integration FAQs Section */}
-      <section id="faqs" className="py-8 sm:py-12 px-6 sm:px-8 max-w-7xl mx-auto w-full space-y-8 scroll-mt-20">
-        <div className="pt-6 border-t border-slate-200/80 space-y-8">
-          <div className="text-center space-y-3 max-w-5xl mx-auto">
+      <section id="faqs" className="py-8 sm:py-12 px-3 xs:px-4 sm:px-8 lg:px-12 max-w-7xl mx-auto w-full space-y-6 sm:space-y-8 scroll-mt-20">
+        <div className="pt-6 border-t border-slate-200/80 space-y-6 sm:space-y-8">
+          <div className="text-center space-y-3 sm:space-y-3.5 max-w-5xl mx-auto">
             <div className="inline-block">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
-                <span className="flex h-2 w-2 relative">
+              <div className="inline-flex items-center gap-1.5 xs:gap-2 px-3 py-1 xs:px-3.5 xs:py-1.5 rounded-full bg-blue-50 text-blue-700 text-[10px] xs:text-xs font-extrabold border border-blue-200/80 shadow-xs max-w-full">
+                <span className="flex h-2 w-2 relative shrink-0">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
                 </span>
-                <HelpCircle className="w-3.5 h-3.5 text-blue-600" />
-                <span className="uppercase tracking-wider">INTEGRATION FAQS • DEVELOPER HELP</span>
+                <HelpCircle className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                <span className="uppercase tracking-wider truncate">INTEGRATION FAQS • DEVELOPER HELP</span>
               </div>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
+            <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto px-1 xs:px-2">
               Integration &amp; API{' '}
               <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
                 Frequently Asked Questions
               </span>
             </h2>
 
-            <p className="text-sm sm:text-base text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
+            <p className="text-xs xs:text-sm sm:text-base text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto px-1 xs:px-2">
               Everything you need to know about connecting storefronts, webhook lifecycles, and REST API authentication.
             </p>
           </div>
 
           {/* 2-Column Responsive FAQ Grid (Zero Side Empty Space) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4 max-w-5xl mx-auto w-full pt-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 xs:gap-3.5 sm:gap-4 max-w-5xl mx-auto w-full pt-2">
             {integrationFaqs.map((faq, idx) => (
               <div 
                 key={idx} 
-                className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-2xs hover:border-blue-200 transition-colors flex flex-col justify-start"
+                className="bg-white p-3.5 xs:p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-2xs hover:border-blue-200 transition-colors flex flex-col justify-start"
               >
                 <button
                   type="button"
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                  className="w-full text-left flex items-start justify-between gap-3 font-bold text-slate-900 text-sm sm:text-base hover:text-blue-600 transition-colors cursor-pointer group"
+                  className="w-full text-left flex items-start justify-between gap-3 font-bold text-slate-900 text-xs xs:text-sm sm:text-base hover:text-blue-600 transition-colors cursor-pointer group"
                 >
                   <span className="group-hover:translate-x-0.5 transition-transform leading-snug">{faq.q}</span>
                   <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 mt-1 transition-transform duration-200 ${openFaq === idx ? 'rotate-180 text-blue-600' : ''}`} />
@@ -212,7 +212,7 @@ export const PublicIntegrationsPage: React.FC = () => {
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.2 }}
-                      className="pt-2.5 text-xs sm:text-sm text-slate-600 leading-relaxed font-medium"
+                      className="pt-2.5 text-xs sm:text-sm text-slate-600 leading-relaxed font-medium border-t border-slate-100 mt-2.5"
                     >
                       {faq.a}
                     </motion.div>

@@ -26,31 +26,31 @@ export const ComparisonSection: React.FC = () => {
   return (
     <section
       id="why-shipfaster"
-      className="pt-12 sm:pt-14 pb-20 px-4 sm:px-8 lg:px-12 bg-slate-50 border-b border-slate-200 overflow-hidden"
+      className="pt-12 sm:pt-14 pb-16 sm:pb-20 px-3 xs:px-4 sm:px-8 lg:px-12 bg-slate-50 border-b border-slate-200 overflow-hidden"
     >
-      <div className="max-w-7xl mx-auto space-y-12">
+      <div className="max-w-7xl mx-auto space-y-10 sm:space-y-12">
         {/* Header Block */}
         <motion.div 
           initial={{ opacity: 0, y: 25 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-50px' }}
           transition={{ duration: 0.5 }}
-          className="text-center space-y-3.5 max-w-5xl mx-auto"
+          className="text-center space-y-3.5 max-w-5xl mx-auto px-1 xs:px-2"
         >
           {/* Badge */}
           <div className="inline-block">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
-              <span className="flex h-2 w-2 relative">
+            <div className="inline-flex items-center gap-1.5 xs:gap-2 px-3 xs:px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-[10px] xs:text-xs font-extrabold border border-blue-200/80 shadow-xs max-w-full">
+              <span className="flex h-2 w-2 relative shrink-0">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
               </span>
-              <HelpCircle className="w-3.5 h-3.5 text-blue-600" />
-              <span className="uppercase tracking-wider">Why ShipFaster Logistic?</span>
+              <HelpCircle className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+              <span className="uppercase tracking-wider truncate">Why ShipFaster Logistic?</span>
             </div>
           </div>
 
           {/* Main Heading */}
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
+          <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
             Shipping Shouldn't Mean Managing{' '}
             <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
               Five Different Systems
@@ -64,7 +64,7 @@ export const ComparisonSection: React.FC = () => {
         </motion.div>
 
         {/* Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 lg:gap-8 items-stretch">
           {/* Left Card: Without ShipFaster */}
           <motion.div
             initial={{ opacity: 0, x: shouldReduceMotion ? 0 : -50 }}
@@ -75,24 +75,24 @@ export const ComparisonSection: React.FC = () => {
               boxShadow: '0 12px 30px -5px rgba(225, 29, 72, 0.1)',
               transition: { duration: 0.18 },
             }}
-            className="bg-rose-50/50 p-5 sm:p-7 lg:p-8 rounded-2xl sm:rounded-3xl border border-rose-200 shadow-sm space-y-6 flex flex-col justify-between"
+            className="bg-rose-50/50 p-4 xs:p-5 sm:p-7 lg:p-8 rounded-2xl sm:rounded-3xl border border-rose-200 shadow-sm space-y-6 flex flex-col justify-between"
           >
             <div className="space-y-6">
               {/* Card Header */}
               <div className="flex items-center gap-3 pb-4 border-b border-rose-200">
-                <div className="w-10 h-10 rounded-2xl bg-rose-100 border border-rose-200 flex items-center justify-center text-rose-600">
+                <div className="w-10 h-10 rounded-2xl bg-rose-100 border border-rose-200 flex items-center justify-center text-rose-600 shrink-0">
                   <XCircle className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-black text-slate-900 font-display">Without ShipFaster Logistic</h3>
-                  <span className="text-xs font-extrabold text-rose-600 uppercase tracking-widest">
+                  <h3 className="text-lg sm:text-xl font-black text-slate-900 font-display">Without ShipFaster Logistic</h3>
+                  <span className="text-[11px] xs:text-xs font-extrabold text-rose-600 uppercase tracking-widest">
                     Traditional Logistics Frustration
                   </span>
                 </div>
               </div>
 
               {/* List Items */}
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {withoutItems.map((item, idx) => (
                   <motion.div
                     key={idx}
@@ -105,10 +105,10 @@ export const ComparisonSection: React.FC = () => {
                       boxShadow: '0 4px 12px rgba(225, 29, 72, 0.08)',
                       transition: { duration: 0.18 },
                     }}
-                    className="flex items-start gap-3 p-3.5 rounded-xl bg-white/80 border border-rose-100 shadow-xs cursor-default"
+                    className="flex items-start gap-2.5 xs:gap-3 p-3 xs:p-3.5 rounded-xl bg-white/80 border border-rose-100 shadow-xs cursor-default"
                   >
                     <div className="shrink-0 mt-0.5">
-                      <XCircle className="w-5 h-5 text-rose-500" />
+                      <XCircle className="w-4 xs:w-5 h-4 xs:h-5 text-rose-500" />
                     </div>
                     <span className="text-xs font-bold text-slate-800 leading-snug">{item}</span>
                   </motion.div>
@@ -127,10 +127,10 @@ export const ComparisonSection: React.FC = () => {
               boxShadow: '0 25px 35px -5px rgba(16, 185, 129, 0.18), 0 10px 10px -5px rgba(16, 185, 129, 0.04)',
               transition: { duration: 0.18 },
             }}
-            className="bg-white p-5 sm:p-7 lg:p-8 rounded-2xl sm:rounded-3xl border-2 border-emerald-500 shadow-xl space-y-6 flex flex-col justify-between relative"
+            className="bg-white p-4 xs:p-5 sm:p-7 lg:p-8 rounded-2xl sm:rounded-3xl border-2 border-emerald-500 shadow-xl space-y-6 flex flex-col justify-between relative"
           >
             {/* Recommended Badge */}
-            <div className="absolute -top-3.5 right-6 px-3.5 py-1 rounded-full bg-emerald-600 text-white text-[10px] font-extrabold uppercase tracking-widest shadow-md z-10">
+            <div className="absolute -top-3.5 right-4 sm:right-6 px-3.5 py-1 rounded-full bg-emerald-600 text-white text-[10px] font-extrabold uppercase tracking-widest shadow-md z-10">
               Recommended Solution
             </div>
 

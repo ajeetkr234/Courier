@@ -8,10 +8,10 @@ import { ShipFasterLogo } from '../../components/ui/ShipFasterLogo';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const { login, isLoading } = useAuth();
+  const { login, isLoading, switchDemoRole } = useAuth();
 
-  const [email, setEmail] = useState('seller@apexwear.com');
-  const [password, setPassword] = useState('password123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,11 +28,10 @@ export const LoginPage: React.FC = () => {
   };
 
   const handleQuickDemoLogin = async (role: 'SELLER' | 'ADMIN') => {
+    switchDemoRole(role);
     if (role === 'ADMIN') {
-      await login('admin@platformlogistics.com');
       navigate('/admin');
     } else {
-      await login('seller@apexwear.com');
       navigate('/app/dashboard');
     }
   };

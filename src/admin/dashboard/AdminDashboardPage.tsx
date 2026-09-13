@@ -113,10 +113,10 @@ export const AdminDashboardPage: React.FC = () => {
     }
   };
 
-  const handleStatusChange = (orderId: string, newStatus: OrderStatus) => {
+  const handleStatusChange = async (orderId: string, newStatus: OrderStatus) => {
     setIsUpdatingStatus(true);
     try {
-      updateOrderStatus(orderId, newStatus);
+      await updateOrderStatus(orderId, newStatus);
       toast.success(`Order #${orderId} status updated to ${newStatus}`);
       if (inspectedOrder && inspectedOrder.id === orderId) {
         setInspectedOrder({ ...inspectedOrder, current_status: newStatus });

@@ -216,20 +216,12 @@ export async function bulkCreateOrdersInSupabase(
  * Update order status and log event in Supabase
  */
 export async function updateOrderStatusInSupabase(orderId: string, status: OrderStatus): Promise<void> {
-  try {
-    await supabase
-      .from('orders')
-      .update({ current_status: status, updated_at: new Date().toISOString() })
-      .eq('id', orderId);
-
-    await supabase.from('order_status_events').insert({
-      order_id: orderId,
-      status,
-      description: `Status updated to ${status}`,
-    });
-  } catch (err) {
-    console.error('Failed to update order status in Supabase:', err);
-  }
+  const { error } = await supabase.rpc('transition_order_status', {
+    p_order_id: orderId,
+    p_status: status,
+    p_description: `Status updated to ${status}`,
+  });
+  if (error) throw new Error(error.message);
 }
 
 /**

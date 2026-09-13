@@ -554,7 +554,7 @@ export const LandingPage: React.FC = () => {
     {
       name: 'Delhivery',
       logoSvg: (
-        <svg viewBox="0 0 140 40" className="h-8 sm:h-9 w-auto">
+        <svg viewBox="0 0 140 40" className="h-5 xs:h-6 sm:h-9 w-auto">
           <rect width="140" height="40" rx="8" fill="#E11D48" />
           <text x="70" y="26" textAnchor="middle" fill="#FFFFFF" fontFamily="system-ui, sans-serif" fontWeight="900" fontSize="17" letterSpacing="1">DELHIVERY</text>
         </svg>
@@ -564,7 +564,7 @@ export const LandingPage: React.FC = () => {
     {
       name: 'Blue Dart',
       logoSvg: (
-        <svg viewBox="0 0 140 40" className="h-8 sm:h-9 w-auto">
+        <svg viewBox="0 0 140 40" className="h-5 xs:h-6 sm:h-9 w-auto">
           <rect width="140" height="40" rx="8" fill="#1D4ED8" />
           <path d="M12 20 L22 12 L22 28 Z" fill="#FACC15" />
           <text x="76" y="26" textAnchor="middle" fill="#FFFFFF" fontFamily="system-ui, sans-serif" fontWeight="900" fontSize="15" letterSpacing="0.5">BLUE DART</text>
@@ -575,7 +575,7 @@ export const LandingPage: React.FC = () => {
     {
       name: 'DHL Express',
       logoSvg: (
-        <svg viewBox="0 0 110 40" className="h-8 sm:h-9 w-auto">
+        <svg viewBox="0 0 110 40" className="h-5 xs:h-6 sm:h-9 w-auto">
           <rect width="110" height="40" rx="8" fill="#FFCC00" />
           <line x1="8" y1="12" x2="30" y2="12" stroke="#D0021B" strokeWidth="3" />
           <line x1="8" y1="20" x2="25" y2="20" stroke="#D0021B" strokeWidth="3" />
@@ -588,7 +588,7 @@ export const LandingPage: React.FC = () => {
     {
       name: 'Xpressbees',
       logoSvg: (
-        <svg viewBox="0 0 145 40" className="h-8 sm:h-9 w-auto">
+        <svg viewBox="0 0 145 40" className="h-5 xs:h-6 sm:h-9 w-auto">
           <rect width="145" height="40" rx="8" fill="#F59E0B" />
           <path d="M14 10 L22 20 L16 20 L24 30 L16 22 L22 22 Z" fill="#090D16" />
           <text x="82" y="26" textAnchor="middle" fill="#090D16" fontFamily="system-ui, sans-serif" fontWeight="900" fontSize="14" letterSpacing="0.5">XPRESSBEES</text>
@@ -599,7 +599,7 @@ export const LandingPage: React.FC = () => {
     {
       name: 'Shadowfax',
       logoSvg: (
-        <svg viewBox="0 0 140 40" className="h-8 sm:h-9 w-auto">
+        <svg viewBox="0 0 140 40" className="h-5 xs:h-6 sm:h-9 w-auto">
           <rect width="140" height="40" rx="8" fill="#7C3AED" />
           <polygon points="14,20 26,12 22,20 26,28" fill="#FFFFFF" />
           <text x="80" y="26" textAnchor="middle" fill="#FFFFFF" fontFamily="system-ui, sans-serif" fontWeight="800" fontSize="15">shadowfax</text>
@@ -610,7 +610,7 @@ export const LandingPage: React.FC = () => {
     {
       name: 'DTDC',
       logoSvg: (
-        <svg viewBox="0 0 120 40" className="h-8 sm:h-9 w-auto">
+        <svg viewBox="0 0 120 40" className="h-5 xs:h-6 sm:h-9 w-auto">
           <rect width="120" height="40" rx="8" fill="#0284C7" />
           <circle cx="18" cy="20" r="9" fill="#EF4444" />
           <text x="68" y="27" textAnchor="middle" fill="#FFFFFF" fontFamily="Impact, Arial Black, sans-serif" fontWeight="900" fontSize="21" letterSpacing="1.5">DTDC</text>
@@ -621,7 +621,7 @@ export const LandingPage: React.FC = () => {
     {
       name: 'Ecom Express',
       logoSvg: (
-        <svg viewBox="0 0 145 40" className="h-8 sm:h-9 w-auto">
+        <svg viewBox="0 0 145 40" className="h-5 xs:h-6 sm:h-9 w-auto">
           <rect width="145" height="40" rx="8" fill="#059669" />
           <rect x="12" y="13" width="14" height="14" rx="3" fill="#FFFFFF" />
           <text x="82" y="26" textAnchor="middle" fill="#FFFFFF" fontFamily="system-ui, sans-serif" fontWeight="800" fontSize="14">ecom express</text>
@@ -632,7 +632,7 @@ export const LandingPage: React.FC = () => {
     {
       name: 'Amazon Shipping',
       logoSvg: (
-        <svg viewBox="0 0 155 40" className="h-8 sm:h-9 w-auto">
+        <svg viewBox="0 0 155 40" className="h-5 xs:h-6 sm:h-9 w-auto">
           <rect width="155" height="40" rx="8" fill="#1F2937" />
           <text x="77" y="23" textAnchor="middle" fill="#FFFFFF" fontFamily="system-ui, sans-serif" fontWeight="800" fontSize="13">amazon<tspan fill="#FF9900"> shipping</tspan></text>
           <path d="M 40 28 Q 77 35 115 28" stroke="#FF9900" strokeWidth="2.5" fill="none" strokeLinecap="round" />
@@ -643,7 +643,7 @@ export const LandingPage: React.FC = () => {
     {
       name: 'FedEx',
       logoSvg: (
-        <svg viewBox="0 0 120 40" className="h-8 sm:h-9 w-auto">
+        <svg viewBox="0 0 120 40" className="h-5 xs:h-6 sm:h-9 w-auto">
           <rect width="120" height="40" rx="8" fill="#1E1B4B" />
           <text x="60" y="28" textAnchor="middle" fontFamily="Impact, Arial Black, sans-serif" fontWeight="900" fontSize="24">
             <tspan fill="#6366F1">Fed</tspan><tspan fill="#F97316">Ex</tspan>
@@ -655,7 +655,7 @@ export const LandingPage: React.FC = () => {
     {
       name: 'Aramex',
       logoSvg: (
-        <svg viewBox="0 0 130 40" className="h-8 sm:h-9 w-auto">
+        <svg viewBox="0 0 130 40" className="h-5 xs:h-6 sm:h-9 w-auto">
           <rect width="130" height="40" rx="8" fill="#DC2626" />
           <text x="65" y="26" textAnchor="middle" fill="#FFFFFF" fontFamily="system-ui, sans-serif" fontWeight="900" fontSize="17" letterSpacing="0.5">aramex</text>
         </svg>
@@ -879,12 +879,12 @@ export const LandingPage: React.FC = () => {
   ];
 
   return (
-    <div className="text-slate-900 flex flex-col font-sans relative">
+    <div className="text-slate-900 flex flex-col font-sans relative pb-20 sm:pb-0">
       {/* Hero Section */}
-      <section className="relative pt-10 sm:pt-12 pb-8 sm:pb-12 px-4 sm:px-8 lg:px-12 bg-gradient-to-b from-blue-50/40 via-white to-white overflow-hidden">
+      <section className="relative pt-8 sm:pt-12 pb-8 sm:pb-12 px-3 xs:px-4 sm:px-8 lg:px-12 bg-gradient-to-b from-blue-50/40 via-white to-white overflow-hidden">
 
         <motion.div
-          className="w-full mx-auto text-center relative z-10 space-y-5 sm:space-y-6 px-4 sm:px-8 lg:px-12"
+          className="w-full mx-auto text-center relative z-10 space-y-4 sm:space-y-6 px-1 xs:px-2 sm:px-4"
           variants={heroContainerVariants}
           initial="hidden"
           animate="visible"
@@ -892,20 +892,20 @@ export const LandingPage: React.FC = () => {
           {/* 1. Badge (y: -15 -> 0, opacity: 0 -> 1, 0.5s) */}
           <motion.div
             variants={heroBadgeVariants}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs"
+            className="inline-flex items-center gap-1.5 xs:gap-2 px-2.5 xs:px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-[10px] xs:text-xs font-extrabold border border-blue-200/80 shadow-xs max-w-full"
           >
-            <span className="flex h-2 w-2 relative">
+            <span className="flex h-2 w-2 relative shrink-0">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
             </span>
-            <Truck className="w-3.5 h-3.5 text-blue-600" />
-            <span className="uppercase tracking-wider">Multi-Courier Shipping Aggregator</span>
+            <Truck className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+            <span className="uppercase tracking-wider truncate">Multi-Courier Shipping Aggregator</span>
           </motion.div>
 
           {/* 2. Responsive Animated Heading */}
           <motion.h1
             variants={heroHeadingWordContainerVariants}
-            className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-[72px] font-black text-slate-950 tracking-tight leading-tight lg:leading-none font-display max-w-[1350px] mx-auto flex items-center justify-center flex-wrap lg:flex-nowrap gap-x-2 sm:gap-x-3.5 py-1 px-2"
+            className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-[72px] font-black text-slate-950 tracking-tight leading-tight lg:leading-none font-display max-w-[1350px] mx-auto flex items-center justify-center flex-wrap lg:flex-nowrap gap-x-2 sm:gap-x-3.5 py-1 px-1 xs:px-2"
           >
             <motion.span variants={heroHeadingWordVariants} className="inline-block text-slate-950 shrink-0">
               Ship
@@ -924,7 +924,7 @@ export const LandingPage: React.FC = () => {
           {/* 3. Description (y: 20 -> 0, opacity: 0 -> 1, 0.5s) */}
           <motion.p
             variants={heroDescriptionVariants}
-            className="text-base sm:text-lg text-slate-600 max-w-[780px] mx-auto leading-relaxed font-medium mt-3 sm:mt-4"
+            className="text-sm sm:text-base md:text-lg text-slate-600 max-w-[780px] mx-auto leading-relaxed font-medium mt-3 sm:mt-4 px-2"
           >
             Compare live freight rates across Delhivery, Xpressbees, Shadowfax & DTDC. Book courier pickups, print shipping labels, track orders, and get faster Cash-on-Delivery payouts.
           </motion.p>
@@ -932,11 +932,11 @@ export const LandingPage: React.FC = () => {
           {/* 4. CTA Buttons (y: 20 -> 0, opacity: 0 -> 1, 0.5s) */}
           <motion.div
             variants={heroCtaVariants}
-            className="flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-4 mt-6 sm:mt-7"
+            className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mt-5 sm:mt-7 w-full max-w-md mx-auto sm:max-w-none"
           >
             <Link to="/register" className="w-full sm:w-auto">
               <motion.div whileHover={{ y: -2 }} transition={{ duration: 0.18 }}>
-                <Button size="lg" className="w-full sm:w-auto shadow-lg shadow-blue-500/20 group" rightIcon={<ArrowRight className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-1" />}>
+                <Button size="lg" className="w-full sm:w-auto shadow-lg shadow-blue-500/20 group justify-center" rightIcon={<ArrowRight className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-1" />}>
                   Book a Shipment
                 </Button>
               </motion.div>
@@ -946,7 +946,7 @@ export const LandingPage: React.FC = () => {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="w-full sm:w-auto hover:border-blue-300 transition-colors"
+                  className="w-full sm:w-auto hover:border-blue-300 transition-colors justify-center"
                   leftIcon={
                     <span className="w-6 h-6 rounded-lg bg-blue-600/10 border border-blue-600/20 flex items-center justify-center text-blue-600 shadow-2xs">
                       <Calculator className="w-3.5 h-3.5" />
@@ -979,7 +979,7 @@ export const LandingPage: React.FC = () => {
           <motion.div
             id="track"
             variants={heroTrackingVariants}
-            className="mt-6 sm:mt-7 max-w-[540px] mx-auto w-full"
+            className="mt-5 sm:mt-7 max-w-[540px] mx-auto w-full"
           >
             <form onSubmit={handleTrackSubmit} className="bg-white p-1.5 xs:p-2 rounded-2xl flex flex-col xs:flex-row items-stretch xs:items-center gap-2 shadow-lg shadow-slate-900/5 border border-slate-200/90 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all">
               <div className="flex items-center flex-1 min-w-0">
@@ -1004,9 +1004,9 @@ export const LandingPage: React.FC = () => {
           {/* 6. Product Visual Showcase */}
           <motion.div
             variants={heroProductVisualVariants}
-            className="mt-8 sm:mt-10 max-w-6xl mx-auto w-full"
+            className="mt-6 sm:mt-10 max-w-6xl mx-auto w-full"
           >
-            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden p-2 sm:p-2.5 bg-white border border-slate-200 shadow-xl shadow-slate-900/5">
+            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden p-1.5 xs:p-2 sm:p-2.5 bg-white border border-slate-200 shadow-xl shadow-slate-900/5">
               <div className="relative aspect-video w-full rounded-xl sm:rounded-2xl overflow-hidden bg-slate-950 flex items-center justify-center">
                 <video
                   src="/Create_a_premium_–_second.mp4"
@@ -1023,7 +1023,7 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* Minimalist Big-Logo Courier Network Showcase */}
-      <section className="relative py-14 sm:py-16 px-4 sm:px-8 lg:px-12 bg-[#090d16] border-y border-slate-800/80 overflow-hidden">
+      <section className="relative py-4 xs:py-5 sm:py-16 px-3 xs:px-4 sm:px-8 lg:px-12 bg-[#090d16] border-y border-slate-800/80 overflow-hidden">
         {/* Ambient Glows & Grid Mesh */}
         <div
           className="absolute inset-0 opacity-[0.03] pointer-events-none"
@@ -1034,22 +1034,22 @@ export const LandingPage: React.FC = () => {
         />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[280px] bg-blue-600/10 blur-[120px] rounded-full pointer-events-none" />
 
-        <div className="relative w-full mx-auto space-y-8">
+        <div className="relative w-full mx-auto space-y-2.5 xs:space-y-3.5 sm:space-y-8">
 
           {/* Header Block (Standardized Chip & Gradient Heading) */}
-          <div className="text-center space-y-3.5 max-w-4xl mx-auto">
+          <div className="text-center space-y-1.5 xs:space-y-2 sm:space-y-3.5 max-w-4xl mx-auto px-1 xs:px-2">
             <div className="inline-block">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 text-cyan-200 text-xs font-extrabold border border-white/20 shadow-xs backdrop-blur-md">
-                <span className="flex h-2 w-2 relative">
+              <div className="inline-flex items-center gap-1.5 xs:gap-2 px-2.5 xs:px-3.5 py-1 xs:py-1.5 rounded-full bg-white/10 text-cyan-200 text-[9px] xs:text-xs font-bold sm:font-extrabold border border-white/20 shadow-xs backdrop-blur-md max-w-full">
+                <span className="flex h-1.5 w-1.5 xs:h-2 xs:w-2 relative shrink-0">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-300 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-400"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 xs:h-2 xs:w-2 bg-cyan-400"></span>
                 </span>
-                <Truck className="w-3.5 h-3.5 text-cyan-300" />
-                <span className="uppercase tracking-wider text-white/95">12+ Integrated Courier Partners</span>
+                <Truck className="w-3 h-3 xs:w-3.5 xs:h-3.5 text-cyan-300 shrink-0" />
+                <span className="uppercase tracking-wider text-white/95 truncate">12+ Integrated Courier Partners</span>
               </div>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight font-display text-white leading-[1.18]">
+            <h2 className="text-lg xs:text-xl sm:text-4xl lg:text-5xl font-black tracking-tight font-display text-white leading-tight sm:leading-[1.18]">
               One Platform.{' '}
               <span className="bg-gradient-to-r from-cyan-200 via-sky-200 to-white bg-clip-text text-transparent">
                 Multiple Courier Networks.
@@ -1059,17 +1059,17 @@ export const LandingPage: React.FC = () => {
 
           {/* LARGE LOGO CONTINUOUS INFINITE MARQUEE */}
           <div
-            className="relative overflow-hidden py-4 max-w-full [mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)]"
+            className="relative overflow-hidden py-1.5 xs:py-2 sm:py-4 max-w-full [mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)]"
           >
             <div ref={marqueeTrackRef} className="animate-infinite-marquee flex items-center shrink-0">
               {/* Track Loop 1 */}
-              <div className="flex items-center gap-4 sm:gap-6 pr-4 sm:pr-6 shrink-0">
+              <div className="flex items-center gap-2.5 xs:gap-3 sm:gap-6 pr-2.5 xs:pr-3 sm:pr-6 shrink-0">
                 {courierNetworkCards.map((partner, idx) => (
                   <div
                     key={`track1-${idx}`}
                     onMouseEnter={handleMarqueeCardMouseEnter}
                     onMouseLeave={handleMarqueeCardMouseLeave}
-                    className={`group bg-slate-900/90 hover:bg-slate-800 p-3 sm:p-4 rounded-2xl border border-slate-800/90 shadow-2xl flex items-center justify-center ${partner.borderGlow} hover:-translate-y-1 transition-all duration-300 ease-out shrink-0 cursor-pointer`}
+                    className={`group bg-slate-900/90 hover:bg-slate-800 p-1.5 xs:p-2 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-800/90 shadow-lg sm:shadow-2xl flex items-center justify-center ${partner.borderGlow} hover:-translate-y-1 transition-all duration-300 ease-out shrink-0 cursor-pointer`}
                   >
                     <div className="transition-transform duration-300 group-hover:scale-105">
                       {partner.logoSvg}
@@ -1079,13 +1079,13 @@ export const LandingPage: React.FC = () => {
               </div>
 
               {/* Track Loop 2 */}
-              <div className="flex items-center gap-4 sm:gap-6 pr-4 sm:pr-6 shrink-0" aria-hidden="true">
+              <div className="flex items-center gap-2.5 xs:gap-3 sm:gap-6 pr-2.5 xs:pr-3 sm:pr-6 shrink-0" aria-hidden="true">
                 {courierNetworkCards.map((partner, idx) => (
                   <div
                     key={`track2-${idx}`}
                     onMouseEnter={handleMarqueeCardMouseEnter}
                     onMouseLeave={handleMarqueeCardMouseLeave}
-                    className={`group bg-slate-900/90 hover:bg-slate-800 p-3 sm:p-4 rounded-2xl border border-slate-800/90 shadow-2xl flex items-center justify-center ${partner.borderGlow} hover:-translate-y-1 transition-all duration-300 ease-out shrink-0 cursor-pointer`}
+                    className={`group bg-slate-900/90 hover:bg-slate-800 p-1.5 xs:p-2 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-800/90 shadow-lg sm:shadow-2xl flex items-center justify-center ${partner.borderGlow} hover:-translate-y-1 transition-all duration-300 ease-out shrink-0 cursor-pointer`}
                   >
                     <div className="transition-transform duration-300 group-hover:scale-105">
                       {partner.logoSvg}
@@ -1095,13 +1095,13 @@ export const LandingPage: React.FC = () => {
               </div>
 
               {/* Track Loop 3 */}
-              <div className="flex items-center gap-4 sm:gap-6 pr-4 sm:pr-6 shrink-0" aria-hidden="true">
+              <div className="flex items-center gap-2.5 xs:gap-3 sm:gap-6 pr-2.5 xs:pr-3 sm:pr-6 shrink-0" aria-hidden="true">
                 {courierNetworkCards.map((partner, idx) => (
                   <div
                     key={`track3-${idx}`}
                     onMouseEnter={handleMarqueeCardMouseEnter}
                     onMouseLeave={handleMarqueeCardMouseLeave}
-                    className={`group bg-slate-900/90 hover:bg-slate-800 p-3 sm:p-4 rounded-2xl border border-slate-800/90 shadow-2xl flex items-center justify-center ${partner.borderGlow} hover:-translate-y-1 transition-all duration-300 ease-out shrink-0 cursor-pointer`}
+                    className={`group bg-slate-900/90 hover:bg-slate-800 p-1.5 xs:p-2 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-800/90 shadow-lg sm:shadow-2xl flex items-center justify-center ${partner.borderGlow} hover:-translate-y-1 transition-all duration-300 ease-out shrink-0 cursor-pointer`}
                   >
                     <div className="transition-transform duration-300 group-hover:scale-105">
                       {partner.logoSvg}
@@ -1128,27 +1128,27 @@ export const LandingPage: React.FC = () => {
 
 
       {/* FREIGHT CALCULATOR SECTION (#calculator) */}
-      <section id="calculator" className="py-10 sm:py-12 px-4 sm:px-8 lg:px-12 bg-white border-b border-slate-200 overflow-hidden">
+      <section id="calculator" className="py-10 sm:py-12 px-3 xs:px-4 sm:px-8 lg:px-12 bg-white border-b border-slate-200 overflow-hidden">
         <div className="max-w-6xl mx-auto space-y-6 sm:space-y-8">
           <motion.div
             initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.5 }}
-            className="text-center space-y-3.5 max-w-5xl mx-auto"
+            className="text-center space-y-3.5 max-w-5xl mx-auto px-1 xs:px-2"
           >
             <div className="inline-block">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
-                <span className="flex h-2 w-2 relative">
+              <div className="inline-flex items-center gap-1.5 xs:gap-2 px-3 xs:px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-[10px] xs:text-xs font-extrabold border border-blue-200/80 shadow-xs max-w-full">
+                <span className="flex h-2 w-2 relative shrink-0">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
                 </span>
-                <Calculator className="w-3.5 h-3.5 text-blue-600" />
-                <span className="uppercase tracking-wider">Multi-Courier Freight Calculator • Rate Demo</span>
+                <Calculator className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                <span className="uppercase tracking-wider truncate">Multi-Courier Freight Calculator • Rate Demo</span>
               </div>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
+            <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
               Calculate Your Shipping Cost{' '}
               <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
                 Before You Ship
@@ -1160,7 +1160,7 @@ export const LandingPage: React.FC = () => {
             </p>
           </motion.div>
 
-          <div className="bg-slate-50 p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xl space-y-8">
+          <div className="bg-slate-50 p-4 xs:p-5 sm:p-7 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xl space-y-6 sm:space-y-8">
             <ServiceabilityCheckForm
               onSuccessContinue={(res) => {
                 if (res.pickupPincode) setCalcPickup(res.pickupPincode);
@@ -1169,8 +1169,8 @@ export const LandingPage: React.FC = () => {
               }}
             />
 
-            <form onSubmit={handleCalculatorSubmit} className="space-y-6 pt-4 border-t border-slate-200">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <form onSubmit={handleCalculatorSubmit} className="space-y-5 sm:space-y-6 pt-4 border-t border-slate-200">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
                 <div className="space-y-1.5">
                   <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-700">Pickup Pincode</label>
                   <input
@@ -1238,58 +1238,58 @@ export const LandingPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+              <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-5 gap-3 sm:gap-4">
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-700">Actual Weight (kg)</label>
+                  <label className="block text-[11px] xs:text-xs font-extrabold uppercase tracking-wider text-slate-700">Actual Wt (kg)</label>
                   <input
                     type="number"
                     step="0.1"
                     min="0.1"
                     value={actualWeight}
                     onChange={(e) => setActualWeight(e.target.value)}
-                    className="w-full glass-input rounded-xl px-3.5 py-2.5 text-sm font-mono font-bold"
+                    className="w-full glass-input rounded-xl px-3 py-2.5 text-sm font-mono font-bold"
                     required
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-700">Length (cm)</label>
+                  <label className="block text-[11px] xs:text-xs font-extrabold uppercase tracking-wider text-slate-700">Length (cm)</label>
                   <input
                     type="number"
                     min="1"
                     value={lengthCm}
                     onChange={(e) => setLengthCm(e.target.value)}
-                    className="w-full glass-input rounded-xl px-3.5 py-2.5 text-sm font-mono font-bold"
+                    className="w-full glass-input rounded-xl px-3 py-2.5 text-sm font-mono font-bold"
                     required
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-700">Width (cm)</label>
+                  <label className="block text-[11px] xs:text-xs font-extrabold uppercase tracking-wider text-slate-700">Width (cm)</label>
                   <input
                     type="number"
                     min="1"
                     value={widthCm}
                     onChange={(e) => setWidthCm(e.target.value)}
-                    className="w-full glass-input rounded-xl px-3.5 py-2.5 text-sm font-mono font-bold"
+                    className="w-full glass-input rounded-xl px-3 py-2.5 text-sm font-mono font-bold"
                     required
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-700">Height (cm)</label>
+                  <label className="block text-[11px] xs:text-xs font-extrabold uppercase tracking-wider text-slate-700">Height (cm)</label>
                   <input
                     type="number"
                     min="1"
                     value={heightCm}
                     onChange={(e) => setHeightCm(e.target.value)}
-                    className="w-full glass-input rounded-xl px-3.5 py-2.5 text-sm font-mono font-bold"
+                    className="w-full glass-input rounded-xl px-3 py-2.5 text-sm font-mono font-bold"
                     required
                   />
                 </div>
 
-                <div className="space-y-1.5 col-span-2 sm:col-span-1">
-                  <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-700">Product Value (₹)</label>
+                <div className="space-y-1.5 col-span-2 xs:col-span-3 sm:col-span-1">
+                  <label className="block text-[11px] xs:text-xs font-extrabold uppercase tracking-wider text-slate-700">Product Value (₹)</label>
                   <input
                     type="number"
                     min="1"
@@ -1327,7 +1327,7 @@ export const LandingPage: React.FC = () => {
               </Button>
             </form>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 rounded-2xl bg-blue-50/80 border border-blue-200 text-slate-900 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 p-3.5 sm:p-4 rounded-2xl bg-blue-50/80 border border-blue-200 text-slate-900 text-xs">
               <div className="flex items-center gap-3">
                 <Scale className="w-5 h-5 text-blue-600 shrink-0" />
                 <div>
@@ -1354,12 +1354,12 @@ export const LandingPage: React.FC = () => {
             </div>
 
             {!user ? (
-              <div className="p-6 rounded-2xl bg-blue-50/70 border border-blue-200 text-center space-y-4">
+              <div className="p-4 xs:p-6 rounded-2xl bg-blue-50/70 border border-blue-200 text-center space-y-4">
                 <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center mx-auto shadow-xs">
                   <Lock className="w-6 h-6" />
                 </div>
                 <div className="space-y-1">
-                  <h4 className="text-lg font-black text-slate-900 font-display">Sign In or Register to Unlock Live Rates</h4>
+                  <h4 className="text-base sm:text-lg font-black text-slate-900 font-display">Sign In or Register to Unlock Live Rates</h4>
                   <p className="text-xs text-slate-600 max-w-md mx-auto font-medium">
                     Compare live courier rates across Delhivery, Xpressbees, Ecom Express &amp; Shadowfax for route <span className="font-mono font-bold text-slate-900">{calcPickup} &rarr; {calcDelivery}</span> ({calculatedChargeable} kg chargeable weight).
                   </p>
@@ -1371,12 +1371,12 @@ export const LandingPage: React.FC = () => {
                       toast.info('Please sign in or create an account to compare live courier rates.');
                       navigate('/login');
                     }}
-                    className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md transition-all inline-flex items-center gap-2"
+                    className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md transition-all inline-flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <Lock className="w-4 h-4" /> Compare Live Rates Now
                   </button>
-                  <Link to="/register">
-                    <Button variant="outline" size="sm" className="text-xs font-bold">
+                  <Link to="/register" className="w-full sm:w-auto">
+                    <Button variant="outline" size="sm" className="w-full sm:w-auto text-xs font-bold justify-center">
                       Create Free Account &rarr;
                     </Button>
                   </Link>
@@ -1389,8 +1389,8 @@ export const LandingPage: React.FC = () => {
                   <span className="text-[10px] font-mono text-slate-400">* Live Carrier Card Estimates</span>
                 </div>
 
-                <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm bg-white">
-                  <table className="w-full text-left text-xs">
+                <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm bg-white -mx-1 xs:mx-0">
+                  <table className="w-full min-w-[660px] text-left text-xs">
                     <thead className="bg-slate-50 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider">
                       <tr>
                         <th className="p-4">Courier</th>
@@ -1445,27 +1445,27 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* PRICING PLANS SECTION (#pricing) */}
-      <section id="pricing" className="py-10 sm:py-12 px-4 sm:px-8 lg:px-12 bg-slate-50 border-b border-slate-200 overflow-hidden">
+      <section id="pricing" className="py-10 sm:py-12 px-3 xs:px-4 sm:px-8 lg:px-12 bg-slate-50 border-b border-slate-200 overflow-hidden">
         <div className="max-w-6xl mx-auto space-y-6 sm:space-y-8">
           <motion.div
             initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.5 }}
-            className="text-center space-y-3.5 max-w-5xl mx-auto"
+            className="text-center space-y-3.5 max-w-5xl mx-auto px-1 xs:px-2"
           >
             <div className="inline-block">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
-                <span className="flex h-2 w-2 relative">
+              <div className="inline-flex items-center gap-1.5 xs:gap-2 px-3 xs:px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-[10px] xs:text-xs font-extrabold border border-blue-200/80 shadow-xs max-w-full">
+                <span className="flex h-2 w-2 relative shrink-0">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
                 </span>
-                <Tag className="w-3.5 h-3.5 text-blue-600" />
-                <span className="uppercase tracking-wider">Transparent Pricing Plans</span>
+                <Tag className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                <span className="uppercase tracking-wider truncate">Transparent Pricing Plans</span>
               </div>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
+            <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
               Simple, Predictable{' '}
               <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
                 Logistics Pricing
@@ -1485,7 +1485,7 @@ export const LandingPage: React.FC = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.1 }}
               whileHover={{ y: -6, scale: 1.015 }}
-              className="bg-white p-5 sm:p-7 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm hover:border-blue-300 hover:shadow-xl flex flex-col justify-between space-y-6 transition-all duration-300 group"
+              className="bg-white p-4 xs:p-5 sm:p-7 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm hover:border-blue-300 hover:shadow-xl flex flex-col justify-between space-y-6 transition-all duration-300 group"
             >
               <div className="space-y-6">
                 <div>
@@ -1530,9 +1530,9 @@ export const LandingPage: React.FC = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
               whileHover={{ y: -6, scale: 1.015 }}
-              className="bg-white p-5 sm:p-7 lg:p-8 rounded-2xl sm:rounded-3xl border-2 border-blue-600 shadow-2xl flex flex-col justify-between space-y-6 relative z-10 group"
+              className="bg-white p-4 xs:p-5 sm:p-7 lg:p-8 rounded-2xl sm:rounded-3xl border-2 border-blue-600 shadow-2xl flex flex-col justify-between space-y-6 relative z-10 group"
             >
-              <div className="absolute -top-3.5 right-6 px-3.5 py-1 rounded-full bg-blue-600 text-white text-[10px] font-extrabold uppercase tracking-widest shadow-md z-20">
+              <div className="absolute -top-3.5 right-4 sm:right-6 px-3.5 py-1 rounded-full bg-blue-600 text-white text-[10px] font-extrabold uppercase tracking-widest shadow-md z-20">
                 RECOMMENDED
               </div>
 
@@ -1583,7 +1583,7 @@ export const LandingPage: React.FC = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.3 }}
               whileHover={{ y: -6, scale: 1.015 }}
-              className="bg-white p-5 sm:p-7 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm hover:border-blue-300 hover:shadow-xl flex flex-col justify-between space-y-6 transition-all duration-300 group"
+              className="bg-white p-4 xs:p-5 sm:p-7 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm hover:border-blue-300 hover:shadow-xl flex flex-col justify-between space-y-6 transition-all duration-300 group"
             >
               <div className="space-y-6">
                 <div>
@@ -1633,29 +1633,29 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* Recover More Orders. Reduce RTO. Section (Upgraded Fantastic Design with Motion) */}
-      <section id="ndr-recovery" className="py-20 px-4 sm:px-8 lg:px-12 bg-slate-950 text-white border-b border-slate-800 overflow-hidden relative">
+      <section id="ndr-recovery" className="py-14 sm:py-20 px-3 xs:px-4 sm:px-8 lg:px-12 bg-slate-950 text-white border-b border-slate-800 overflow-hidden relative">
 
-        <div className="relative max-w-6xl mx-auto space-y-16">
+        <div className="relative max-w-6xl mx-auto space-y-12 sm:space-y-16">
           {/* Header Block */}
           <motion.div
             initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.5 }}
-            className="text-center space-y-3.5 max-w-5xl mx-auto"
+            className="text-center space-y-3.5 max-w-5xl mx-auto px-1 xs:px-2"
           >
             <div className="inline-block">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 text-cyan-200 text-xs font-extrabold border border-white/20 shadow-xs backdrop-blur-md">
-                <span className="flex h-2 w-2 relative">
+              <div className="inline-flex items-center gap-1.5 xs:gap-2 px-3 xs:px-3.5 py-1.5 rounded-full bg-white/10 text-cyan-200 text-[10px] xs:text-xs font-extrabold border border-white/20 shadow-xs backdrop-blur-md max-w-full">
+                <span className="flex h-2 w-2 relative shrink-0">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-300 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-400"></span>
                 </span>
-                <Zap className="w-3.5 h-3.5 text-cyan-300" />
-                <span className="uppercase tracking-wider text-white/95">NDR &amp; RTO Recovery Hub</span>
+                <Zap className="w-3.5 h-3.5 text-cyan-300 shrink-0" />
+                <span className="uppercase tracking-wider text-white/95 truncate">NDR &amp; RTO Recovery Hub</span>
               </div>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
+            <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-black text-white font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
               Recover More Orders,{' '}
               <span className="bg-gradient-to-r from-cyan-200 via-sky-200 to-white bg-clip-text text-transparent">
                 Reduce RTO Costs
@@ -1673,7 +1673,7 @@ export const LandingPage: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="bg-slate-900/90 p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-[0_0_50px_rgba(15,23,42,0.6)] space-y-6 relative overflow-hidden backdrop-blur-md"
+            className="bg-slate-900/90 p-4 xs:p-5 sm:p-7 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800 shadow-[0_0_50px_rgba(15,23,42,0.6)] space-y-6 relative overflow-hidden backdrop-blur-md"
           >
             {/* Top Pipeline Bar */}
             <div className="flex items-center justify-between">
@@ -1687,7 +1687,7 @@ export const LandingPage: React.FC = () => {
             </div>
 
             {/* Grid of Steps */}
-            <div className="grid grid-cols-2 md:grid-cols-6 gap-3 sm:gap-4 items-stretch relative">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3.5 lg:gap-4 items-stretch relative">
               {ndrWorkflowSteps.map((step, idx) => (
                 <motion.div
                   key={idx}
@@ -1696,7 +1696,7 @@ export const LandingPage: React.FC = () => {
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: 0.15 + idx * 0.08 }}
                   whileHover={{ y: -5, scale: 1.02 }}
-                  className="bg-slate-950/90 p-4 rounded-2xl border border-slate-800/80 hover:border-slate-700 text-center space-y-3 flex flex-col items-center justify-between group cursor-pointer shadow-md hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300 relative"
+                  className="bg-slate-950/90 p-3.5 xs:p-4 rounded-2xl border border-slate-800/80 hover:border-slate-700 text-center space-y-2.5 xs:space-y-3 flex flex-col items-center justify-between group cursor-pointer shadow-md hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300 relative"
                 >
                   {/* Step Badge */}
                   <span className="text-[9px] font-mono font-extrabold text-slate-500 uppercase tracking-widest">
@@ -1704,12 +1704,12 @@ export const LandingPage: React.FC = () => {
                   </span>
 
                   {/* Icon Container */}
-                  <div className="w-11 h-11 rounded-2xl bg-slate-900/90 border border-slate-800 flex items-center justify-center shadow-md group-hover:scale-110 group-hover:border-blue-500/40 transition-all duration-300">
+                  <div className="w-10 h-10 xs:w-11 xs:h-11 rounded-2xl bg-slate-900/90 border border-slate-800 flex items-center justify-center shadow-md group-hover:scale-110 group-hover:border-blue-500/40 transition-all duration-300">
                     {step.icon}
                   </div>
 
                   {/* Label */}
-                  <span className="text-xs font-bold text-slate-200 group-hover:text-white transition-colors">
+                  <span className="text-[11px] xs:text-xs font-bold text-slate-200 group-hover:text-white transition-colors">
                     {step.label}
                   </span>
                 </motion.div>
@@ -1718,14 +1718,14 @@ export const LandingPage: React.FC = () => {
           </motion.div>
 
           {/* Action Center & Key Features Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-stretch">
             {/* Left Card: NDR Action Center Performance */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="lg:col-span-7 bg-slate-950 p-6 sm:p-8 rounded-3xl border border-slate-800/90 shadow-2xl space-y-6 flex flex-col justify-between relative overflow-hidden backdrop-blur-md"
+              className="lg:col-span-7 bg-slate-950 p-4 xs:p-5 sm:p-7 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800/90 shadow-2xl space-y-6 flex flex-col justify-between relative overflow-hidden backdrop-blur-md"
             >
               <div className="flex items-center justify-between pb-4 border-b border-slate-800/80">
                 <div>
@@ -1737,45 +1737,45 @@ export const LandingPage: React.FC = () => {
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-3.5">
                 <motion.div
                   whileHover={{ scale: 1.03 }}
-                  className="p-4 rounded-2xl bg-slate-900/90 border border-rose-500/20 space-y-1 shadow-[0_0_15px_rgba(244,63,94,0.05)] transition-all"
+                  className="p-3.5 xs:p-4 rounded-2xl bg-slate-900/90 border border-rose-500/20 space-y-1 shadow-[0_0_15px_rgba(244,63,94,0.05)] transition-all"
                 >
                   <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">NDR Orders</span>
-                  <span className="block text-xl sm:text-2xl font-black text-rose-400 font-display">1,248</span>
+                  <span className="block text-lg xs:text-xl sm:text-2xl font-black text-rose-400 font-display">1,248</span>
                 </motion.div>
 
                 <motion.div
                   whileHover={{ scale: 1.03 }}
-                  className="p-4 rounded-2xl bg-slate-900/90 border border-blue-500/20 space-y-1 shadow-[0_0_15px_rgba(59,130,246,0.05)] transition-all"
+                  className="p-3.5 xs:p-4 rounded-2xl bg-slate-900/90 border border-blue-500/20 space-y-1 shadow-[0_0_15px_rgba(59,130,246,0.05)] transition-all"
                 >
                   <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Contacted</span>
-                  <span className="block text-xl sm:text-2xl font-black text-blue-400 font-display">1,180</span>
+                  <span className="block text-lg xs:text-xl sm:text-2xl font-black text-blue-400 font-display">1,180</span>
                 </motion.div>
 
                 <motion.div
                   whileHover={{ scale: 1.03 }}
-                  className="p-4 rounded-2xl bg-slate-900/90 border border-purple-500/20 space-y-1 shadow-[0_0_15px_rgba(168,85,247,0.05)] transition-all"
+                  className="p-3.5 xs:p-4 rounded-2xl bg-slate-900/90 border border-purple-500/20 space-y-1 shadow-[0_0_15px_rgba(168,85,247,0.05)] transition-all"
                 >
                   <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Confirmed</span>
-                  <span className="block text-xl sm:text-2xl font-black text-purple-400 font-display">945</span>
+                  <span className="block text-lg xs:text-xl sm:text-2xl font-black text-purple-400 font-display">945</span>
                 </motion.div>
 
                 <motion.div
                   whileHover={{ scale: 1.03 }}
-                  className="p-4 rounded-2xl bg-slate-900/90 border border-amber-500/20 space-y-1 shadow-[0_0_15px_rgba(245,158,11,0.05)] transition-all"
+                  className="p-3.5 xs:p-4 rounded-2xl bg-slate-900/90 border border-amber-500/20 space-y-1 shadow-[0_0_15px_rgba(245,158,11,0.05)] transition-all"
                 >
                   <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Reattempts</span>
-                  <span className="block text-xl sm:text-2xl font-black text-amber-400 font-display">912</span>
+                  <span className="block text-lg xs:text-xl sm:text-2xl font-black text-amber-400 font-display">912</span>
                 </motion.div>
 
                 <motion.div
                   whileHover={{ scale: 1.02 }}
-                  className="p-4.5 rounded-2xl bg-slate-900/90 border border-emerald-500/30 col-span-2 sm:col-span-2 space-y-1 shadow-[0_0_20px_rgba(16,185,129,0.1)] transition-all"
+                  className="p-3.5 xs:p-4.5 rounded-2xl bg-slate-900/90 border border-emerald-500/30 col-span-2 sm:col-span-2 space-y-1 shadow-[0_0_20px_rgba(16,185,129,0.1)] transition-all"
                 >
                   <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Recovered Deliveries</span>
-                  <span className="block text-2xl font-black text-emerald-400 font-display">840 Successful</span>
+                  <span className="block text-xl xs:text-2xl font-black text-emerald-400 font-display">840 Successful</span>
                 </motion.div>
               </div>
             </motion.div>
@@ -1820,32 +1820,32 @@ export const LandingPage: React.FC = () => {
       <section
         ref={trackingSectionRef}
         id="unified-tracking"
-        className="py-10 sm:py-12 px-4 sm:px-8 lg:px-12 bg-slate-50 border-b border-slate-200 overflow-hidden relative"
+        className="py-10 sm:py-12 px-3 xs:px-4 sm:px-8 lg:px-12 bg-slate-50 border-b border-slate-200 overflow-hidden relative"
       >
 
-        <div className="relative w-full mx-auto space-y-8 sm:space-y-10">
+        <div className="relative w-full mx-auto space-y-6 sm:space-y-10">
           {/* Header Block */}
           <motion.div
             initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.5 }}
-            className="text-center space-y-3.5 max-w-5xl mx-auto"
+            className="text-center space-y-3.5 max-w-5xl mx-auto px-1 xs:px-2"
           >
             {/* Badge */}
             <div className="inline-block">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
-                <span className="flex h-2 w-2 relative">
+              <div className="inline-flex items-center gap-1.5 xs:gap-2 px-3 xs:px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-[10px] xs:text-xs font-extrabold border border-blue-200/80 shadow-xs max-w-full">
+                <span className="flex h-2 w-2 relative shrink-0">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
                 </span>
-                <Navigation className="w-3.5 h-3.5 text-blue-600" />
-                <span className="uppercase tracking-wider">Unified Courier Tracking Engine</span>
+                <Navigation className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                <span className="uppercase tracking-wider truncate">Unified Courier Tracking Engine</span>
               </div>
             </div>
 
             {/* Heading */}
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight font-display text-slate-900 leading-[1.18] max-w-4xl mx-auto">
+            <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight font-display text-slate-900 leading-[1.18] max-w-4xl mx-auto">
               One Tracking Experience{' '}
               <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
                 for Every Courier
@@ -1859,7 +1859,7 @@ export const LandingPage: React.FC = () => {
           </motion.div>
 
           {/* Product Showcase (Left Panel, Center Connection, Right Panel) */}
-          <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-stretch max-w-6xl mx-auto">
+          <div className="relative grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 items-stretch max-w-6xl mx-auto">
             {/* LEFT PANEL: Courier Operations Dashboard */}
             <motion.div
               initial={{ opacity: 0, x: -40 }}
@@ -1867,7 +1867,7 @@ export const LandingPage: React.FC = () => {
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.6, delay: 0.15 }}
               whileHover={{ y: -3 }}
-              className="lg:col-span-7 bg-slate-900 text-white p-6 sm:p-8 rounded-3xl border border-slate-800/90 shadow-2xl shadow-slate-900/10 space-y-6 flex flex-col justify-between relative overflow-hidden group transition-all duration-300"
+              className="lg:col-span-7 bg-slate-900 text-white p-4 xs:p-5 sm:p-7 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800/90 shadow-2xl shadow-slate-900/10 space-y-6 flex flex-col justify-between relative overflow-hidden group transition-all duration-300"
             >
               <div className="space-y-6">
                 {/* Header Bar */}
@@ -1883,7 +1883,7 @@ export const LandingPage: React.FC = () => {
                 </div>
 
                 {/* Location & Delivery Info Grid */}
-                <div className="grid grid-cols-2 gap-3.5 text-xs font-medium">
+                <div className="grid grid-cols-1 xs:grid-cols-2 gap-2.5 xs:gap-3.5 text-xs font-medium">
                   <div className="p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700/80 space-y-1">
                     <span className="block text-[10px] text-slate-400 uppercase font-bold tracking-wider">Current Location</span>
                     <span className="block text-slate-100 font-bold truncate">Gurugram Hub (Haryana)</span>
@@ -1951,18 +1951,18 @@ export const LandingPage: React.FC = () => {
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.6, delay: 0.2 }}
               whileHover={{ y: -3 }}
-              className="lg:col-span-5 bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/90 shadow-xl space-y-6 flex flex-col justify-between group transition-all duration-300"
+              className="lg:col-span-5 bg-white p-4 xs:p-5 sm:p-7 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-xl space-y-6 flex flex-col justify-between group transition-all duration-300"
             >
               <div className="space-y-6">
                 {/* Brand Header */}
                 <div className="flex items-center justify-between pb-4 border-b border-slate-100">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8.5 h-8.5 rounded-xl bg-blue-600 text-white font-black text-xs flex items-center justify-center font-display shadow-md">
+                    <div className="w-8.5 h-8.5 rounded-xl bg-blue-600 text-white font-black text-xs flex items-center justify-center font-display shadow-md shrink-0">
                       FL
                     </div>
-                    <span className="text-sm font-black text-slate-900 font-display">ShipFaster Logistic Merchant Store</span>
+                    <span className="text-sm font-black text-slate-900 font-display truncate">ShipFaster Logistic Merchant Store</span>
                   </div>
-                  <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+                  <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 shrink-0">
                     Branded Page
                   </span>
                 </div>
@@ -1973,15 +1973,15 @@ export const LandingPage: React.FC = () => {
                   whileInView={{ opacity: 1, scale: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.35 }}
-                  className="bg-blue-50/70 p-5 rounded-2xl border border-blue-100/80 text-center space-y-2 shadow-xs"
+                  className="bg-blue-50/70 p-4 xs:p-5 rounded-2xl border border-blue-100/80 text-center space-y-2 shadow-xs"
                 >
                   <Package className="w-8 h-8 text-blue-600 mx-auto transition-transform duration-300 group-hover:scale-110" />
-                  <h4 className="text-lg font-black text-slate-900 font-display">Your order is on the way!</h4>
+                  <h4 className="text-base xs:text-lg font-black text-slate-900 font-display">Your order is on the way!</h4>
                   <p className="text-xs text-slate-600 font-medium">Out for Delivery with last-mile agent</p>
                 </motion.div>
 
                 {/* Delivery Time Info */}
-                <div className="p-4 bg-slate-50/80 rounded-2xl border border-slate-200/80 flex items-center justify-between text-xs">
+                <div className="p-3.5 xs:p-4 bg-slate-50/80 rounded-2xl border border-slate-200/80 flex items-center justify-between text-xs">
                   <span className="font-bold text-slate-600">Expected Delivery</span>
                   <span className="font-black text-blue-600 font-display">Tomorrow by 5 PM</span>
                 </div>
@@ -2001,29 +2001,29 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* Bring COD, Settlements & Billing Into One View Section (3rd Mockup Design Upgrade) */}
-      <section id="finance-suite" className="py-20 sm:py-24 px-4 sm:px-8 lg:px-12 bg-slate-50 border-b border-slate-200 overflow-hidden relative">
+      <section id="finance-suite" className="py-14 sm:py-24 px-3 xs:px-4 sm:px-8 lg:px-12 bg-slate-50 border-b border-slate-200 overflow-hidden relative">
 
-        <div className="relative max-w-6xl mx-auto space-y-12 sm:space-y-16">
+        <div className="relative max-w-6xl mx-auto space-y-10 sm:space-y-16">
           {/* Header Block */}
           <motion.div
             initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.5 }}
-            className="text-center space-y-3.5 max-w-5xl mx-auto"
+            className="text-center space-y-3.5 max-w-5xl mx-auto px-1 xs:px-2"
           >
             <div className="inline-block">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
-                <span className="flex h-2 w-2 relative">
+              <div className="inline-flex items-center gap-1.5 xs:gap-2 px-3 xs:px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-[10px] xs:text-xs font-extrabold border border-blue-200/80 shadow-xs max-w-full">
+                <span className="flex h-2 w-2 relative shrink-0">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
                 </span>
-                <Wallet className="w-3.5 h-3.5 text-blue-600" />
-                <span className="uppercase tracking-wider">Financial Operations &amp; COD Suite</span>
+                <Wallet className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                <span className="uppercase tracking-wider truncate">Financial Operations &amp; COD Suite</span>
               </div>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
+            <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
               Bring COD, Settlements &amp; Billing{' '}
               <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
                 Into One View
@@ -2041,7 +2041,7 @@ export const LandingPage: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="bg-white py-8 sm:py-10 rounded-3xl border border-slate-200/90 shadow-xl space-y-8 relative overflow-hidden backdrop-blur-xs"
+            className="bg-white py-6 sm:py-10 rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-xl space-y-6 sm:space-y-8 relative overflow-hidden backdrop-blur-xs"
           >
             {/* Background Light Beam Accents */}
             <div className="absolute -top-24 -left-24 w-72 h-72 bg-blue-100/50 rounded-full blur-3xl pointer-events-none" />
@@ -2170,7 +2170,7 @@ export const LandingPage: React.FC = () => {
           </motion.div>
 
           {/* BOTTOM GRID: Merchant Financial Ledger (Left) & Reconciliation Suite (Right) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-stretch">
             {/* LEFT CARD: Merchant Financial Ledger & Trend Chart */}
             <motion.div
               initial={{ opacity: 0, x: -40 }}
@@ -2178,13 +2178,13 @@ export const LandingPage: React.FC = () => {
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.6, delay: 0.2 }}
               whileHover={{ y: -3 }}
-              className="lg:col-span-7 bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/90 shadow-xl space-y-6 flex flex-col justify-between transition-all duration-300"
+              className="lg:col-span-7 bg-white p-4 xs:p-5 sm:p-7 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-xl space-y-6 flex flex-col justify-between transition-all duration-300"
             >
               <div className="space-y-6">
                 {/* Ledger Header */}
                 <div className="flex items-center justify-between pb-4 border-b border-slate-100">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-blue-100/80 border border-blue-200/80 flex items-center justify-center text-blue-600 shadow-xs">
+                    <div className="w-10 h-10 rounded-2xl bg-blue-100/80 border border-blue-200/80 flex items-center justify-center text-blue-600 shadow-xs shrink-0">
                       <BarChart3 className="w-5 h-5 text-blue-600" />
                     </div>
                     <div>
@@ -2192,7 +2192,7 @@ export const LandingPage: React.FC = () => {
                       <span className="text-[10px] font-mono text-slate-400">* Demo Dashboard Metrics • Financial Reconciliation Preview</span>
                     </div>
                   </div>
-                  <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-extrabold border border-emerald-200 flex items-center gap-1.5 shadow-xs">
+                  <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-extrabold border border-emerald-200 flex items-center gap-1.5 shadow-xs shrink-0">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> Wallet Active
                   </span>
                 </div>
@@ -2370,7 +2370,7 @@ export const LandingPage: React.FC = () => {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4"
           >
-            <div className="p-4.5 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex items-center gap-3.5 hover:border-blue-300 transition-all">
+            <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex items-center gap-3.5 hover:border-blue-300 transition-all">
               <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-100">
                 <ShieldCheck className="w-5 h-5 text-blue-600" />
               </div>
@@ -2380,7 +2380,7 @@ export const LandingPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="p-4.5 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex items-center gap-3.5 hover:border-blue-300 transition-all">
+            <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex items-center gap-3.5 hover:border-blue-300 transition-all">
               <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-100">
                 <Clock className="w-5 h-5 text-blue-600" />
               </div>
@@ -2390,7 +2390,7 @@ export const LandingPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="p-4.5 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex items-center gap-3.5 hover:border-blue-300 transition-all">
+            <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex items-center gap-3.5 hover:border-blue-300 transition-all">
               <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-100">
                 <Lock className="w-5 h-5 text-blue-600" />
               </div>
@@ -2400,7 +2400,7 @@ export const LandingPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="p-4.5 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex items-center gap-3.5 hover:border-blue-300 transition-all">
+            <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex items-center gap-3.5 hover:border-blue-300 transition-all">
               <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-100">
                 <Eye className="w-5 h-5 text-blue-600" />
               </div>
@@ -2416,21 +2416,21 @@ export const LandingPage: React.FC = () => {
 
 
       {/* Talk to Our Logistics Experts / Book a Demo Section (#contact) */}
-      <section id="contact" className="py-10 sm:py-12 px-4 sm:px-8 lg:px-12 bg-slate-50 border-b border-slate-200 overflow-hidden">
+      <section id="contact" className="py-10 sm:py-12 px-3 xs:px-4 sm:px-8 lg:px-12 bg-slate-50 border-b border-slate-200 overflow-hidden">
         <div className="w-full mx-auto space-y-6 sm:space-y-8">
-          <div className="text-center space-y-3.5 max-w-5xl mx-auto">
+          <div className="text-center space-y-3.5 max-w-5xl mx-auto px-1 xs:px-2">
             <div className="inline-block">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
-                <span className="flex h-2 w-2 relative">
+              <div className="inline-flex items-center gap-1.5 xs:gap-2 px-3 xs:px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-[10px] xs:text-xs font-extrabold border border-blue-200/80 shadow-xs max-w-full">
+                <span className="flex h-2 w-2 relative shrink-0">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
                 </span>
-                <Headset className="w-3.5 h-3.5 text-blue-600" />
-                <span className="uppercase tracking-wider">Sales &amp; Logistics Consultation</span>
+                <Headset className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                <span className="uppercase tracking-wider truncate">Sales &amp; Logistics Consultation</span>
               </div>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
+            <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
               Talk to Our{' '}
               <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
                 Logistics Experts
@@ -2442,12 +2442,12 @@ export const LandingPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 items-start">
-            <div className="md:col-span-5 space-y-6">
-              <h3 className="text-xl font-black text-slate-900 font-display">Corporate Support Desk</h3>
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 lg:gap-12 items-start">
+            <div className="md:col-span-5 space-y-4 sm:space-y-6">
+              <h3 className="text-lg sm:text-xl font-black text-slate-900 font-display">Corporate Support Desk</h3>
 
-              <div className="space-y-4 text-xs font-medium">
-                <div className="flex items-start gap-4 p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
+              <div className="space-y-3 sm:space-y-4 text-xs font-medium">
+                <div className="flex items-start gap-3.5 sm:gap-4 p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
                   <Phone className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
                   <div>
                     <span className="block font-bold text-slate-900 text-sm">Toll-Free Seller Support</span>
@@ -2455,7 +2455,7 @@ export const LandingPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex items-start gap-4 p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
+                <div className="flex items-start gap-3.5 sm:gap-4 p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
                   <Mail className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
                   <div>
                     <span className="block font-bold text-slate-900 text-sm">Email Inquiries</span>
@@ -2463,7 +2463,7 @@ export const LandingPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex items-start gap-4 p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
+                <div className="flex items-start gap-3.5 sm:gap-4 p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
                   <MapPin className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
                   <div>
                     <span className="block font-bold text-slate-900 text-sm">Gurugram Corporate Headquarters</span>
@@ -2473,8 +2473,8 @@ export const LandingPage: React.FC = () => {
               </div>
             </div>
 
-            <form onSubmit={handleDemoFormSubmit} className="md:col-span-7 bg-white p-5 sm:p-7 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xl space-y-4">
-              <h3 className="text-xl font-black text-slate-900 font-display">Schedule a Product Consultation</h3>
+            <form onSubmit={handleDemoFormSubmit} className="md:col-span-7 bg-white p-4 xs:p-5 sm:p-7 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xl space-y-4">
+              <h3 className="text-lg sm:text-xl font-black text-slate-900 font-display">Schedule a Product Consultation</h3>
 
               {demoFormError && (
                 <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold flex items-center gap-2">
@@ -2483,7 +2483,7 @@ export const LandingPage: React.FC = () => {
                 </div>
               )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
                 <Input
                   label="Full Name"
                   value={demoFullName}
@@ -2501,7 +2501,7 @@ export const LandingPage: React.FC = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
                 <Input
                   label="Mobile Number"
                   type="tel"
@@ -2519,7 +2519,7 @@ export const LandingPage: React.FC = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">Monthly Shipment Volume</label>
                   <select
@@ -2567,12 +2567,12 @@ export const LandingPage: React.FC = () => {
       {/* Auth Required Modal when clicking Compare Courier Rates */}
       <AnimatePresence>
         {isAuthModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 xs:p-4 bg-slate-950/70 backdrop-blur-md">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="bg-white rounded-3xl p-8 max-w-md w-full border border-slate-200 shadow-2xl space-y-6 relative text-center"
+              className="bg-white rounded-2xl sm:rounded-3xl p-5 xs:p-6 sm:p-8 max-w-md w-full border border-slate-200 shadow-2xl space-y-5 sm:space-y-6 relative text-center mx-2 xs:mx-4"
             >
               <button
                 type="button"
@@ -2583,18 +2583,18 @@ export const LandingPage: React.FC = () => {
                 <X className="w-5 h-5" />
               </button>
 
-              <div className="w-14 h-14 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center mx-auto shadow-xs">
-                <Lock className="w-7 h-7" />
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center mx-auto shadow-xs">
+                <Lock className="w-6 h-6 sm:w-7 sm:h-7" />
               </div>
 
               <div className="space-y-2">
-                <h3 className="text-2xl font-black text-slate-900 font-display">Sign In Required</h3>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-900 font-display">Sign In Required</h3>
                 <p className="text-xs text-slate-600 font-medium leading-relaxed">
                   Sign in or create a free ShipFaster Logistic account to compare live courier freight rates across Delhivery, Xpressbees, Ecom Express &amp; Shadowfax.
                 </p>
               </div>
 
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-mono font-bold flex justify-around text-slate-700">
+              <div className="p-3.5 sm:p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-mono font-bold flex justify-around text-slate-700">
                 <div>
                   <span className="block text-[10px] text-slate-400 uppercase font-sans">Route</span>
                   <span>{calcPickup} &rarr; {calcDelivery}</span>
@@ -2605,7 +2605,7 @@ export const LandingPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="space-y-3 pt-2">
+              <div className="space-y-2.5 sm:space-y-3 pt-1 sm:pt-2">
                 <Link to="/login" className="block">
                   <Button size="lg" className="w-full justify-center shadow-md">
                     Sign In to Account

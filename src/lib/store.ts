@@ -38,8 +38,8 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>((set) => ({
-  currentUser: DEFAULT_PRIMARY_USER,
-  currentSeller: DEFAULT_PRIMARY_SELLER,
+  currentUser: import.meta.env.VITE_ENABLE_DEMO_MODE === 'true' ? DEFAULT_PRIMARY_USER : null,
+  currentSeller: import.meta.env.VITE_ENABLE_DEMO_MODE === 'true' ? DEFAULT_PRIMARY_SELLER : null,
   warehouses: [],
   activeWarehouseId: null,
   walletBalance: 0,

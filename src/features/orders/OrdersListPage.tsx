@@ -191,14 +191,19 @@ export const OrdersListPage: React.FC = () => {
     toast.success(`${filteredOrders.length} live orders exported`);
   };
 
-  const handleBulkAction = (action: string) => {
+  const handleBulkAction = async (action: string) => {
     const selectedOrders = orders.filter((order) => selectedOrderIds.includes(order.id));
     if (selectedOrders.length === 0) return;
 
     if (action === 'CONFIRM') {
-      selectedOrders
+      const targets = selectedOrders
         .filter((order) => order.current_status === 'NEW')
-        .forEach((order) => updateOrderStatus(order.id, 'CONFIRMED'));
+      try {
+        await Promise.all(targets.map((order) => updateOrderStatus(order.id, 'CONFIRMED')));
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : 'Failed to confirm selected orders');
+        return;
+      }
       setSelectedOrderIds([]);
       toast.success('Selected new orders confirmed in database');
       return;
@@ -220,9 +225,14 @@ export const OrdersListPage: React.FC = () => {
     }
 
     if (action === 'CANCEL') {
-      selectedOrders
+      const targets = selectedOrders
         .filter((order) => !['DELIVERED', 'RTO', 'RETURNED'].includes(order.current_status))
-        .forEach((order) => updateOrderStatus(order.id, 'CANCELLED'));
+      try {
+        await Promise.all(targets.map((order) => updateOrderStatus(order.id, 'CANCELLED')));
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : 'Failed to cancel selected orders');
+        return;
+      }
       setSelectedOrderIds([]);
       toast.success('Selected cancellable orders updated in database');
       return;

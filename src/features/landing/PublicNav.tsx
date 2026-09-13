@@ -99,8 +99,8 @@ export const PublicNavbar: React.FC = () => {
       )}
 
       {/* Enterprise Navbar — 72px Height with Balanced Spacing */}
-      <header className="bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs h-[72px] flex items-center w-full">
-        <div className="w-full mx-auto px-4 sm:px-8 lg:px-12 flex items-center justify-between">
+      <header className="relative bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs h-[72px] flex items-center w-full">
+        <div className="w-full mx-auto px-3 xs:px-4 sm:px-8 lg:px-12 flex items-center justify-between">
           {/* Brand Logo & Name */}
           <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-700 to-blue-500 flex items-center justify-center font-black text-white shadow-md text-lg font-display group-hover:scale-105 transition-transform duration-200">
@@ -140,17 +140,17 @@ export const PublicNavbar: React.FC = () => {
           </nav>
 
           {/* Desktop Right CTAs */}
-          <div className="hidden sm:flex items-center gap-3.5">
+          <div className="hidden md:flex items-center gap-2.5 sm:gap-3.5">
             <Link to="/app/home">
-              <Button variant="ghost" size="sm" className="font-bold text-slate-700 hover:text-blue-600 px-3">
+              <Button variant="ghost" size="sm" className="font-bold text-slate-700 hover:text-blue-600 px-2.5 sm:px-3 text-xs">
                 Open Dashboard
               </Button>
             </Link>
             <Link to="/app/home">
               <Button 
                 size="sm" 
-                className="font-bold shadow-xs hover:shadow-md hover:shadow-blue-500/20 hover:-translate-y-0.5 transition-all duration-200 group"
-                rightIcon={<ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />}
+                className="font-bold text-xs shadow-xs hover:shadow-md hover:shadow-blue-500/20 hover:-translate-y-0.5 transition-all duration-200 group"
+                rightIcon={<ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-200" />}
               >
                 Start Shipping
               </Button>
@@ -171,7 +171,7 @@ export const PublicNavbar: React.FC = () => {
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="absolute top-[72px] left-0 right-0 lg:hidden border-b border-slate-200 bg-white px-6 py-4 space-y-3 font-semibold text-sm shadow-xl max-h-[80vh] overflow-y-auto">
+          <div className="absolute top-[72px] left-0 right-0 lg:hidden border-b border-slate-200 bg-white/98 backdrop-blur-xl px-4 sm:px-6 py-4 space-y-3 font-semibold text-sm shadow-xl max-h-[calc(100vh-80px)] overflow-y-auto z-50">
             {navLinks.map((link) => {
               const active = isActive(link.path);
               return (
@@ -217,7 +217,7 @@ export const PublicFooter: React.FC = () => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}
-      className="border-t border-slate-200 bg-slate-50 pt-12 sm:pt-16 pb-12 px-4 sm:px-8 lg:px-12 mt-auto w-full"
+      className="border-t border-slate-200 bg-slate-50 pt-10 sm:pt-16 pb-24 sm:pb-12 px-3 xs:px-4 sm:px-8 lg:px-12 mt-auto w-full"
     >
       <div className="w-full mx-auto space-y-8 sm:space-y-12">
         {/* Brand Header */}

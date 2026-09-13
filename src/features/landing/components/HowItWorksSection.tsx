@@ -138,7 +138,10 @@ export const HowItWorksSection: React.FC = () => {
         if (!cardEl) return;
         const progressPos = idx / (steps.length - 1);
         
-        tl.to(cardEl, {
+        tl.fromTo(cardEl, {
+          opacity: 0.7,
+          y: 15,
+        }, {
           opacity: 1,
           y: 0,
           scale: 1,
@@ -167,31 +170,31 @@ export const HowItWorksSection: React.FC = () => {
     <section
       ref={sectionRef}
       id="how-it-works"
-      className="py-16 sm:py-20 px-4 sm:px-8 lg:px-12 bg-slate-50 border-b border-slate-200 overflow-hidden relative"
+      className="py-8 xs:py-10 sm:py-20 px-3 xs:px-4 sm:px-8 lg:px-12 bg-slate-50 border-b border-slate-200 overflow-hidden relative"
     >
 
-      <div className="relative max-w-7xl mx-auto space-y-12">
+      <div className="relative max-w-7xl mx-auto space-y-6 xs:space-y-8 sm:space-y-12">
         {/* Header Block */}
-        <div className="text-center space-y-3.5 max-w-5xl mx-auto">
+        <div className="text-center space-y-2 xs:space-y-2.5 sm:space-y-3.5 max-w-5xl mx-auto px-1 xs:px-2">
           <div className="inline-block">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
-              <span className="flex h-2 w-2 relative">
+            <div className="inline-flex items-center gap-1.5 xs:gap-2 px-2.5 xs:px-3.5 py-1 xs:py-1.5 rounded-full bg-blue-50 text-blue-700 text-[10px] xs:text-xs font-extrabold border border-blue-200/80 shadow-xs max-w-full">
+              <span className="flex h-2 w-2 relative shrink-0">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
               </span>
-              <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-              <span className="uppercase tracking-wider">How It Works • Automated Journey</span>
+              <Sparkles className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+              <span className="uppercase tracking-wider truncate">How It Works • Automated Journey</span>
             </div>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18]">
+          <h2 className="text-xl xs:text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-snug sm:leading-[1.18]">
             From Order Placement to{' '}
             <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
               Doorstep Delivery
             </span>
           </h2>
 
-          <p className="text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
+          <p className="text-xs xs:text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
             See how ShipFaster Logistic manages every stage of your multi-courier shipping lifecycle.
           </p>
         </div>
@@ -239,7 +242,7 @@ export const HowItWorksSection: React.FC = () => {
         </div>
 
         {/* 3x2 DESKTOP STEP CARDS GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 xs:gap-4 sm:gap-6 items-stretch">
           {steps.map((step, idx) => {
             const isActive = idx <= activeStepIndex;
             const isCurrent = idx === activeStepIndex;
@@ -249,14 +252,13 @@ export const HowItWorksSection: React.FC = () => {
                 key={step.id}
                 ref={(el) => { stepCardsRef.current[idx] = el; }}
                 onClick={() => setActiveStepIndex(idx)}
-                className={`bg-white p-5 sm:p-6 rounded-2xl sm:rounded-3xl border transition-all duration-300 space-y-4 flex flex-col justify-between relative overflow-hidden group cursor-pointer ${
+                className={`bg-white p-3.5 xs:p-4 sm:p-6 rounded-2xl sm:rounded-3xl border transition-all duration-300 space-y-2.5 xs:space-y-3 sm:space-y-4 flex flex-col justify-between relative overflow-hidden group cursor-pointer ${
                   isCurrent
                     ? 'border-blue-400 shadow-xl shadow-blue-500/10 ring-2 ring-blue-500/20 -translate-y-1'
                     : isActive
                     ? 'border-slate-300 shadow-md opacity-100'
-                    : 'border-slate-200/80 shadow-xs opacity-75 hover:opacity-100'
+                    : 'border-slate-200/80 shadow-xs opacity-85 hover:opacity-100'
                 }`}
-                style={{ opacity: 0, transform: 'translateY(25px)' }}
               >
                 {/* Active Indicator Top Accent Line */}
                 <div
@@ -265,21 +267,21 @@ export const HowItWorksSection: React.FC = () => {
                   }`}
                 />
 
-                <div className="space-y-3.5">
+                <div className="space-y-3 sm:space-y-3.5">
                   {/* Card Header: Icon + Stage Badges */}
                   <div className="flex items-center justify-between">
-                    <div className={`w-10 h-10 rounded-2xl flex items-center justify-center border transition-colors ${
+                    <div className={`w-10 h-10 rounded-2xl flex items-center justify-center border transition-colors shrink-0 ${
                       isCurrent
                         ? 'bg-blue-50 border-blue-200 shadow-xs'
                         : 'bg-slate-50 border-slate-200/80'
                     }`}>
                       {step.icon}
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-mono font-black text-blue-600 uppercase tracking-widest bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">
+                    <div className="flex items-center gap-1.5 xs:gap-2">
+                      <span className="text-[9px] xs:text-[10px] font-mono font-black text-blue-600 uppercase tracking-widest bg-blue-50 px-1.5 xs:px-2 py-0.5 rounded-md border border-blue-100">
                         STAGE {step.stepNumber}
                       </span>
-                      <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full border ${step.activeBadgeColor}`}>
+                      <span className={`text-[9px] xs:text-[10px] font-extrabold uppercase px-1.5 xs:px-2 py-0.5 rounded-full border truncate max-w-[110px] xs:max-w-none ${step.activeBadgeColor}`}>
                         {step.badgeText}
                       </span>
                     </div>
@@ -287,7 +289,7 @@ export const HowItWorksSection: React.FC = () => {
 
                   {/* Title & Subtitle */}
                   <div>
-                    <h3 className="text-lg font-black text-slate-900 font-display group-hover:text-blue-600 transition-colors">
+                    <h3 className="text-base sm:text-lg font-black text-slate-900 font-display group-hover:text-blue-600 transition-colors">
                       {step.title} <span className="text-slate-400 font-semibold text-xs block xs:inline">/ {step.subtitle}</span>
                     </h3>
                   </div>

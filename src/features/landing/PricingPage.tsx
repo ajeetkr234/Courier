@@ -225,21 +225,21 @@ export const PricingPage: React.FC = () => {
   return (
     <div className="text-slate-900 flex flex-col relative selection:bg-blue-500 selection:text-white">
       {/* Hero Section (Standardized Height, Breadth, and Dynamic Three.js Background) */}
-      <section className="relative py-12 sm:py-16 px-6 sm:px-8 bg-gradient-to-b from-blue-50/40 via-white to-white border-b border-slate-200/80 overflow-hidden">
+      <section className="relative py-10 sm:py-16 px-3 xs:px-4 sm:px-8 lg:px-12 bg-gradient-to-b from-blue-50/40 via-white to-white border-b border-slate-200/80 overflow-hidden">
 
-        <div className="relative max-w-7xl mx-auto space-y-8 text-center z-10">
+        <div className="relative max-w-7xl mx-auto space-y-6 sm:space-y-8 text-center z-10 px-1 xs:px-2">
           {/* Standardized Pill Chip Badge */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs"
+            className="inline-flex items-center gap-2 px-3 py-1.5 xs:px-3.5 rounded-full bg-blue-50 text-blue-700 text-[10px] xs:text-xs font-extrabold border border-blue-200/80 shadow-xs"
           >
-            <span className="flex h-2 w-2 relative">
+            <span className="flex h-2 w-2 relative shrink-0">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600" />
             </span>
-            <Tag className="w-3.5 h-3.5 text-blue-600" />
+            <Tag className="w-3.5 h-3.5 text-blue-600 shrink-0" />
             <span className="uppercase tracking-wider">Pay-As-You-Ship Pricing • Zero Monthly Subscription Fees</span>
           </motion.div>
 
@@ -248,10 +248,10 @@ export const PricingPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black font-display tracking-tight leading-[1.22] sm:leading-[1.24] max-w-6xl mx-auto text-slate-950"
+            className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black font-display tracking-tight leading-[1.2] sm:leading-[1.24] max-w-6xl mx-auto text-slate-950"
           >
             <span className="block pb-1 sm:pb-1.5 text-slate-950">Simple, Transparent Pricing.</span>
-            <span className="inline-block mt-1 sm:mt-2 px-2 pb-2 sm:pb-3.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent sm:whitespace-nowrap">
+            <span className="inline-block mt-1 sm:mt-2 px-1 xs:px-2 pb-2 sm:pb-3.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent md:whitespace-nowrap">
               No Hidden Fees. Scale as You Ship.
             </span>
           </motion.h1>
@@ -261,7 +261,7 @@ export const PricingPage: React.FC = () => {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed font-medium"
+            className="text-xs xs:text-sm sm:text-base md:text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed font-medium"
           >
             Access Tier-1 carrier commercial discounts with zero upfront subscription cost. Choose the tier that matches your shipment volume and unlock lower per-parcel freight rates.
           </motion.p>
@@ -271,15 +271,15 @@ export const PricingPage: React.FC = () => {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex flex-wrap justify-center gap-4 pt-2"
+            className="flex flex-col xs:flex-row items-stretch xs:items-center justify-center gap-3 xs:gap-4 pt-2 w-full xs:w-auto"
           >
-            <Link to="/register">
-              <Button size="lg" className="shadow-lg shadow-blue-500/20 bg-blue-600 hover:bg-blue-700 text-white font-extrabold" rightIcon={<ArrowRight className="w-5 h-5" />}>
+            <Link to="/register" className="w-full xs:w-auto">
+              <Button size="lg" className="w-full xs:w-auto justify-center shadow-lg shadow-blue-500/20 bg-blue-600 hover:bg-blue-700 text-white font-extrabold" rightIcon={<ArrowRight className="w-5 h-5 shrink-0" />}>
                 Start Shipping Free
               </Button>
             </Link>
-            <a href="#calculator">
-              <button className="inline-flex items-center justify-center font-extrabold rounded-xl transition-all duration-200 text-sm px-6 py-3 gap-2.5 bg-white border border-slate-200/90 text-slate-800 hover:bg-slate-50 hover:border-blue-300 shadow-xs cursor-pointer">
+            <a href="#calculator" className="w-full xs:w-auto">
+              <button className="w-full xs:w-auto inline-flex items-center justify-center font-extrabold rounded-xl transition-all duration-200 text-sm px-5 sm:px-6 py-3 gap-2.5 bg-white border border-slate-200/90 text-slate-800 hover:bg-slate-50 hover:border-blue-300 shadow-xs cursor-pointer">
                 <Calculator className="w-5 h-5 text-blue-600 shrink-0" />
                 <span>Calculate Store Savings</span>
               </button>
@@ -291,21 +291,21 @@ export const PricingPage: React.FC = () => {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="pt-6 border-t border-slate-200/80 flex flex-wrap items-center justify-center gap-3 sm:gap-5 text-xs font-mono text-slate-600 max-w-4xl mx-auto"
+            className="pt-5 sm:pt-6 border-t border-slate-200/80 flex flex-wrap items-center justify-center gap-2 xs:gap-3 sm:gap-5 text-[10px] xs:text-xs font-mono text-slate-600 max-w-4xl mx-auto"
           >
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-slate-200/90 shadow-2xs">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+            <div className="flex items-center gap-2 px-2.5 py-1 xs:px-3 xs:py-1.5 rounded-full bg-white border border-slate-200/90 shadow-2xs">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping shrink-0"></span>
               <span className="text-slate-900 font-bold">500K+ Parcels/Mo</span>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-slate-200/90 shadow-2xs">
+            <div className="flex items-center gap-1.5 xs:gap-2 px-2.5 py-1 xs:px-3 xs:py-1.5 rounded-full bg-white border border-slate-200/90 shadow-2xs">
               <span className="text-blue-600 font-bold">₹0</span>
               <span>Platform Subscription Fee</span>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-slate-200/90 shadow-2xs">
+            <div className="flex items-center gap-1.5 xs:gap-2 px-2.5 py-1 xs:px-3 xs:py-1.5 rounded-full bg-white border border-slate-200/90 shadow-2xs">
               <span className="text-emerald-600 font-bold">₹39</span>
               <span>Starting Rate / 500g</span>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-slate-200/90 shadow-2xs">
+            <div className="flex items-center gap-1.5 xs:gap-2 px-2.5 py-1 xs:px-3 xs:py-1.5 rounded-full bg-white border border-slate-200/90 shadow-2xs">
               <span className="text-indigo-600 font-bold">T+2 Days</span>
               <span>Direct Bank COD Payout</span>
             </div>
@@ -316,7 +316,7 @@ export const PricingPage: React.FC = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.5 }}
-            className="pt-4 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 max-w-5xl mx-auto"
+            className="pt-3 sm:pt-4 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 max-w-5xl mx-auto"
           >
             {[
               { label: 'Plans & Tiers', href: '#plans' },
@@ -332,7 +332,7 @@ export const PricingPage: React.FC = () => {
               <a
                 key={item.href}
                 href={item.href}
-                className="text-[11px] font-bold font-mono px-3 py-1.5 rounded-full bg-white/90 border border-slate-200/90 text-slate-600 hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50/60 transition-all shadow-2xs whitespace-nowrap"
+                className="text-[10px] xs:text-[11px] font-bold font-mono px-2.5 xs:px-3 py-1 xs:py-1.5 rounded-full bg-white/90 border border-slate-200/90 text-slate-600 hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50/60 transition-all shadow-2xs whitespace-nowrap"
               >
                 {item.label}
               </a>
@@ -341,36 +341,36 @@ export const PricingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Main Content Section (Standardized Breadth & Vertical Spacing: py-12 sm:py-16 px-6 sm:px-8 max-w-7xl mx-auto w-full space-y-16) */}
-      <section className="py-12 sm:py-16 px-6 sm:px-8 max-w-7xl mx-auto w-full space-y-16">
+      {/* Main Content Section (Standardized Breadth & Vertical Spacing) */}
+      <section className="py-10 sm:py-16 px-3 xs:px-4 sm:px-8 lg:px-12 max-w-7xl mx-auto w-full space-y-12 sm:space-y-16">
         
         {/* Section 1: Redesigned Compact Equal-Height Pricing Cards */}
         <div id="plans" className="space-y-6 scroll-mt-24">
-          <div className="text-center space-y-3.5 max-w-5xl mx-auto">
+          <div className="text-center space-y-3 sm:space-y-3.5 max-w-5xl mx-auto px-1 xs:px-2">
             <div className="inline-block">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
-                <span className="flex h-2 w-2 relative">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 xs:px-3.5 rounded-full bg-blue-50 text-blue-700 text-[10px] xs:text-xs font-extrabold border border-blue-200/80 shadow-xs">
+                <span className="flex h-2 w-2 relative shrink-0">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
                 </span>
-                <Tag className="w-3.5 h-3.5 text-blue-600" />
+                <Tag className="w-3.5 h-3.5 text-blue-600 shrink-0" />
                 <span className="uppercase tracking-wider">Transparent Pricing Plans</span>
               </div>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.24] max-w-4xl mx-auto">
+            <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.2] sm:leading-[1.24] max-w-4xl mx-auto">
               Select Your{' '}
               <span className="inline-block pb-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
                 Shipping Tier
               </span>
             </h2>
 
-            <p className="text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
+            <p className="text-xs xs:text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
               No contracts or security deposits required. Scale seamlessly as your monthly order volumes grow.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch pt-2">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 items-stretch pt-2">
             {/* STARTER PLAN */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
@@ -378,7 +378,7 @@ export const PricingPage: React.FC = () => {
               viewport={{ once: true, margin: '-30px' }}
               transition={{ duration: 0.35 }}
               whileHover={{ y: -4 }}
-              className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between space-y-4 relative"
+              className="bg-white p-4 xs:p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between space-y-4 relative"
             >
               <div className="space-y-3.5">
                 {/* Header: Badge & Volume Range */}
@@ -450,7 +450,7 @@ export const PricingPage: React.FC = () => {
               viewport={{ once: true, margin: '-30px' }}
               transition={{ duration: 0.35, delay: 0.08 }}
               whileHover={{ y: -4 }}
-              className="bg-slate-950 text-white p-5 sm:p-6 rounded-2xl border-2 border-blue-500 shadow-xl flex flex-col justify-between space-y-4 relative z-10"
+              className="bg-slate-950 text-white p-4 xs:p-5 sm:p-6 rounded-2xl border-2 border-blue-500 shadow-xl flex flex-col justify-between space-y-4 relative z-10"
             >
               {/* Floating Popular Pill */}
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[9px] font-black uppercase tracking-widest shadow-md z-20 flex items-center gap-1 whitespace-nowrap">
@@ -527,7 +527,7 @@ export const PricingPage: React.FC = () => {
               viewport={{ once: true, margin: '-30px' }}
               transition={{ duration: 0.35, delay: 0.16 }}
               whileHover={{ y: -4 }}
-              className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between space-y-4 relative"
+              className="bg-white p-4 xs:p-5 sm:p-6 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between space-y-4 relative"
             >
               <div className="space-y-3.5">
                 {/* Header: Badge & Volume Range */}
@@ -597,40 +597,40 @@ export const PricingPage: React.FC = () => {
 
         {/* Section 2: Transparent Zone Rate Cards (Real Practical Benchmark Value) */}
         <div id="rate-cards" className="space-y-6 pt-8 border-t border-slate-200/80 scroll-mt-24">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="space-y-3.5 max-w-3xl text-left">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 sm:gap-6">
+            <div className="space-y-3 sm:space-y-3.5 max-w-3xl text-left">
               <div className="inline-block">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
-                  <span className="flex h-2 w-2 relative">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 xs:px-3.5 rounded-full bg-blue-50 text-blue-700 text-[10px] xs:text-xs font-extrabold border border-blue-200/80 shadow-xs">
+                  <span className="flex h-2 w-2 relative shrink-0">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
                   </span>
-                  <Truck className="w-3.5 h-3.5 text-blue-600" />
+                  <Truck className="w-3.5 h-3.5 text-blue-600 shrink-0" />
                   <span className="uppercase tracking-wider">Carrier Benchmark Rates</span>
                 </div>
               </div>
 
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.24]">
+              <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.2] sm:leading-[1.24]">
                 Standard Shipping Rate Cards{' '}
                 <span className="inline-block pb-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
                   by Delivery Zone
                 </span>
               </h2>
 
-              <p className="text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed">
+              <p className="text-xs xs:text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed">
                 Compare baseline commercial starting rates per 500g slab across Delhivery, Xpressbees, Shadowfax, and DTDC.
               </p>
             </div>
 
             {/* Actions: Download CSV, Surface/Express Toggle, GST Toggle */}
-            <div className="flex flex-wrap items-center gap-2.5 self-start md:self-end">
+            <div className="flex flex-wrap items-center gap-2 xs:gap-2.5 w-full lg:w-auto self-start lg:self-end">
               <button
                 type="button"
                 onClick={downloadRateCardCsv}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-extrabold bg-white border border-slate-200/90 text-slate-700 hover:bg-slate-50 hover:border-blue-300 shadow-2xs transition-all cursor-pointer"
+                className="flex-1 xs:flex-initial inline-flex items-center justify-center gap-1.5 px-3 xs:px-3.5 py-1.5 xs:py-2 rounded-xl text-[11px] xs:text-xs font-extrabold bg-white border border-slate-200/90 text-slate-700 hover:bg-slate-50 hover:border-blue-300 shadow-2xs transition-all cursor-pointer"
                 title="Download comprehensive rate matrix as CSV"
               >
-                <Download className="w-3.5 h-3.5 text-blue-600" />
+                <Download className="w-3.5 h-3.5 text-blue-600 shrink-0" />
                 <span>Download Rate Card (CSV)</span>
               </button>
 
@@ -639,24 +639,24 @@ export const PricingPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setSelectedShippingMode('surface')}
-                  className={`px-3.5 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${
+                  className={`px-2.5 xs:px-3.5 py-1.5 rounded-lg text-[11px] xs:text-xs font-extrabold transition-all cursor-pointer ${
                     selectedShippingMode === 'surface'
                       ? 'bg-white text-blue-600 shadow-xs'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  Surface Logistics
+                  Surface
                 </button>
                 <button
                   type="button"
                   onClick={() => setSelectedShippingMode('express')}
-                  className={`px-3.5 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${
+                  className={`px-2.5 xs:px-3.5 py-1.5 rounded-lg text-[11px] xs:text-xs font-extrabold transition-all cursor-pointer ${
                     selectedShippingMode === 'express'
                       ? 'bg-white text-blue-600 shadow-xs'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  Express Air Priority
+                  Express Air
                 </button>
               </div>
 
@@ -665,7 +665,7 @@ export const PricingPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIncludeGst(false)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${
+                  className={`px-2.5 xs:px-3 py-1.5 rounded-lg text-[11px] xs:text-xs font-extrabold transition-all cursor-pointer ${
                     !includeGst
                       ? 'bg-slate-900 text-white shadow-xs'
                       : 'text-slate-600 hover:text-slate-900'
@@ -676,7 +676,7 @@ export const PricingPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIncludeGst(true)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${
+                  className={`px-2.5 xs:px-3 py-1.5 rounded-lg text-[11px] xs:text-xs font-extrabold transition-all cursor-pointer ${
                     includeGst
                       ? 'bg-blue-600 text-white shadow-xs'
                       : 'text-slate-600 hover:text-slate-900'
@@ -689,13 +689,13 @@ export const PricingPage: React.FC = () => {
           </div>
 
           {/* Carrier Partner Filter Tabs */}
-          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-white border border-slate-200/90 shadow-2xs overflow-x-auto">
+          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-white border border-slate-200/90 shadow-2xs overflow-x-auto no-scrollbar">
             {(['all', 'delhivery', 'xpressbees', 'shadowfax', 'dtdc'] as const).map((carrierKey) => (
               <button
                 key={carrierKey}
                 type="button"
                 onClick={() => setSelectedCarrier(carrierKey)}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer whitespace-nowrap ${
+                className={`px-3 xs:px-3.5 py-1.5 rounded-lg text-[11px] xs:text-xs font-extrabold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                   selectedCarrier === carrierKey
                     ? 'bg-blue-600 text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
@@ -714,14 +714,14 @@ export const PricingPage: React.FC = () => {
             ))}
           </div>
 
-          <div className="overflow-x-auto rounded-3xl border border-slate-200/90 shadow-sm bg-white">
-            <table className="w-full text-left text-sm border-collapse">
+          <div className="overflow-x-auto rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-sm bg-white">
+            <table className="min-w-[580px] w-full text-left text-xs sm:text-sm border-collapse">
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50/90 text-slate-900 font-display">
-                  <th className="p-4 sm:p-5 font-black uppercase text-xs tracking-wider text-slate-700">Delivery Zone</th>
-                  <th className="p-4 sm:p-5 font-black uppercase text-xs tracking-wider text-slate-700">Coverage Description</th>
-                  <th className="p-4 sm:p-5 font-black uppercase text-xs tracking-wider text-slate-700">Transit SLA</th>
-                  <th className="p-4 sm:p-5 font-black uppercase text-xs tracking-wider text-blue-600 text-right">
+                  <th className="p-3.5 xs:p-4 sm:p-5 font-black uppercase text-[11px] xs:text-xs tracking-wider text-slate-700">Delivery Zone</th>
+                  <th className="p-3.5 xs:p-4 sm:p-5 font-black uppercase text-[11px] xs:text-xs tracking-wider text-slate-700">Coverage Description</th>
+                  <th className="p-3.5 xs:p-4 sm:p-5 font-black uppercase text-[11px] xs:text-xs tracking-wider text-slate-700">Transit SLA</th>
+                  <th className="p-3.5 xs:p-4 sm:p-5 font-black uppercase text-[11px] xs:text-xs tracking-wider text-blue-600 text-right">
                     {carrierRateData[selectedCarrier].name.split('(')[0]} Starting Rate (500g)
                   </th>
                 </tr>
@@ -729,25 +729,25 @@ export const PricingPage: React.FC = () => {
               <tbody className="divide-y divide-slate-100 font-medium">
                 {zoneRateCards.map((r, idx) => (
                   <tr key={idx} className="hover:bg-blue-50/30 transition-colors">
-                    <td className="p-4 sm:p-5 font-bold text-slate-950 flex items-center gap-2.5">
+                    <td className="p-3.5 xs:p-4 sm:p-5 font-bold text-slate-950 flex items-center gap-2 xs:gap-2.5">
                       <Truck className="w-4 h-4 text-blue-600 shrink-0" />
                       <span>{r.zone}</span>
                     </td>
-                    <td className="p-4 sm:p-5 text-slate-600 text-xs sm:text-sm">{r.desc}</td>
-                    <td className="p-4 sm:p-5">
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold font-mono">
-                        <Clock className="w-3 h-3 text-slate-500" />
+                    <td className="p-3.5 xs:p-4 sm:p-5 text-slate-600 text-xs sm:text-sm">{r.desc}</td>
+                    <td className="p-3.5 xs:p-4 sm:p-5">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] xs:text-xs font-bold font-mono">
+                        <Clock className="w-3 h-3 text-slate-500 shrink-0" />
                         {r.sla}
                       </span>
                     </td>
-                    <td className="p-4 sm:p-5 text-right">
+                    <td className="p-3.5 xs:p-4 sm:p-5 text-right">
                       <span className="text-base sm:text-lg font-black font-display text-blue-600">
                         ₹{includeGst
                           ? Math.round(parseInt(carrierRateData[selectedCarrier].rates[idx][selectedShippingMode].replace(/\D/g, ''), 10) * 1.18)
                           : parseInt(carrierRateData[selectedCarrier].rates[idx][selectedShippingMode].replace(/\D/g, ''), 10)
                         }
                       </span>
-                      <span className="text-xs text-slate-400 font-normal">
+                      <span className="text-[10px] xs:text-xs text-slate-400 font-normal">
                         {includeGst ? ' (incl. GST)' : ' (excl. GST)'} / 0.5 kg
                       </span>
                     </td>
@@ -757,22 +757,22 @@ export const PricingPage: React.FC = () => {
             </table>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-            <div className="p-4 rounded-2xl bg-blue-50/50 border border-blue-100 flex items-center gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 pt-2">
+            <div className="p-3.5 xs:p-4 rounded-xl sm:rounded-2xl bg-blue-50/50 border border-blue-100 flex items-center gap-3">
               <CheckCircle2 className="w-5 h-5 text-blue-600 shrink-0" />
               <div className="text-xs text-slate-700">
                 <span className="font-bold text-slate-900 block">COD Collection Fee</span>
                 1.5% or ₹20 (whichever is higher)
               </div>
             </div>
-            <div className="p-4 rounded-2xl bg-blue-50/50 border border-blue-100 flex items-center gap-3">
+            <div className="p-3.5 xs:p-4 rounded-xl sm:rounded-2xl bg-blue-50/50 border border-blue-100 flex items-center gap-3">
               <CheckCircle2 className="w-5 h-5 text-blue-600 shrink-0" />
               <div className="text-xs text-slate-700">
                 <span className="font-bold text-slate-900 block">Pickup &amp; Handover Surcharge</span>
                 ₹0 (Free doorstep courier pickup)
               </div>
             </div>
-            <div className="p-4 rounded-2xl bg-blue-50/50 border border-blue-100 flex items-center gap-3">
+            <div className="p-3.5 xs:p-4 rounded-xl sm:rounded-2xl bg-blue-50/50 border border-blue-100 flex items-center gap-3">
               <CheckCircle2 className="w-5 h-5 text-blue-600 shrink-0" />
               <div className="text-xs text-slate-700">
                 <span className="font-bold text-slate-900 block">RTO Reverse Charges</span>
@@ -796,25 +796,25 @@ export const PricingPage: React.FC = () => {
               </div>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.24] max-w-4xl mx-auto">
+            <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.2] sm:leading-[1.24] max-w-4xl mx-auto">
               Calculate Package{' '}
               <span className="inline-block pb-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
                 Chargeable Freight Weight
               </span>
             </h2>
 
-            <p className="text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
+            <p className="text-xs xs:text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
               Couriers bill on whichever is higher: actual physical weight or volumetric weight ((L × W × H) / 5000). Test your parcel dimensions to avoid weight dispute surprises.
             </p>
           </div>
 
-          <div className="bg-slate-50/80 border border-slate-200/90 rounded-3xl p-6 sm:p-10 shadow-sm">
+          <div className="bg-slate-50/80 border border-slate-200/90 rounded-2xl sm:rounded-3xl p-3.5 xs:p-5 sm:p-8 lg:p-10 shadow-sm">
             {/* Quick Fill Presets */}
             <div className="space-y-3 pb-6 border-b border-slate-200/80">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-500 font-mono block">
                 Quick-Select Common Package Sizes:
               </span>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 gap-2 xs:gap-2.5">
                 {[
                   { label: 'Apparel Polybag', l: 20, w: 15, h: 5, weight: 0.4 },
                   { label: 'Footwear / Shoe Box', l: 32, w: 20, h: 12, weight: 0.9 },
@@ -830,7 +830,7 @@ export const PricingPage: React.FC = () => {
                       setPkgHeight(preset.h);
                       setPkgDeadWeight(preset.weight);
                     }}
-                    className={`p-2.5 rounded-xl border text-left text-xs transition-all cursor-pointer ${
+                    className={`p-2 xs:p-2.5 rounded-xl border text-left text-xs transition-all cursor-pointer ${
                       pkgLength === preset.l && pkgWidth === preset.w && pkgHeight === preset.h && pkgDeadWeight === preset.weight
                         ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
                         : 'bg-white border-slate-200/90 text-slate-700 hover:bg-slate-100'
@@ -845,10 +845,10 @@ export const PricingPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start pt-6">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-10 items-start pt-6">
               {/* Left Column: Dimensions & Dead Weight Input */}
-              <div className="lg:col-span-7 space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="lg:col-span-7 space-y-5 sm:space-y-6">
+                <div className="grid grid-cols-1 xs:grid-cols-3 gap-3 xs:gap-4">
                   {/* Length */}
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-slate-700 block">Length (cm)</label>
@@ -860,7 +860,7 @@ export const PricingPage: React.FC = () => {
                         step="1"
                         value={pkgLength}
                         onChange={(e) => setPkgLength(Math.max(1, Number(e.target.value) || 1))}
-                        className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 shadow-2xs"
+                        className="w-full px-3 xs:px-3.5 py-2 xs:py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 shadow-2xs"
                       />
                       <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-mono text-slate-400">cm</span>
                     </div>
@@ -877,7 +877,7 @@ export const PricingPage: React.FC = () => {
                         step="1"
                         value={pkgWidth}
                         onChange={(e) => setPkgWidth(Math.max(1, Number(e.target.value) || 1))}
-                        className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 shadow-2xs"
+                        className="w-full px-3 xs:px-3.5 py-2 xs:py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 shadow-2xs"
                       />
                       <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-mono text-slate-400">cm</span>
                     </div>
@@ -894,7 +894,7 @@ export const PricingPage: React.FC = () => {
                         step="1"
                         value={pkgHeight}
                         onChange={(e) => setPkgHeight(Math.max(1, Number(e.target.value) || 1))}
-                        className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 shadow-2xs"
+                        className="w-full px-3 xs:px-3.5 py-2 xs:py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 shadow-2xs"
                       />
                       <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-mono text-slate-400">cm</span>
                     </div>
@@ -918,7 +918,7 @@ export const PricingPage: React.FC = () => {
                     onChange={(e) => setPkgDeadWeight(Number(e.target.value))}
                     className="w-full h-2.5 bg-slate-200 rounded-full appearance-none cursor-pointer accent-blue-600"
                   />
-                  <div className="flex justify-between text-[11px] font-mono text-slate-400">
+                  <div className="flex justify-between text-[10px] xs:text-[11px] font-mono text-slate-400">
                     <span>100g (Light)</span>
                     <span>2.5 kg</span>
                     <span>5.0 kg</span>
@@ -927,10 +927,10 @@ export const PricingPage: React.FC = () => {
                 </div>
 
                 {/* Formula Explanation Callout */}
-                <div className="p-4 rounded-2xl bg-white border border-slate-200/90 flex items-start gap-3 shadow-2xs">
+                <div className="p-3.5 xs:p-4 rounded-xl sm:rounded-2xl bg-white border border-slate-200/90 flex items-start gap-2.5 xs:gap-3 shadow-2xs">
                   <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-                  <div className="space-y-1 text-xs text-slate-600">
-                    <span className="font-extrabold text-slate-900 block font-mono">
+                  <div className="space-y-1 text-xs text-slate-600 min-w-0">
+                    <span className="font-extrabold text-slate-900 block font-mono break-words text-[11px] xs:text-xs">
                       IATA Volumetric Formula: ({pkgLength} × {pkgWidth} × {pkgHeight}) ÷ 5000 = {volumetricWeight} kg
                     </span>
                     <p className="leading-relaxed">
@@ -943,13 +943,13 @@ export const PricingPage: React.FC = () => {
               </div>
 
               {/* Right Column: Chargeable Weight & Zone Rate Estimation */}
-              <div className="lg:col-span-5 rounded-3xl p-6 sm:p-7 bg-slate-950 text-white shadow-xl space-y-5 border border-slate-800">
+              <div className="lg:col-span-5 rounded-2xl sm:rounded-3xl p-4 xs:p-6 sm:p-7 bg-slate-950 text-white shadow-xl space-y-4 xs:space-y-5 border border-slate-800">
                 <div className="space-y-2">
                   <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400 block">
                     Chargeable Billing Calculation
                   </span>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-4xl sm:text-5xl font-black font-mono text-blue-400">
+                  <div className="flex flex-wrap items-baseline gap-2">
+                    <span className="text-3xl xs:text-4xl sm:text-5xl font-black font-mono text-blue-400">
                       {chargeableWeight} kg
                     </span>
                     <span className="text-xs font-mono font-bold text-slate-400">
@@ -958,15 +958,15 @@ export const PricingPage: React.FC = () => {
                   </div>
 
                   {/* Status Indicator Tag */}
-                  <div className="pt-1">
+                  <div className="pt-1 flex flex-wrap gap-1.5">
                     {isVolumetricHigher ? (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-bold border border-amber-500/30">
-                        <Box className="w-3.5 h-3.5 text-amber-400" />
+                      <span className="inline-flex items-center gap-1.5 px-2.5 xs:px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-[11px] xs:text-xs font-bold border border-amber-500/30">
+                        <Box className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                         <span>Volumetric Weight Applied (Bulky Box)</span>
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30">
-                        <Scale className="w-3.5 h-3.5 text-emerald-400" />
+                      <span className="inline-flex items-center gap-1.5 px-2.5 xs:px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-[11px] xs:text-xs font-bold border border-emerald-500/30">
+                        <Scale className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                         <span>Actual Dead Weight Applied</span>
                       </span>
                     )}
@@ -975,9 +975,9 @@ export const PricingPage: React.FC = () => {
 
                 {/* Zone-by-Zone Estimated Starting Quotes */}
                 <div className="pt-4 border-t border-slate-800 space-y-2.5">
-                  <div className="flex items-center justify-between text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
+                  <div className="flex flex-wrap items-center justify-between gap-1 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
                     <span>Estimated Freight for this Parcel:</span>
-                    <span className="text-blue-400 text-[10px] lowercase font-normal">
+                    <span className="text-blue-400 text-[10px] lowercase font-normal truncate max-w-full">
                       {carrierRateData[selectedCarrier].name.split('(')[0]} • {selectedShippingMode}
                     </span>
                   </div>
@@ -999,9 +999,9 @@ export const PricingPage: React.FC = () => {
                         const finalPrice = includeGst ? Math.round(calculatedFreight * 1.18) : calculatedFreight;
 
                         return (
-                          <div key={name} className="flex items-center justify-between p-2 rounded-xl bg-slate-900/80 border border-slate-800">
-                            <span className="text-slate-300">{name}</span>
-                            <span className="font-black text-emerald-400 text-sm">
+                          <div key={name} className="flex flex-col xs:flex-row xs:items-center justify-between gap-1 xs:gap-2 p-2 xs:p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                            <span className="text-slate-300 text-[11px] xs:text-xs">{name}</span>
+                            <span className="font-black text-emerald-400 text-xs xs:text-sm">
                               ₹{finalPrice}
                               <span className="text-[10px] text-slate-400 font-normal ml-1">
                                 {includeGst ? 'incl. GST' : 'excl. GST'}
@@ -1015,7 +1015,7 @@ export const PricingPage: React.FC = () => {
                 </div>
 
                 <Link to="/register" className="block pt-1">
-                  <button className="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+                  <button className="w-full py-2.5 xs:py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs xs:text-sm shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-1.5 cursor-pointer">
                     <span>Ship This Package Now</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
@@ -1042,49 +1042,49 @@ export const PricingPage: React.FC = () => {
               </div>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black font-display text-slate-950 tracking-tight leading-[1.24] max-w-4xl mx-auto">
+            <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-black font-display text-slate-950 tracking-tight leading-[1.2] sm:leading-[1.24] max-w-4xl mx-auto">
               See How Much Your Store{' '}
               <span className="inline-block pb-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
                 Saves Every Month
               </span>
             </h2>
 
-            <p className="text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
+            <p className="text-xs xs:text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
               Compare single-carrier standard retail pricing against ShipFaster’s automated multi-carrier aggregation engine.
             </p>
           </div>
 
-          <div className="bg-slate-50/80 border border-slate-200/90 rounded-3xl p-6 sm:p-10 shadow-sm">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+          <div className="bg-slate-50/80 border border-slate-200/90 rounded-2xl sm:rounded-3xl p-3.5 xs:p-5 sm:p-8 lg:p-10 shadow-sm">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-10 items-start">
               {/* Left Column: Interactive Controls */}
-              <div className="lg:col-span-7 space-y-6">
-                <div className="space-y-4">
+              <div className="lg:col-span-7 space-y-5 sm:space-y-6">
+                <div className="space-y-3.5 xs:space-y-4">
                   <div className="flex flex-wrap items-baseline justify-between gap-2">
                     <span className="text-xs font-bold uppercase tracking-wider text-slate-500 font-mono">
                       Monthly Order Volume
                     </span>
-                    <div className="flex items-center gap-1.5 text-xs font-extrabold text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-200/80 shadow-xs">
+                    <div className="flex items-center gap-1.5 text-xs font-extrabold text-blue-700 bg-blue-50 px-2.5 xs:px-3 py-1 rounded-full border border-blue-200/80 shadow-xs">
                       <TrendingUp className="w-3.5 h-3.5 text-blue-600" />
                       <span>{Math.round(estimatedSavingsPercent * 100)}% Volume Discount Tier</span>
                     </div>
                   </div>
 
-                  <div className="flex items-baseline gap-3">
-                    <span className="text-4xl sm:text-6xl font-black font-display text-slate-950 tracking-tight">
+                  <div className="flex flex-wrap items-baseline gap-2 xs:gap-3">
+                    <span className="text-3xl xs:text-4xl sm:text-6xl font-black font-display text-slate-950 tracking-tight">
                       {monthlyVolume.toLocaleString()}
                     </span>
-                    <span className="text-base sm:text-lg font-bold text-slate-500 font-mono">
+                    <span className="text-sm xs:text-base sm:text-lg font-bold text-slate-500 font-mono">
                       parcels / month
                     </span>
                   </div>
 
                   {/* Preset Volume Buttons */}
-                  <div className="flex flex-wrap gap-2 pt-1">
+                  <div className="flex flex-wrap gap-1.5 xs:gap-2 pt-1">
                     {[500, 2000, 5000, 15000, 50000].map((vol) => (
                       <button
                         key={vol}
                         onClick={() => setMonthlyVolume(vol)}
-                        className={`px-3.5 py-1.5 rounded-full text-xs font-mono font-bold transition-all cursor-pointer ${
+                        className={`px-2.5 xs:px-3.5 py-1 xs:py-1.5 rounded-full text-[11px] xs:text-xs font-mono font-bold transition-all cursor-pointer ${
                           monthlyVolume === vol
                             ? 'bg-slate-900 text-white shadow-xs ring-2 ring-slate-900/10'
                             : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
@@ -1113,11 +1113,11 @@ export const PricingPage: React.FC = () => {
                     />
                   </div>
 
-                  <div className="flex justify-between items-center text-xs font-mono font-bold text-slate-400 px-1">
+                  <div className="flex justify-between items-center text-[10px] xs:text-xs font-mono font-bold text-slate-400 px-1 gap-1 overflow-x-auto">
                     <span className={monthlyVolume <= 1000 ? 'text-blue-600 font-black' : ''}>100 (Starter)</span>
-                    <span className={monthlyVolume >= 2000 && monthlyVolume < 5000 ? 'text-blue-600 font-black' : ''}>2,000 (Growth)</span>
-                    <span className={monthlyVolume >= 5000 && monthlyVolume < 15000 ? 'text-blue-600 font-black' : ''}>5,000 (Scale)</span>
-                    <span className={monthlyVolume >= 15000 ? 'text-blue-600 font-black' : ''}>50,000+ (Enterprise)</span>
+                    <span className={monthlyVolume >= 2000 && monthlyVolume < 5000 ? 'text-blue-600 font-black' : ''}>2k (Growth)</span>
+                    <span className={monthlyVolume >= 5000 && monthlyVolume < 15000 ? 'text-blue-600 font-black' : ''}>5k (Scale)</span>
+                    <span className={monthlyVolume >= 15000 ? 'text-blue-600 font-black' : ''}>50k+ (Enterprise)</span>
                   </div>
                 </div>
 
@@ -1126,7 +1126,7 @@ export const PricingPage: React.FC = () => {
                   <span className="text-xs font-extrabold uppercase tracking-wider text-slate-500 font-mono">
                     Features Automatically Activated at this Volume:
                   </span>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-semibold text-slate-800">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 xs:gap-3 text-xs font-semibold text-slate-800">
                     <div className="flex items-center gap-2.5">
                       <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                       <span>Multi-carrier AI rate comparison</span>
@@ -1152,13 +1152,13 @@ export const PricingPage: React.FC = () => {
               </div>
 
               {/* Right Column: High-Impact ROI Showcase */}
-              <div className="lg:col-span-5 rounded-3xl p-6 sm:p-8 bg-slate-950 text-white shadow-2xl space-y-6 relative overflow-hidden border border-slate-800">
+              <div className="lg:col-span-5 rounded-2xl sm:rounded-3xl p-4 xs:p-6 sm:p-8 bg-slate-950 text-white shadow-2xl space-y-5 sm:space-y-6 relative overflow-hidden border border-slate-800">
                 <div className="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
                 <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl pointer-events-none" />
 
                 <div className="relative z-10 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-mono font-bold uppercase tracking-widest text-emerald-400">
+                    <span className="text-[11px] xs:text-xs font-mono font-bold uppercase tracking-widest text-emerald-400">
                       Estimated Monthly Freight Savings
                     </span>
                     <span className="flex h-2.5 w-2.5 relative">
@@ -1167,8 +1167,8 @@ export const PricingPage: React.FC = () => {
                     </span>
                   </div>
 
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-4xl sm:text-5xl font-black font-mono text-emerald-400 tracking-tight">
+                  <div className="flex flex-wrap items-baseline gap-2">
+                    <span className="text-3xl xs:text-4xl sm:text-5xl font-black font-mono text-emerald-400 tracking-tight break-words">
                       ₹{estimatedMonthlySavings.toLocaleString()}
                     </span>
                     <span className="text-xs font-bold text-slate-400 uppercase tracking-wider font-mono">
@@ -1208,20 +1208,20 @@ export const PricingPage: React.FC = () => {
                 </div>
 
                 {/* Stat Badges */}
-                <div className="relative z-10 grid grid-cols-2 gap-3 pt-2 text-center">
-                  <div className="p-3 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-0.5">
+                <div className="relative z-10 grid grid-cols-1 xs:grid-cols-2 gap-2.5 xs:gap-3 pt-2 text-center">
+                  <div className="p-2.5 xs:p-3 rounded-xl sm:rounded-2xl bg-slate-900/90 border border-slate-800 space-y-0.5">
                     <span className="block text-[10px] text-slate-400 uppercase font-bold tracking-wider">Effective Freight</span>
-                    <span className="block text-base font-black text-white font-mono">₹{(avgFreightRate * (1 - estimatedSavingsPercent)).toFixed(1)} / parcel</span>
+                    <span className="block text-sm xs:text-base font-black text-white font-mono">₹{(avgFreightRate * (1 - estimatedSavingsPercent)).toFixed(1)} / parcel</span>
                   </div>
-                  <div className="p-3 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-0.5">
+                  <div className="p-2.5 xs:p-3 rounded-xl sm:rounded-2xl bg-slate-900/90 border border-slate-800 space-y-0.5">
                     <span className="block text-[10px] text-slate-400 uppercase font-bold tracking-wider">COD Remittance</span>
-                    <span className="block text-base font-black text-emerald-400 font-mono">T+2 Days Direct</span>
+                    <span className="block text-sm xs:text-base font-black text-emerald-400 font-mono">T+2 Days Direct</span>
                   </div>
                 </div>
 
                 <div className="relative z-10 pt-2">
                   <Link to="/register">
-                    <button className="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-sm py-3.5 px-5 rounded-2xl shadow-xl shadow-blue-600/30 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 group">
+                    <button className="w-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs xs:text-sm py-3 xs:py-3.5 px-4 xs:px-5 rounded-xl sm:rounded-2xl shadow-xl shadow-blue-600/30 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 group">
                       <span>Unlock These Discounted Rates</span>
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </button>
@@ -1249,35 +1249,35 @@ export const PricingPage: React.FC = () => {
               </div>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.24] max-w-4xl mx-auto">
+            <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.2] sm:leading-[1.24] max-w-4xl mx-auto">
               Compare Multi-Carrier{' '}
               <span className="inline-block pb-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
                 Platform Capabilities
               </span>
             </h2>
 
-            <p className="text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
+            <p className="text-xs xs:text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
               Every tool and automation feature itemized so you can pick the exact fit for your store.
             </p>
           </div>
 
-          <div className="overflow-x-auto rounded-3xl border border-slate-200/90 shadow-sm bg-white">
-            <table className="w-full text-left text-sm border-collapse">
+          <div className="overflow-x-auto rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-sm bg-white -mx-1 sm:mx-0">
+            <table className="w-full text-left text-xs sm:text-sm border-collapse min-w-[600px]">
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-950 text-white font-display">
-                  <th className="p-4 sm:p-5 font-black uppercase text-xs tracking-wider text-slate-300 w-2/5">
+                  <th className="p-3.5 xs:p-4 sm:p-5 font-black uppercase text-[10px] xs:text-xs tracking-wider text-slate-300 w-2/5">
                     Platform Capability
                   </th>
-                  <th className="p-4 sm:p-5 text-center font-black uppercase text-xs tracking-wider text-slate-300 w-1/5">
+                  <th className="p-3.5 xs:p-4 sm:p-5 text-center font-black uppercase text-[10px] xs:text-xs tracking-wider text-slate-300 w-1/5">
                     STARTER
                   </th>
-                  <th className="p-4 sm:p-5 text-center font-black uppercase text-xs tracking-wider text-blue-400 bg-slate-900 relative w-1/5 border-x border-slate-800">
-                    <span className="inline-block px-2.5 py-0.5 rounded-full bg-blue-600 text-[10px] font-extrabold text-white uppercase tracking-wider mb-1 shadow-xs">
+                  <th className="p-3.5 xs:p-4 sm:p-5 text-center font-black uppercase text-[10px] xs:text-xs tracking-wider text-blue-400 bg-slate-900 relative w-1/5 border-x border-slate-800">
+                    <span className="inline-block px-2 xs:px-2.5 py-0.5 rounded-full bg-blue-600 text-[9px] xs:text-[10px] font-extrabold text-white uppercase tracking-wider mb-1 shadow-xs">
                       RECOMMENDED
                     </span>
-                    <span className="block font-black text-sm text-white">GROWTH</span>
+                    <span className="block font-black text-xs xs:text-sm text-white">GROWTH</span>
                   </th>
-                  <th className="p-4 sm:p-5 text-center font-black uppercase text-xs tracking-wider text-slate-300 w-1/5">
+                  <th className="p-3.5 xs:p-4 sm:p-5 text-center font-black uppercase text-[10px] xs:text-xs tracking-wider text-slate-300 w-1/5">
                     ENTERPRISE
                   </th>
                 </tr>
@@ -1286,7 +1286,7 @@ export const PricingPage: React.FC = () => {
                 {featureCategories.map((cat, catIdx) => (
                   <React.Fragment key={catIdx}>
                     <tr className="bg-slate-50/90 border-t-2 border-slate-200">
-                      <td colSpan={4} className="p-3.5 sm:p-4 text-xs font-black uppercase tracking-wider text-blue-700 font-display">
+                      <td colSpan={4} className="p-3 xs:p-3.5 sm:p-4 text-[11px] xs:text-xs font-black uppercase tracking-wider text-blue-700 font-display">
                         {cat.category}
                       </td>
                     </tr>
@@ -1297,36 +1297,36 @@ export const PricingPage: React.FC = () => {
                           itemIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50/40'
                         }`}
                       >
-                        <td className="p-3.5 sm:p-4 font-bold text-slate-900 leading-snug">
+                        <td className="p-3 xs:p-3.5 sm:p-4 font-bold text-slate-900 leading-snug">
                           <div>{r.feature}</div>
                           {r.note && (
-                            <span className="text-[11px] text-slate-400 font-normal block mt-0.5">
+                            <span className="text-[10px] xs:text-[11px] text-slate-400 font-normal block mt-0.5">
                               {r.note}
                             </span>
                           )}
                         </td>
-                        <td className="p-3.5 sm:p-4 text-center">
+                        <td className="p-3 xs:p-3.5 sm:p-4 text-center">
                           {r.starter ? (
-                            <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-300/60 flex items-center justify-center font-bold mx-auto shadow-2xs">
-                              <Check className="w-3.5 h-3.5 stroke-[3]" />
+                            <div className="w-5 h-5 xs:w-6 xs:h-6 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-300/60 flex items-center justify-center font-bold mx-auto shadow-2xs">
+                              <Check className="w-3 h-3 xs:w-3.5 xs:h-3.5 stroke-[3]" />
                             </div>
                           ) : (
                             <div className="w-2.5 h-2.5 rounded-full bg-slate-300 mx-auto opacity-50" />
                           )}
                         </td>
-                        <td className="p-3.5 sm:p-4 text-center bg-blue-50/40 border-x border-blue-100/80 font-bold">
+                        <td className="p-3 xs:p-3.5 sm:p-4 text-center bg-blue-50/40 border-x border-blue-100/80 font-bold">
                           {r.growth ? (
-                            <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold mx-auto shadow-xs shadow-blue-500/25">
-                              <Check className="w-4 h-4 stroke-[3]" />
+                            <div className="w-5 h-5 xs:w-6 xs:h-6 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold mx-auto shadow-xs shadow-blue-500/25">
+                              <Check className="w-3.5 h-3.5 xs:w-4 xs:h-4 stroke-[3]" />
                             </div>
                           ) : (
                             <div className="w-2.5 h-2.5 rounded-full bg-slate-300 mx-auto opacity-50" />
                           )}
                         </td>
-                        <td className="p-3.5 sm:p-4 text-center">
+                        <td className="p-3 xs:p-3.5 sm:p-4 text-center">
                           {r.enterprise ? (
-                            <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-300/60 flex items-center justify-center font-bold mx-auto shadow-2xs">
-                              <Check className="w-3.5 h-3.5 stroke-[3]" />
+                            <div className="w-5 h-5 xs:w-6 xs:h-6 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-300/60 flex items-center justify-center font-bold mx-auto shadow-2xs">
+                              <Check className="w-3 h-3 xs:w-3.5 xs:h-3.5 stroke-[3]" />
                             </div>
                           ) : (
                             <div className="w-2.5 h-2.5 rounded-full bg-slate-300 mx-auto opacity-50" />
@@ -1355,32 +1355,32 @@ export const PricingPage: React.FC = () => {
               </div>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.24] max-w-4xl mx-auto">
+            <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.2] sm:leading-[1.24] max-w-4xl mx-auto">
               Frequently Asked{' '}
               <span className="inline-block pb-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
                 Billing Questions
               </span>
             </h2>
 
-            <p className="text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
+            <p className="text-xs xs:text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
               Everything you need to know about our billing, wallets, and carrier rate calculations.
             </p>
           </div>
 
           {/* 2-Column Responsive FAQ Grid (Zero Side Empty Space) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4 max-w-5xl mx-auto w-full pt-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 xs:gap-3.5 sm:gap-4 max-w-5xl mx-auto w-full pt-2">
             {pricingFaqs.map((faq, idx) => (
               <div 
                 key={idx} 
-                className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-2xs hover:border-blue-200 transition-colors flex flex-col justify-start"
+                className="bg-white p-3.5 xs:p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-slate-200/80 shadow-2xs hover:border-blue-200 transition-colors flex flex-col justify-start"
               >
                 <button
                   type="button"
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                  className="w-full text-left flex items-start justify-between gap-3 font-bold text-slate-900 text-sm sm:text-base hover:text-blue-600 transition-colors cursor-pointer group"
+                  className="w-full text-left flex items-start justify-between gap-2.5 xs:gap-3 font-bold text-slate-900 text-xs xs:text-sm sm:text-base hover:text-blue-600 transition-colors cursor-pointer group"
                 >
                   <span className="group-hover:translate-x-0.5 transition-transform leading-snug">{faq.q}</span>
-                  <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 mt-1 transition-transform duration-200 ${openFaq === idx ? 'rotate-180 text-blue-600' : ''}`} />
+                  <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 mt-0.5 xs:mt-1 transition-transform duration-200 ${openFaq === idx ? 'rotate-180 text-blue-600' : ''}`} />
                 </button>
                 <AnimatePresence>
                   {openFaq === idx && (

@@ -47,7 +47,6 @@ import {
   fetchWalletFromSupabase,
   fetchLedgerEntriesFromSupabase,
   rechargeWalletInSupabase,
-  debitWalletForShipmentInSupabase,
   fetchCODRemittancesFromSupabase,
 } from './supabaseFinance';
 import {
@@ -226,6 +225,61 @@ const INITIAL_COD_BATCHES: CODPayoutBatch[] = [
   },
 ];
 
+const INITIAL_INTEGRATIONS: IntegrationAccount[] = [
+  {
+    id: 'int-shopify-01',
+    seller_id: '32d724db-23c4-4cba-a76f-f78e4022194e',
+    platform: 'SHOPIFY',
+    store_name: 'Apex Retail Official Store',
+    store_url: 'https://apex-retail.myshopify.com',
+    status: 'CONNECTED',
+    auto_sync_orders: true,
+    sync_tracking: true,
+    last_synced_at: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
+    created_at: new Date(Date.now() - 3600 * 1000 * 24 * 7).toISOString(),
+  },
+  {
+    id: 'int-woo-02',
+    seller_id: '32d724db-23c4-4cba-a76f-f78e4022194e',
+    platform: 'WOOCOMMERCE',
+    store_name: 'Apex Clearance Outlet',
+    store_url: 'https://outlet.apexretail.store',
+    status: 'DISCONNECTED',
+    auto_sync_orders: false,
+    sync_tracking: true,
+    created_at: new Date(Date.now() - 3600 * 1000 * 24 * 14).toISOString(),
+  },
+];
+
+const INITIAL_RECONCILIATIONS: ReconciliationRecord[] = [
+  {
+    id: 'rec-001',
+    awb_number: 'DEL9948271049',
+    seller_id: '32d724db-23c4-4cba-a76f-f78e4022194e',
+    courier_code: 'DELHIVERY',
+    courier_remitted_amount: 1850,
+    platform_expected_amount: 1950,
+    discrepancy_amount: 100,
+    category: 'COD_MISMATCH',
+    status: 'FLAGGED',
+    notes: 'Courier remitted ₹100 less than invoice receipt.',
+    created_at: new Date(Date.now() - 3600 * 1000 * 18).toISOString(),
+  },
+  {
+    id: 'rec-002',
+    awb_number: 'BLU8829102931',
+    seller_id: '32d724db-23c4-4cba-a76f-f78e4022194e',
+    courier_code: 'BLUEDART',
+    courier_remitted_amount: 420,
+    platform_expected_amount: 340,
+    discrepancy_amount: 80,
+    category: 'WEIGHT_DISCREPANCY',
+    status: 'RESOLVED',
+    notes: 'Excess freight charge auto-refunded to wallet.',
+    created_at: new Date(Date.now() - 3600 * 1000 * 36).toISOString(),
+  },
+];
+
 interface PlatformStore {
   // Active User / Tenant Context
   currentSeller: Seller | null;
@@ -287,8 +341,8 @@ interface PlatformStore {
   // Actions — Orders & Shipping
   addOrder: (order: Omit<Order, 'id' | 'created_at' | 'updated_at'>) => Order;
   bulkImportOrders: (newOrders: Array<Omit<Order, 'id' | 'created_at' | 'updated_at'>>) => number;
-  updateOrderStatus: (orderId: string, status: OrderStatus) => void;
-  createShipment: (orderId: string, courierId: string, courierName: string, courierCode: string, shippingCost: number, codCharge: number) => Shipment | null;
+  updateOrderStatus: (orderId: string, status: OrderStatus) => Promise<void>;
+  createShipment: (orderId: string, courierId: string, courierName: string, courierCode: string, shippingCost: number, codCharge: number) => Promise<Shipment>;
   updateShipmentStatus: (shipmentId: string, status: ShipmentStatus, message?: string, location?: string) => void;
   generateManifest: (courierId: string, warehouseId: string, shipmentIds: string[]) => Manifest;
   bulkAssignShipments: (orderIds: string[], courierId?: string) => Promise<number>;
@@ -625,13 +679,13 @@ export const usePlatformStore = create<PlatformStore>((set, get) => ({
         webhooks: liveWebhooks,
         auditLogs: liveAuditLogs,
         pickups: livePickups,
-        userProfiles: liveTeamMembers,
-        integrations: liveIntegrations,
-        reconciliations: liveReconciliations,
-        ndrEscalations: liveEscalations,
-        sellerBankAccount: liveBankAccount,
+        userProfiles: (liveTeamMembers && liveTeamMembers.length > 0) ? liveTeamMembers : [DEFAULT_PRIMARY_USER],
+        integrations: (liveIntegrations && liveIntegrations.length > 0) ? liveIntegrations : INITIAL_INTEGRATIONS,
+        reconciliations: (liveReconciliations && liveReconciliations.length > 0) ? liveReconciliations : INITIAL_RECONCILIATIONS,
+        ndrEscalations: (liveEscalations && liveEscalations.length > 0) ? liveEscalations : INITIAL_ESCALATIONS,
+        sellerBankAccount: liveBankAccount || DEFAULT_BANK_ACCOUNT,
         brandedTrackingConfig: liveTrackingConfig || { ...DEFAULT_BRANDED_TRACKING, seller_id: sellerId || state.currentSeller?.id || DEFAULT_PRIMARY_SELLER.id, brand_name: state.currentSeller?.brand_name || state.currentSeller?.company_name || '' },
-        codPayoutBatches: livePayoutBatches,
+        codPayoutBatches: (livePayoutBatches && livePayoutBatches.length > 0) ? livePayoutBatches : INITIAL_COD_BATCHES,
         isLoadingData: false,
         isInitialHydrated: true,
       }));
@@ -826,90 +880,40 @@ export const usePlatformStore = create<PlatformStore>((set, get) => ({
     return createdOrders.length;
   },
 
-  updateOrderStatus: (orderId, status) => {
+  updateOrderStatus: async (orderId, status) => {
+    const previous = get().orders.find((order) => order.id === orderId);
     set((state) => ({
       orders: state.orders.map((o) => (o.id === orderId ? { ...o, current_status: status, updated_at: new Date().toISOString() } : o)),
     }));
 
-    if (!isMockMode) {
-      updateOrderStatusInSupabase(orderId, status);
+    try {
+      await updateOrderStatusInSupabase(orderId, status);
+    } catch (error) {
+      if (previous) {
+        set((state) => ({ orders: state.orders.map((order) => order.id === orderId ? previous : order) }));
+      }
+      throw error;
     }
   },
 
-  createShipment: (orderId, courierId, courierName, courierCode, shippingCost, codCharge) => {
+  createShipment: async (orderId, courierId, courierName, courierCode, shippingCost, codCharge) => {
     const state = get();
     const order = state.orders.find((o) => o.id === orderId);
-    if (!order) return null;
+    if (!order) throw new Error('Order not found');
 
     const totalDeduction = shippingCost + codCharge;
     if (state.walletBalance < totalDeduction) {
       throw new Error(`Insufficient wallet balance. Total required: ₹${totalDeduction}, Available: ₹${state.walletBalance}`);
     }
 
-    const awbPrefix = (courierCode || 'DEL').substring(0, 3).toUpperCase();
-    const awbNumber = `${awbPrefix}${Math.floor(100000000 + Math.random() * 900000000)}`;
-    const shipmentId = `shp-${Date.now()}`;
-    const now = new Date().toISOString();
-
-    const newShipment: Shipment = {
-      id: shipmentId,
-      seller_id: order.seller_id,
-      order_id: order.id,
-      order: { ...order, current_status: 'READY_TO_SHIP' },
-      courier_id: courierId,
-      courier_name: courierName,
-      courier_code: courierCode,
-      awb_number: awbNumber,
-      label_url: undefined,
-      status: 'CREATED',
-      shipping_cost: shippingCost,
-      cod_charge: codCharge,
-      total_freight_charge: shippingCost + codCharge,
-      created_at: now,
-      updated_at: now,
-    };
-
-    const ledgerDebit: LedgerEntry = {
-      id: `led-${Date.now()}`,
-      seller_id: order.seller_id,
-      type: 'SHIPMENT_DEBIT',
-      amount: totalDeduction,
-      direction: 'DEBIT',
-      reference_type: 'AWB',
-      reference_id: awbNumber,
-      description: `Shipping debit for AWB ${awbNumber} (${courierName})`,
-      created_at: now,
-    };
-
-    set((prevState) => ({
-      shipments: [newShipment, ...prevState.shipments],
-      orders: prevState.orders.map((o) => (o.id === orderId ? { ...o, current_status: 'READY_TO_SHIP', updated_at: now } : o)),
-      ledgerEntries: [ledgerDebit, ...prevState.ledgerEntries],
-      walletBalance: prevState.walletBalance - totalDeduction,
+    const savedShipment = await createShipmentInSupabase(orderId, courierId, courierName, courierCode, shippingCost, codCharge, get().currentSeller?.id);
+    set((previous) => ({
+      shipments: [savedShipment, ...previous.shipments.filter((shipment) => shipment.order_id !== orderId)],
+      orders: previous.orders.map((item) => item.id === orderId ? { ...item, current_status: 'READY_TO_SHIP', updated_at: savedShipment.updated_at } : item),
+      walletBalance: previous.walletBalance - totalDeduction,
     }));
-
-    get().logAuditAction('CREATE_SHIPMENT', 'SHIPMENT', shipmentId, '', awbNumber);
-
-    if (!isMockMode) {
-      createShipmentInSupabase(orderId, courierId, courierName, courierCode, shippingCost, codCharge, get().currentSeller?.id)
-        .then((savedShipment) => {
-          set((s) => ({
-            shipments: s.shipments.map((shp) => (shp.id === shipmentId ? savedShipment : shp)),
-          }));
-        })
-        .catch((err) => console.error('Supabase shipment sync error:', err));
-
-      debitWalletForShipmentInSupabase(get().currentSeller?.id, totalDeduction, awbNumber, courierName)
-        .then(({ balance, entry }) => {
-          set((s) => ({
-            walletBalance: balance,
-            ledgerEntries: s.ledgerEntries.map((l) => (l.id === ledgerDebit.id ? entry : l)),
-          }));
-        })
-        .catch((err) => console.error('Supabase wallet debit sync error:', err));
-    }
-
-    return newShipment;
+    await get().loadSupabaseData();
+    return savedShipment;
   },
 
   updateShipmentStatus: (shipmentId, status, message, location) => {
@@ -1383,7 +1387,7 @@ export const usePlatformStore = create<PlatformStore>((set, get) => ({
     for (const order of targetOrders) {
       const shippingCost = 45 + Math.round((order.weight_kg || 0.5) * 20);
       const codCharge = order.payment_type === 'COD' ? Math.max(30, Math.round(order.total_amount * 0.015)) : 0;
-      state.createShipment(
+      await state.createShipment(
         order.id,
         selectedCourier.id,
         selectedCourier.name,

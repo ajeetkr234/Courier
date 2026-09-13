@@ -173,42 +173,42 @@ def handle_webhook():
   };
 
   return (
-    <section id="developer-sandbox" className="py-12 sm:py-16 px-4 sm:px-8 lg:px-12 max-w-7xl mx-auto w-full space-y-8 scroll-mt-20">
+    <section id="developer-sandbox" className="py-10 sm:py-16 px-3 xs:px-4 sm:px-8 lg:px-12 max-w-7xl mx-auto w-full space-y-6 sm:space-y-8 scroll-mt-20">
       {/* Header */}
-      <div className="text-center space-y-3.5 max-w-5xl mx-auto">
+      <div className="text-center space-y-3 sm:space-y-3.5 max-w-5xl mx-auto px-1 xs:px-2">
         <div className="inline-block">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
-            <span className="flex h-2 w-2 relative">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 xs:px-3.5 rounded-full bg-blue-50 text-blue-700 text-[11px] xs:text-xs font-extrabold border border-blue-200/80 shadow-xs">
+            <span className="flex h-2 w-2 relative shrink-0">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600" />
             </span>
-            <Code2 className="w-3.5 h-3.5 text-blue-600" />
+            <Code2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
             <span className="uppercase tracking-wider">DEVELOPER REST API &amp; SDK PLAYGROUND</span>
           </div>
         </div>
 
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
+        <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
           Built for Developers.{' '}
           <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
             Integrate in Under 5 Minutes.
           </span>
         </h2>
 
-        <p className="text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
+        <p className="text-xs xs:text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
           Explore complete production code samples for order creation, label generation, and cryptographic webhook verification across any programming language.
         </p>
       </div>
 
       {/* Code Explorer Studio Box */}
-      <div className="bg-slate-950 rounded-3xl border border-slate-800 shadow-2xl overflow-hidden">
+      <div className="bg-slate-950 rounded-2xl sm:rounded-3xl border border-slate-800 shadow-2xl overflow-hidden">
         {/* Top Control Bar */}
-        <div className="p-4 sm:p-5 border-b border-slate-800/90 bg-slate-900/90 flex flex-wrap items-center justify-between gap-4">
+        <div className="p-3 xs:p-4 sm:p-5 border-b border-slate-800/90 bg-slate-900/90 flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4">
           {/* Operation Selector */}
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
             <button
               type="button"
               onClick={() => setSelectedEndpoint('create_shipment')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
+              className={`flex-1 sm:flex-initial text-center justify-center px-2.5 xs:px-3.5 py-1.5 rounded-xl text-[11px] xs:text-xs font-mono font-bold transition-all cursor-pointer ${
                 selectedEndpoint === 'create_shipment'
                   ? 'bg-blue-600 text-white shadow-xs'
                   : 'bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700'
@@ -219,7 +219,7 @@ def handle_webhook():
             <button
               type="button"
               onClick={() => setSelectedEndpoint('verify_webhook')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
+              className={`flex-1 sm:flex-initial text-center justify-center px-2.5 xs:px-3.5 py-1.5 rounded-xl text-[11px] xs:text-xs font-mono font-bold transition-all cursor-pointer ${
                 selectedEndpoint === 'verify_webhook'
                   ? 'bg-indigo-600 text-white shadow-xs'
                   : 'bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700'
@@ -230,14 +230,14 @@ def handle_webhook():
           </div>
 
           {/* Language Selector & Copy Action */}
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center justify-between sm:justify-start gap-2 w-full lg:w-auto">
             <div className="flex items-center p-1 rounded-xl bg-slate-950 border border-slate-800">
               {(['curl', 'nodejs', 'python'] as const).map((lang) => (
                 <button
                   key={lang}
                   type="button"
                   onClick={() => setSelectedLang(lang)}
-                  className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer uppercase ${
+                  className={`px-2.5 xs:px-3 py-1 rounded-lg text-[10px] xs:text-xs font-mono font-bold transition-all cursor-pointer uppercase ${
                     selectedLang === lang
                       ? 'bg-blue-500/20 text-blue-400 border border-blue-400/30'
                       : 'text-slate-400 hover:text-slate-200'
@@ -251,7 +251,7 @@ def handle_webhook():
             <button
               type="button"
               onClick={handleCopy}
-              className="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700 transition-all cursor-pointer flex items-center gap-1.5 shadow-2xs"
+              className="px-3 xs:px-3.5 py-1.5 rounded-xl text-[11px] xs:text-xs font-mono font-bold bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700 transition-all cursor-pointer flex items-center gap-1.5 shadow-2xs"
             >
               {copied ? (
                 <>
@@ -269,32 +269,32 @@ def handle_webhook():
         </div>
 
         {/* Code Display Terminal Body */}
-        <div className="p-4 sm:p-6 overflow-x-auto bg-slate-950/95 font-mono text-xs sm:text-sm text-slate-200 leading-relaxed max-h-[480px]">
+        <div className="p-3 xs:p-4 sm:p-6 overflow-x-auto bg-slate-950/95 font-mono text-[11px] xs:text-xs sm:text-sm text-slate-200 leading-relaxed max-h-[480px]">
           <pre className="selection:bg-blue-600 selection:text-white">
             <code>{currentCode}</code>
           </pre>
         </div>
 
         {/* Bottom Feature Badges & Developer Link */}
-        <div className="p-4 sm:p-5 border-t border-slate-800/90 bg-slate-900/60 flex flex-wrap items-center justify-between gap-4 text-xs font-mono">
-          <div className="flex flex-wrap items-center gap-4 text-slate-400">
+        <div className="p-3.5 xs:p-4 sm:p-5 border-t border-slate-800/90 bg-slate-900/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 text-[11px] xs:text-xs font-mono">
+          <div className="flex flex-wrap items-center gap-2.5 xs:gap-4 text-slate-400">
             <span className="flex items-center gap-1.5 text-slate-300">
-              <Zap className="w-3.5 h-3.5 text-amber-400" />
+              <Zap className="w-3.5 h-3.5 text-amber-400 shrink-0" />
               <span>P95 Latency: &lt;350ms</span>
             </span>
             <span className="flex items-center gap-1.5 text-slate-300">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
               <span>Idempotent via X-Idempotency-Key</span>
             </span>
             <span className="flex items-center gap-1.5 text-slate-300">
-              <Lock className="w-3.5 h-3.5 text-blue-400" />
+              <Lock className="w-3.5 h-3.5 text-blue-400 shrink-0" />
               <span>HMAC-SHA256 Signed Bus</span>
             </span>
           </div>
 
           <Link to="/app/developers" className="inline-flex items-center gap-1.5 text-blue-400 hover:text-blue-300 font-bold transition-colors">
             <span>Explore Developer Portal &amp; API Keys</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <ArrowRight className="w-3.5 h-3.5 shrink-0" />
           </Link>
         </div>
       </div>

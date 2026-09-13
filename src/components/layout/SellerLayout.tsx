@@ -6,7 +6,7 @@ import {
   AlertTriangle, RotateCcw, Scale, Wallet, FileText, Globe, 
   BarChart3, Code2, Users, Settings, ChevronDown,
   Menu, X, Building2, PlusCircle, Upload, ShieldCheck, Search, Activity, Calculator,
-  Palette
+  Palette, Headphones
 } from 'lucide-react';
 import { usePlatformStore } from '../../services/store';
 import { useAuth } from '../../app/providers/AuthProvider';
@@ -319,6 +319,14 @@ export const SellerLayout: React.FC = () => {
             )}
           </Link>
 
+          <Link
+            to="/app/claims"
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${isActive('/app/claims') ? 'bg-indigo-50 text-indigo-700 font-bold border border-indigo-200' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'}`}
+          >
+            <ShieldCheck className="w-4 h-4" />
+            <span>Protection &amp; Claims</span>
+          </Link>
+
           {/* Rate Calculator */}
           <Link
             to="/app/rate-calculator"
@@ -422,6 +430,14 @@ export const SellerLayout: React.FC = () => {
           >
             <Settings className="w-4 h-4" />
             <span>Settings</span>
+          </Link>
+
+          <Link
+            to="/app/support"
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${isActive('/app/support') ? 'bg-indigo-50 text-indigo-700 font-bold border border-indigo-200' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'}`}
+          >
+            <Headphones className="w-4 h-4" />
+            <span>Support Centre</span>
           </Link>
         </nav>
 

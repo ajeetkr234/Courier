@@ -1,5 +1,5 @@
-import { supabase, isMockMode, getEffectiveSellerId, isValidUUID } from '../lib/supabase';
-import { OrderStatus, Shipment, ShipmentStatus, PickupRequest } from '../types';
+import { supabase, supabaseUrl, supabaseAnonKey, isMockMode, getEffectiveSellerId, isValidUUID } from '../lib/supabase';
+import { Shipment, ShipmentStatus, PickupRequest } from '../types';
 
 /**
  * Fetch all shipments for the current seller from Supabase, joined with courier & order details
@@ -72,120 +72,20 @@ export async function createShipmentInSupabase(
   courierCode: string,
   shippingCost: number,
   codCharge: number,
-  fallbackSellerId?: string
+  _fallbackSellerId?: string
 ): Promise<Shipment> {
-  const effectiveSellerId = await getEffectiveSellerId(fallbackSellerId);
-  const awbPrefix = (courierCode || 'DEL').substring(0, 3).toUpperCase();
-  const awbNumber = `${awbPrefix}${Math.floor(100000000 + Math.random() * 900000000)}`;
-  const now = new Date().toISOString();
-
   if (!isValidUUID(orderId)) {
     throw new Error('A valid live order is required to create a shipment');
   }
-  const verifiedOrderId = orderId;
-
-  // Ensure courierId is a valid UUID
-  let verifiedCourierId = courierId;
-  if (!isValidUUID(courierId)) {
-    const { data: courierRow } = await supabase
-      .from('couriers')
-      .select('id')
-      .limit(1)
-      .maybeSingle();
-    if (courierRow) verifiedCourierId = courierRow.id;
-  }
-
-  if (!isMockMode) {
-    try {
-      const { data: createdShipment, error } = await supabase
-        .from('shipments')
-        .insert({
-          seller_id: effectiveSellerId,
-          order_id: verifiedOrderId,
-          courier_id: verifiedCourierId,
-          awb_number: awbNumber,
-          label_url: null,
-          status: 'CREATED',
-          pickup_date: new Date().toISOString().split('T')[0],
-        })
-        .select('*, couriers(*), orders(*)')
-        .single();
-
-      if (error) {
-        console.error('Supabase shipment insert failed:', error);
-      } else if (createdShipment) {
-        // Record tracking event
-        await supabase.from('tracking_events').insert({
-          shipment_id: createdShipment.id,
-          raw_status: 'MANIFEST_GENERATED',
-          normalized_status: 'CREATED',
-          event_time: now,
-          location: 'Origin Fulfillment Hub',
-          message: 'Shipping label generated and ready for carrier pickup',
-        });
-
-        // Update order status in orders table
-        await supabase
-          .from('orders')
-          .update({ current_status: 'READY_TO_SHIP', updated_at: now })
-          .eq('id', verifiedOrderId);
-
-        return {
-          id: createdShipment.id,
-          seller_id: createdShipment.seller_id,
-          order_id: createdShipment.order_id,
-          courier_id: createdShipment.courier_id,
-          courier_name: createdShipment.couriers?.name || courierName,
-          courier_code: createdShipment.couriers?.code || courierCode,
-          awb_number: createdShipment.awb_number,
-          label_url: createdShipment.label_url,
-          status: createdShipment.status as ShipmentStatus,
-          pickup_date: createdShipment.pickup_date,
-          shipping_cost: shippingCost,
-          cod_charge: codCharge,
-          total_freight_charge: shippingCost + codCharge,
-          created_at: createdShipment.created_at,
-          updated_at: createdShipment.updated_at,
-        };
-      }
-    } catch (e) {
-      console.error('Error inserting shipment to Supabase:', e);
-    }
-  }
-
-  return {
-    id: `shp-${Date.now()}`,
-    seller_id: effectiveSellerId,
-    order_id: verifiedOrderId,
-    courier_id: verifiedCourierId,
-    courier_name: courierName,
-    courier_code: courierCode,
-    awb_number: awbNumber,
-    label_url: undefined,
-    status: 'CREATED',
-    pickup_date: new Date().toISOString().split('T')[0],
-    shipping_cost: shippingCost,
-    cod_charge: codCharge,
-    total_freight_charge: shippingCost + codCharge,
-    created_at: now,
-    updated_at: now,
-  };
+  if (!isValidUUID(courierId)) throw new Error('A valid courier is required');
+  const idempotencyKey = `shipment:${orderId}:${courierId}`;
+  const { data, error } = await supabase.functions.invoke('book-shipment', {
+    body: { orderId, courierId, shippingCost, codCharge, idempotencyKey },
+  });
+  if (error) throw new Error(error.message || 'Courier booking failed');
+  if (!data?.awb_number) throw new Error(data?.error || 'Courier did not return an AWB');
+  return { ...data, courier_name: courierName, courier_code: courierCode } as Shipment;
 }
-
-const shipmentToOrderStatus: Partial<Record<ShipmentStatus, OrderStatus>> = {
-  CREATED: 'READY_TO_SHIP',
-  PICKUP_SCHEDULED: 'READY_TO_SHIP',
-  PICKED_UP: 'SHIPPED',
-  IN_TRANSIT: 'IN_TRANSIT',
-  OUT_FOR_DELIVERY: 'OUT_FOR_DELIVERY',
-  DELIVERED: 'DELIVERED',
-  NDR: 'NDR',
-  RTO_INITIATED: 'RTO',
-  RTO_IN_TRANSIT: 'RTO',
-  RTO_DELIVERED: 'RETURNED',
-  LOST: 'RTO',
-  CANCELLED: 'CANCELLED',
-};
 
 export async function updateShipmentStatusInSupabase(
   shipmentId: string,
@@ -194,33 +94,12 @@ export async function updateShipmentStatusInSupabase(
   location?: string
 ): Promise<void> {
   if (!isValidUUID(shipmentId)) return;
-
-  const now = new Date().toISOString();
-  const { data: shipment, error } = await supabase
-    .from('shipments')
-    .update({ status, updated_at: now })
-    .eq('id', shipmentId)
-    .select('id, order_id')
-    .single();
-
-  if (error) throw error;
-
-  await supabase.from('tracking_events').insert({
-    shipment_id: shipmentId,
-    raw_status: status,
-    normalized_status: status,
-    event_time: now,
-    location: location || 'Carrier network',
-    message: message || `Shipment status updated to ${status.replace(/_/g, ' ')}`,
+  const { error } = await supabase.rpc('apply_shipment_status', {
+    p_shipment_id: shipmentId, p_status: status, p_raw_status: status,
+    p_message: message || `Shipment status updated to ${status.replace(/_/g, ' ')}`,
+    p_location: location || 'Carrier network', p_event_time: new Date().toISOString(),
   });
-
-  const nextOrderStatus = shipmentToOrderStatus[status];
-  if (shipment?.order_id && nextOrderStatus) {
-    await supabase
-      .from('orders')
-      .update({ current_status: nextOrderStatus, updated_at: now })
-      .eq('id', shipment.order_id);
-  }
+  if (error) throw new Error(error.message);
 }
 
 /**
@@ -344,64 +223,12 @@ export async function fetchPublicTrackingFromSupabase(query: string): Promise<an
   if (!trimmed) return null;
 
   try {
-    // 1. Try matching by AWB directly
-    let { data: shipment } = await supabase
-      .from('shipments')
-      .select('*, couriers(*), orders(*), tracking_events(*)')
-      .eq('awb_number', trimmed)
-      .maybeSingle();
-
-    // 2. If not found, try matching by Order External ID
-    if (!shipment) {
-      const { data: order } = await supabase
-        .from('orders')
-        .select('id')
-        .eq('external_order_id', trimmed)
-        .maybeSingle();
-
-      if (order?.id) {
-        const { data: shp } = await supabase
-          .from('shipments')
-          .select('*, couriers(*), orders(*), tracking_events(*)')
-          .eq('order_id', order.id)
-          .maybeSingle();
-        shipment = shp;
-      }
-    }
-
-    if (!shipment) return null;
-
-    const events = (shipment.tracking_events || []).map((ev: any) => ({
-      id: ev.id,
-      shipment_id: ev.shipment_id,
-      raw_status: ev.raw_status,
-      normalized_status: ev.normalized_status as ShipmentStatus,
-      event_time: ev.event_time,
-      location: ev.location || 'Hub Sorting Center',
-      message: ev.message,
-    })).sort((a: any, b: any) => new Date(b.event_time).getTime() - new Date(a.event_time).getTime());
-
-    return {
-      awbNumber: shipment.awb_number,
-      normalizedStatus: shipment.status as ShipmentStatus,
-      currentStatus: shipment.status.replace(/_/g, ' '),
-      estimatedDeliveryDate: shipment.pickup_date ? new Date(new Date(shipment.pickup_date).getTime() + 3 * 86400000).toISOString() : new Date().toISOString(),
-      events: events.length > 0 ? events : [
-        {
-          id: 'ev-1',
-          shipment_id: shipment.id,
-          raw_status: shipment.status,
-          normalized_status: shipment.status as ShipmentStatus,
-          event_time: shipment.created_at,
-          location: 'Origin Logistics Hub',
-          message: 'Shipment recorded in national carrier network',
-        }
-      ],
-      courierName: shipment.couriers?.name || 'Courier Partner',
-      courierCode: shipment.couriers?.code || 'delhivery',
-      originCity: 'Delhi',
-      destinationCity: shipment.orders?.shipping_address?.city || 'Destination City',
-    };
+    const response = await fetch(`${supabaseUrl}/functions/v1/public-tracking?q=${encodeURIComponent(trimmed)}`, {
+      headers: { apikey: supabaseAnonKey },
+    });
+    if (response.status === 404) return null;
+    if (!response.ok) throw new Error(`Tracking lookup failed (${response.status})`);
+    return await response.json();
   } catch (err) {
     console.error('Error in fetchPublicTrackingFromSupabase:', err);
     return null;

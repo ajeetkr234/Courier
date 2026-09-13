@@ -112,11 +112,11 @@ export const ServiceabilityCheckForm: React.FC<ServiceabilityCheckFormProps> = (
 
   return (
     <div className={`w-full max-w-full overflow-x-hidden ${className}`}>
-      <div className="bg-slate-50 p-5 sm:p-8 rounded-3xl border border-slate-200 shadow-xl space-y-6">
+      <div className="bg-white/90 p-4 xs:p-5 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-sm space-y-5 sm:space-y-6">
         <form onSubmit={handleSubmit} className="space-y-6" noValidate>
           {/* Top Form Header */}
           <div className="space-y-1">
-            <h3 className="text-lg sm:text-xl font-black text-slate-900 font-display tracking-tight flex items-center gap-2">
+            <h3 className="text-base sm:text-xl font-black text-slate-900 font-display tracking-tight flex items-center gap-2">
               <Search className="w-5 h-5 text-blue-600 shrink-0" /> Delivery Availability &amp; Serviceability Check
             </h3>
             <p className="text-xs text-slate-600 font-medium">

@@ -69,7 +69,7 @@ export const RateComparisonModal: React.FC<RateComparisonModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleConfirmShipment = () => {
+  const handleConfirmShipment = async () => {
     if (!selectedQuote) {
       toast.error('Please select a courier partner');
       return;
@@ -84,7 +84,7 @@ export const RateComparisonModal: React.FC<RateComparisonModalProps> = ({
 
     setSubmitting(true);
     try {
-      createShipment(
+      await createShipment(
         order.id,
         selectedQuote.courier_id,
         selectedQuote.courier_name,

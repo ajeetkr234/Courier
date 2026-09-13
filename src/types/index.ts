@@ -262,6 +262,38 @@ export interface PickupRequest {
   created_at: string;
 }
 
+export interface SupportTicket {
+  id: string;
+  seller_id: string;
+  ticket_number: string;
+  category: string;
+  subject: string;
+  description: string;
+  entity_type?: string;
+  entity_id?: string;
+  priority: 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT';
+  status: 'OPEN' | 'IN_PROGRESS' | 'WAITING_ON_SELLER' | 'RESOLVED' | 'CLOSED';
+  sla_due_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ShipmentClaim {
+  id: string;
+  seller_id: string;
+  shipment_id: string;
+  claim_type: 'LOST' | 'DAMAGED' | 'TAMPERED' | 'SHORT' | 'POD_DISPUTE';
+  claimed_amount: number;
+  approved_amount?: number;
+  description: string;
+  evidence_paths: string[];
+  status: 'DRAFT' | 'SUBMITTED' | 'UNDER_REVIEW' | 'MORE_INFO_REQUIRED' | 'APPROVED' | 'REJECTED' | 'PAID';
+  resolution_notes?: string;
+  submitted_at: string;
+  resolved_at?: string;
+  shipment?: Shipment;
+}
+
 // NDR & RTO
 export interface NDRCase {
   id: string;

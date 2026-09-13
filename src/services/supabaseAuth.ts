@@ -141,6 +141,14 @@ export async function signUpUser(
   if (error) throw error;
   if (!data.user) throw new Error('Registration failed: no user returned from Supabase.');
 
+  if (!data.session) {
+    throw new Error('Account created. Verify the email we sent you, then sign in to continue onboarding.');
+  }
+
+  // The database bootstrap trigger adds seller_id/role to app_metadata. Refresh
+  // once so tenant RLS sees those claims before loading the new workspace.
+  await supabase.auth.refreshSession();
+
   return await provisionSellerAccount(data.user.id, email, companyName, phone);
 }
 

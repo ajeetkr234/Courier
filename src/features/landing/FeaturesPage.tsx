@@ -343,22 +343,22 @@ export const FeaturesPage: React.FC = () => {
   return (
     <div className="text-slate-900 flex flex-col font-sans relative overflow-x-hidden">
       {/* Hero Header */}
-      <section className="relative py-12 sm:py-16 px-6 sm:px-8 bg-gradient-to-b from-blue-50/40 via-white to-white border-b border-slate-200/80 overflow-hidden">
+      <section className="relative py-10 sm:py-16 px-3 xs:px-4 sm:px-8 lg:px-12 bg-gradient-to-b from-blue-50/40 via-white to-white border-b border-slate-200/80 overflow-hidden">
 
-        <div className="relative max-w-7xl mx-auto space-y-8 text-center z-10">
+        <div className="relative max-w-7xl mx-auto space-y-6 sm:space-y-8 text-center z-10">
           {/* Badge */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs"
+            className="inline-flex items-center gap-1.5 xs:gap-2 px-3 py-1 xs:px-3.5 xs:py-1.5 rounded-full bg-blue-50 text-blue-700 text-[10px] xs:text-xs font-extrabold border border-blue-200/80 shadow-xs max-w-full"
           >
-            <span className="flex h-2 w-2 relative">
+            <span className="flex h-2 w-2 relative shrink-0">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600" />
             </span>
-            <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-            <span className="uppercase tracking-wider">Platform Architecture • 12 Pillars of Automation</span>
+            <Sparkles className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+            <span className="uppercase tracking-wider truncate">Platform Architecture • 12 Pillars of Automation</span>
           </motion.div>
 
           {/* Heading */}
@@ -366,7 +366,7 @@ export const FeaturesPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-2xl xs:text-3xl sm:text-5xl md:text-6xl lg:text-[66px] font-black font-display tracking-tight leading-[1.22] sm:leading-[1.24] max-w-5xl mx-auto text-slate-950"
+            className="text-2xl xs:text-3xl sm:text-5xl md:text-6xl lg:text-[66px] font-black font-display tracking-tight leading-[1.22] sm:leading-[1.24] max-w-5xl mx-auto text-slate-950 px-1 xs:px-2"
           >
             Everything You Need to{' '}
             <span className="inline-block pb-1 sm:pb-2.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
@@ -379,7 +379,7 @@ export const FeaturesPage: React.FC = () => {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed font-medium"
+            className="text-xs xs:text-sm sm:text-base md:text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed font-medium px-1 xs:px-2"
           >
             Explore the complete suite of shipping automation, multi-carrier rate optimization, NDR recovery tools, and financial reconciliation built for modern e-commerce.
           </motion.p>
@@ -389,16 +389,16 @@ export const FeaturesPage: React.FC = () => {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex flex-wrap justify-center gap-4 pt-2"
+            className="flex flex-col xs:flex-row items-stretch xs:items-center justify-center gap-2.5 sm:gap-4 pt-2 w-full max-w-md mx-auto xs:max-w-none"
           >
-            <Link to="/register">
-              <Button size="lg" className="shadow-lg shadow-blue-500/20 bg-blue-600 hover:bg-blue-700 text-white font-extrabold" rightIcon={<ArrowRight className="w-5 h-5" />}>
+            <Link to="/register" className="w-full xs:w-auto">
+              <Button size="lg" className="w-full xs:w-auto shadow-lg shadow-blue-500/20 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs xs:text-sm" rightIcon={<ArrowRight className="w-4 h-4 xs:w-5 xs:h-5" />}>
                 Book a Shipment
               </Button>
             </Link>
-            <a href="#simulator">
-              <button className="inline-flex items-center justify-center font-extrabold rounded-xl transition-all duration-200 text-sm px-6 py-3 gap-2.5 bg-white border border-slate-200/90 text-slate-800 hover:bg-slate-50 hover:border-blue-300 shadow-xs cursor-pointer">
-                <Cpu className="w-5 h-5 text-blue-600 shrink-0" />
+            <a href="#simulator" className="w-full xs:w-auto">
+              <button className="w-full xs:w-auto inline-flex items-center justify-center font-extrabold rounded-xl transition-all duration-200 text-xs xs:text-sm px-4 xs:px-6 py-3 gap-2 xs:gap-2.5 bg-white border border-slate-200/90 text-slate-800 hover:bg-slate-50 hover:border-blue-300 shadow-xs cursor-pointer">
+                <Cpu className="w-4 h-4 xs:w-5 xs:h-5 text-blue-600 shrink-0" />
                 <span>Explore Interactive Simulator</span>
               </button>
             </a>
@@ -409,21 +409,21 @@ export const FeaturesPage: React.FC = () => {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="pt-6 border-t border-slate-200/80 flex flex-wrap items-center justify-center gap-3 sm:gap-5 text-xs font-mono text-slate-600 max-w-4xl mx-auto"
+            className="pt-5 sm:pt-6 border-t border-slate-200/80 flex flex-wrap items-center justify-center gap-2 xs:gap-2.5 sm:gap-4 text-[11px] xs:text-xs font-mono text-slate-600 max-w-4xl mx-auto"
           >
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-slate-200/90 shadow-2xs">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+            <div className="flex items-center gap-1.5 xs:gap-2 px-2.5 xs:px-3 py-1 xs:py-1.5 rounded-full bg-white border border-slate-200/90 shadow-2xs">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping shrink-0"></span>
               <span className="text-slate-900 font-bold">28,000+ Pincodes Covered</span>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-slate-200/90 shadow-2xs">
+            <div className="flex items-center gap-1.5 xs:gap-2 px-2.5 xs:px-3 py-1 xs:py-1.5 rounded-full bg-white border border-slate-200/90 shadow-2xs">
               <span className="text-blue-600 font-bold">Sub-Second</span>
               <span>Rate Aggregation</span>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-slate-200/90 shadow-2xs">
+            <div className="flex items-center gap-1.5 xs:gap-2 px-2.5 xs:px-3 py-1 xs:py-1.5 rounded-full bg-white border border-slate-200/90 shadow-2xs">
               <span className="text-emerald-600 font-bold">65% RTO</span>
               <span>Average NDR Recovery</span>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-slate-200/90 shadow-2xs">
+            <div className="flex items-center gap-1.5 xs:gap-2 px-2.5 xs:px-3 py-1 xs:py-1.5 rounded-full bg-white border border-slate-200/90 shadow-2xs">
               <span className="text-indigo-600 font-bold">T+2 Days</span>
               <span>COD Payout Cycle</span>
             </div>
@@ -432,57 +432,57 @@ export const FeaturesPage: React.FC = () => {
       </section>
 
       {/* Ecosystem Ribbon Strip */}
-      <section className="py-6 px-4 sm:px-8 border-b border-slate-200/80 bg-slate-50/50">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs">
-          <div className="flex items-center gap-2 text-slate-500 font-bold font-mono uppercase tracking-wider">
-            <Layers className="w-4 h-4 text-blue-600" />
+      <section className="py-4 sm:py-6 px-3 xs:px-4 sm:px-8 border-b border-slate-200/80 bg-slate-50/50">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4 text-xs">
+          <div className="flex items-center gap-2 text-slate-500 font-bold font-mono uppercase tracking-wider text-[11px] xs:text-xs">
+            <Layers className="w-4 h-4 text-blue-600 shrink-0" />
             <span>Integrated Network:</span>
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-4 font-bold text-slate-700">
-            <span className="px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs">Delhivery</span>
-            <span className="px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs">Blue Dart</span>
-            <span className="px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs">Xpressbees</span>
-            <span className="px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs">Shadowfax</span>
-            <span className="px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs">DTDC</span>
-            <span className="px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs text-emerald-700 border-emerald-200">Shopify</span>
-            <span className="px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs text-purple-700 border-purple-200">WooCommerce</span>
-            <span className="px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs text-blue-700 border-blue-200">REST API</span>
+          <div className="flex flex-wrap items-center justify-center gap-1.5 xs:gap-2.5 sm:gap-3.5 font-bold text-slate-700 text-[11px] xs:text-xs">
+            <span className="px-2.5 xs:px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs">Delhivery</span>
+            <span className="px-2.5 xs:px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs">Blue Dart</span>
+            <span className="px-2.5 xs:px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs">Xpressbees</span>
+            <span className="px-2.5 xs:px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs">Shadowfax</span>
+            <span className="px-2.5 xs:px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs">DTDC</span>
+            <span className="px-2.5 xs:px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs text-emerald-700 border-emerald-200">Shopify</span>
+            <span className="px-2.5 xs:px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs text-purple-700 border-purple-200">WooCommerce</span>
+            <span className="px-2.5 xs:px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs text-blue-700 border-blue-200">REST API</span>
           </div>
         </div>
       </section>
 
       {/* Main Grid: 12 Pillar Feature Capability Cards with Category Filter */}
-      <section id="capabilities" className="py-8 sm:py-10 px-4 sm:px-8 max-w-7xl mx-auto w-full space-y-8">
-        <div className="text-center space-y-3.5 max-w-5xl mx-auto">
+      <section id="capabilities" className="py-8 sm:py-12 px-3 xs:px-4 sm:px-8 max-w-7xl mx-auto w-full space-y-6 sm:space-y-8">
+        <div className="text-center space-y-3 sm:space-y-3.5 max-w-5xl mx-auto">
           <div className="inline-block">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
-              <span className="flex h-2 w-2 relative">
+            <div className="inline-flex items-center gap-1.5 xs:gap-2 px-3 py-1 xs:px-3.5 xs:py-1.5 rounded-full bg-blue-50 text-blue-700 text-[10px] xs:text-xs font-extrabold border border-blue-200/80 shadow-xs max-w-full">
+              <span className="flex h-2 w-2 relative shrink-0">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
               </span>
-              <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-              <span className="uppercase tracking-wider">DEEP-DIVE CAPABILITIES • PLATFORM PILLARS</span>
+              <Sparkles className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+              <span className="uppercase tracking-wider truncate">DEEP-DIVE CAPABILITIES • PLATFORM PILLARS</span>
             </div>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
+          <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto px-1 xs:px-2">
             12 Pillars of{' '}
             <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
               Modern E-Commerce Logistics
             </span>
           </h2>
 
-          <p className="text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
+          <p className="text-xs xs:text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto px-1 xs:px-2">
             Designed to eliminate operational friction, reduce shipping costs, and automate fulfillment at every stage of your order lifecycle. Click any pillar to view technical specifications.
           </p>
         </div>
 
         {/* Category Filter Chips Bar */}
-        <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+        <div className="flex flex-wrap items-center justify-center gap-1.5 xs:gap-2 pt-1 sm:pt-2">
           <button
             type="button"
             onClick={() => setSelectedCategory('all')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            className={`px-3 xs:px-4 py-1.5 xs:py-2 rounded-xl text-[11px] xs:text-xs font-bold transition-all cursor-pointer ${
               selectedCategory === 'all'
                 ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -493,7 +493,7 @@ export const FeaturesPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setSelectedCategory('shipping')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            className={`px-3 xs:px-4 py-1.5 xs:py-2 rounded-xl text-[11px] xs:text-xs font-bold transition-all cursor-pointer ${
               selectedCategory === 'shipping'
                 ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -504,7 +504,7 @@ export const FeaturesPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setSelectedCategory('rto')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            className={`px-3 xs:px-4 py-1.5 xs:py-2 rounded-xl text-[11px] xs:text-xs font-bold transition-all cursor-pointer ${
               selectedCategory === 'rto'
                 ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -515,7 +515,7 @@ export const FeaturesPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setSelectedCategory('finance')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            className={`px-3 xs:px-4 py-1.5 xs:py-2 rounded-xl text-[11px] xs:text-xs font-bold transition-all cursor-pointer ${
               selectedCategory === 'finance'
                 ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -526,7 +526,7 @@ export const FeaturesPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setSelectedCategory('operations')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            className={`px-3 xs:px-4 py-1.5 xs:py-2 rounded-xl text-[11px] xs:text-xs font-bold transition-all cursor-pointer ${
               selectedCategory === 'operations'
                 ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -537,7 +537,7 @@ export const FeaturesPage: React.FC = () => {
         </div>
 
         {/* 12 Cards Grid */}
-        <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
+        <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-4 lg:gap-5">
           <AnimatePresence>
             {filteredFeatures.map((feat, featIdx) => (
               <motion.div 
@@ -550,7 +550,7 @@ export const FeaturesPage: React.FC = () => {
                 whileHover={{ y: -4, scale: 1.012 }}
                 whileTap={{ scale: 0.985 }}
                 onClick={() => setSelectedFeature(feat)}
-                className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-[0_12px_28px_-6px_rgba(37,99,235,0.12)] hover:border-blue-300 transition-all duration-300 space-y-3.5 flex flex-col justify-between group cursor-pointer relative overflow-hidden"
+                className="bg-white p-3.5 xs:p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-[0_12px_28px_-6px_rgba(37,99,235,0.12)] hover:border-blue-300 transition-all duration-300 space-y-3 sm:space-y-3.5 flex flex-col justify-between group cursor-pointer relative overflow-hidden"
               >
                 {/* Subtle top accent gradient line on hover */}
                 <div className="absolute top-0 inset-x-0 h-0.5 bg-gradient-to-r from-blue-500/0 via-blue-500/80 to-indigo-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -594,33 +594,33 @@ export const FeaturesPage: React.FC = () => {
         {/* Feature Deep-Dive Interactive Modal */}
         <AnimatePresence>
           {selectedFeature && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 xs:p-4 bg-slate-950/70 backdrop-blur-md">
               <motion.div
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="bg-white rounded-3xl p-6 sm:p-8 max-w-2xl w-full border border-slate-200 shadow-2xl space-y-6 relative max-h-[90vh] overflow-y-auto"
+                className="bg-white rounded-2xl sm:rounded-3xl p-4 xs:p-6 sm:p-8 max-w-2xl w-full border border-slate-200 shadow-2xl space-y-4 sm:space-y-6 relative max-h-[92vh] overflow-y-auto"
               >
                 {/* Close Button */}
                 <button
                   type="button"
                   onClick={() => setSelectedFeature(null)}
-                  className="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+                  className="absolute top-3.5 right-3.5 xs:top-5 xs:right-5 p-1.5 xs:p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors z-10"
                   aria-label="Close modal"
                 >
                   <X className="w-5 h-5" />
                 </button>
 
                 {/* Header */}
-                <div className="flex items-center gap-3.5 pr-8">
-                  <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center shrink-0">
+                <div className="flex items-center gap-2.5 xs:gap-3.5 pr-8 xs:pr-9">
+                  <div className="w-10 h-10 xs:w-12 xs:h-12 rounded-xl xs:rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center shrink-0">
                     {selectedFeature.icon}
                   </div>
                   <div>
                     <span className="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 text-[10px] font-mono font-bold uppercase">
                       {selectedFeature.badge}
                     </span>
-                    <h3 className="text-xl font-black text-slate-900 font-display mt-0.5">
+                    <h3 className="text-base xs:text-lg sm:text-xl font-black text-slate-900 font-display mt-0.5">
                       {selectedFeature.title}
                     </h3>
                   </div>
@@ -631,9 +631,9 @@ export const FeaturesPage: React.FC = () => {
                 </p>
 
                 {/* Specs Box */}
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-700 space-y-1.5">
+                <div className="p-3.5 xs:p-4 rounded-xl xs:rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-700 space-y-1.5">
                   <span className="block font-bold text-slate-900 uppercase text-[10px] tracking-wider">Architecture Overview</span>
-                  <p className="leading-relaxed">{selectedFeature.specs}</p>
+                  <p className="leading-relaxed text-[11px] xs:text-xs">{selectedFeature.specs}</p>
                 </div>
 
                 {/* JSON Webhook / API Snippet */}
@@ -641,7 +641,7 @@ export const FeaturesPage: React.FC = () => {
                   <span className="block font-mono text-[10px] font-bold text-slate-500 uppercase">
                     Sample JSON Webhook Payload / Schema
                   </span>
-                  <div className="bg-slate-950 p-4 rounded-2xl text-[11px] font-mono text-emerald-400 overflow-x-auto border border-slate-800 shadow-inner">
+                  <div className="bg-slate-950 p-3 xs:p-4 rounded-xl xs:rounded-2xl text-[10px] xs:text-[11px] font-mono text-emerald-400 overflow-x-auto border border-slate-800 shadow-inner">
                     <pre>{selectedFeature.apiSnippet}</pre>
                   </div>
                 </div>
@@ -649,28 +649,28 @@ export const FeaturesPage: React.FC = () => {
                 {/* Highlights List */}
                 <div className="space-y-2">
                   <span className="block font-bold text-slate-900 uppercase text-[10px] tracking-wider">Key Capabilities Included</span>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 gap-2">
                     {selectedFeature.highlights.map((h, i) => (
                       <div key={i} className="flex items-center gap-2 text-xs font-bold text-slate-800 p-2 rounded-xl bg-slate-50 border border-slate-200/60">
                         <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                        <span>{h}</span>
+                        <span className="truncate">{h}</span>
                       </div>
                     ))}
                   </div>
                 </div>
 
                 {/* Modal Footer CTAs */}
-                <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+                <div className="pt-3 sm:pt-4 border-t border-slate-100 flex flex-col-reverse xs:flex-row items-stretch xs:items-center justify-between gap-2.5 xs:gap-3">
                   <button
                     type="button"
                     onClick={() => setSelectedFeature(null)}
-                    className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 cursor-pointer"
+                    className="w-full xs:w-auto text-center px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 cursor-pointer"
                   >
                     Close
                   </button>
 
-                  <Link to={selectedFeature.actionLink}>
-                    <Button size="sm" className="font-extrabold shadow-sm">
+                  <Link to={selectedFeature.actionLink} className="w-full xs:w-auto">
+                    <Button size="sm" className="w-full xs:w-auto font-extrabold shadow-sm justify-center">
                       {selectedFeature.actionLabel} &rarr;
                     </Button>
                   </Link>
@@ -681,35 +681,35 @@ export const FeaturesPage: React.FC = () => {
         </AnimatePresence>
 
         {/* Interactive Feature Deep-Dive Simulator (#simulator) */}
-        <div id="simulator" className="space-y-8 pt-8 border-t border-slate-200/80 relative">
-          <div className="text-center space-y-3.5 max-w-5xl mx-auto">
+        <div id="simulator" className="space-y-6 sm:space-y-8 pt-8 border-t border-slate-200/80 relative">
+          <div className="text-center space-y-3 sm:space-y-3.5 max-w-5xl mx-auto">
             <div className="inline-block">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
-                <span className="flex h-2 w-2 relative">
+              <div className="inline-flex items-center gap-1.5 xs:gap-2 px-3 py-1 xs:px-3.5 xs:py-1.5 rounded-full bg-blue-50 text-blue-700 text-[10px] xs:text-xs font-extrabold border border-blue-200/80 shadow-xs max-w-full">
+                <span className="flex h-2 w-2 relative shrink-0">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
                 </span>
-                <Cpu className="w-3.5 h-3.5 text-blue-600" />
-                <span className="uppercase tracking-wider">INTERACTIVE PLATFORM SIMULATOR • LIVE PREVIEW</span>
+                <Cpu className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                <span className="uppercase tracking-wider truncate">INTERACTIVE PLATFORM SIMULATOR • LIVE PREVIEW</span>
               </div>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
+            <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto px-1 xs:px-2">
               See ShipFaster Logistic{' '}
               <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
                 Modules in Action
               </span>
             </h2>
 
-            <p className="text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
+            <p className="text-xs xs:text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto px-1 xs:px-2">
               Switch modules below to test how our real-time algorithms calculate freight rates, automate NDR verification, and reconcile finances.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-3">
+          <div className="flex flex-wrap items-center justify-center gap-1.5 xs:gap-2.5 sm:gap-3">
             <button
               onClick={() => setActiveTab('aggregation')}
-              className={`px-5 py-2.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+              className={`px-3 xs:px-4 sm:px-5 py-2 xs:py-2.5 rounded-xl text-[11px] xs:text-xs font-extrabold transition-all cursor-pointer ${
                 activeTab === 'aggregation' ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25' : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200/90 shadow-2xs'
               }`}
             >
@@ -717,7 +717,7 @@ export const FeaturesPage: React.FC = () => {
             </button>
             <button
               onClick={() => setActiveTab('ndr')}
-              className={`px-5 py-2.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+              className={`px-3 xs:px-4 sm:px-5 py-2 xs:py-2.5 rounded-xl text-[11px] xs:text-xs font-extrabold transition-all cursor-pointer ${
                 activeTab === 'ndr' ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25' : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200/90 shadow-2xs'
               }`}
             >
@@ -725,7 +725,7 @@ export const FeaturesPage: React.FC = () => {
             </button>
             <button
               onClick={() => setActiveTab('cod')}
-              className={`px-5 py-2.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+              className={`px-3 xs:px-4 sm:px-5 py-2 xs:py-2.5 rounded-xl text-[11px] xs:text-xs font-extrabold transition-all cursor-pointer ${
                 activeTab === 'cod' ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25' : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200/90 shadow-2xs'
               }`}
             >
@@ -733,7 +733,7 @@ export const FeaturesPage: React.FC = () => {
             </button>
             <button
               onClick={() => setActiveTab('disputes')}
-              className={`px-5 py-2.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+              className={`px-3 xs:px-4 sm:px-5 py-2 xs:py-2.5 rounded-xl text-[11px] xs:text-xs font-extrabold transition-all cursor-pointer ${
                 activeTab === 'disputes' ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25' : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200/90 shadow-2xs'
               }`}
             >
@@ -751,21 +751,21 @@ export const FeaturesPage: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -15 }}
                   transition={{ duration: 0.3 }}
-                  className="space-y-5"
+                  className="space-y-4 xs:space-y-5"
                 >
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 xs:pb-4 border-b border-slate-100">
                     <div>
-                      <h4 className="font-black text-blue-600 text-base font-display">Multi-Courier Rate Calculation Output</h4>
-                      <p className="text-xs text-slate-500 font-medium">Interactive simulation for a {simWeight} kg parcel routed via {currentZone.name}</p>
+                      <h4 className="font-black text-blue-600 text-sm xs:text-base font-display">Multi-Courier Rate Calculation Output</h4>
+                      <p className="text-[11px] xs:text-xs text-slate-500 font-medium">Interactive simulation for a {simWeight} kg parcel routed via {currentZone.name}</p>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-3">
+                    <div className="grid grid-cols-2 xs:flex xs:flex-wrap items-center gap-2 xs:gap-3 w-full sm:w-auto">
                       <div className="space-y-1">
-                        <label className="text-[10px] font-bold uppercase text-slate-500 block">Shipping Zone:</label>
+                        <label className="text-[9px] xs:text-[10px] font-bold uppercase text-slate-500 block">Shipping Zone:</label>
                         <select 
                           value={simZoneId}
                           onChange={(e) => setSimZoneId(e.target.value)}
-                          className="bg-slate-50 border border-slate-200 text-xs text-slate-800 rounded-lg px-2.5 py-1.5 font-bold cursor-pointer focus:outline-none focus:border-blue-600"
+                          className="w-full bg-slate-50 border border-slate-200 text-xs text-slate-800 rounded-lg px-2 xs:px-2.5 py-1.5 font-bold cursor-pointer focus:outline-none focus:border-blue-600"
                         >
                           {shippingZones.map((z) => (
                             <option key={z.id} value={z.id}>{z.name}</option>
@@ -774,11 +774,11 @@ export const FeaturesPage: React.FC = () => {
                       </div>
 
                       <div className="space-y-1">
-                        <label className="text-[10px] font-bold uppercase text-slate-500 block">Weight:</label>
+                        <label className="text-[9px] xs:text-[10px] font-bold uppercase text-slate-500 block">Weight:</label>
                         <select 
                           value={simWeight}
                           onChange={(e) => setSimWeight(parseFloat(e.target.value))}
-                          className="bg-slate-50 border border-slate-200 text-xs text-slate-800 rounded-lg px-2.5 py-1.5 font-mono cursor-pointer focus:outline-none focus:border-blue-600"
+                          className="w-full bg-slate-50 border border-slate-200 text-xs text-slate-800 rounded-lg px-2 xs:px-2.5 py-1.5 font-mono cursor-pointer focus:outline-none focus:border-blue-600"
                         >
                           <option value={0.5}>0.5 kg</option>
                           <option value={1.5}>1.5 kg</option>
@@ -789,38 +789,38 @@ export const FeaturesPage: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-medium">
-                    <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 hover:border-emerald-500/50 transition-colors shadow-2xs">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 xs:gap-4 text-xs font-medium">
+                    <div className="p-4 xs:p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5 xs:space-y-2 hover:border-emerald-500/50 transition-colors shadow-2xs">
                       <div className="flex items-center justify-between">
                         <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Delhivery Surface</span>
                         <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 text-[9px] font-bold">Cheapest</span>
                       </div>
-                      <span className="block text-emerald-600 font-mono font-black text-xl">
+                      <span className="block text-emerald-600 font-mono font-black text-lg xs:text-xl">
                         ₹{(42 * simWeight * currentZone.multiplier).toFixed(2)}
                       </span>
-                      <span className="block text-slate-500 text-xs">Estimated Delivery: {currentZone.eta}</span>
+                      <span className="block text-slate-500 text-[11px] xs:text-xs">Estimated Delivery: {currentZone.eta}</span>
                     </div>
 
-                    <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 hover:border-amber-500/50 transition-colors shadow-2xs">
+                    <div className="p-4 xs:p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5 xs:space-y-2 hover:border-amber-500/50 transition-colors shadow-2xs">
                       <div className="flex items-center justify-between">
                         <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Xpressbees Air</span>
                         <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-700 text-[9px] font-bold">Fastest</span>
                       </div>
-                      <span className="block text-amber-600 font-mono font-black text-xl">
+                      <span className="block text-amber-600 font-mono font-black text-lg xs:text-xl">
                         ₹{(58 * simWeight * currentZone.multiplier).toFixed(2)}
                       </span>
-                      <span className="block text-slate-500 text-xs">Estimated Delivery: Next Day Air</span>
+                      <span className="block text-slate-500 text-[11px] xs:text-xs">Estimated Delivery: Next Day Air</span>
                     </div>
 
-                    <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 hover:border-purple-500/50 transition-colors shadow-2xs">
+                    <div className="p-4 xs:p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5 xs:space-y-2 hover:border-purple-500/50 transition-colors shadow-2xs">
                       <div className="flex items-center justify-between">
                         <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Ecom Express COD</span>
                         <span className="px-2 py-0.5 rounded bg-purple-100 text-purple-700 text-[9px] font-bold">Best SLA</span>
                       </div>
-                      <span className="block text-purple-600 font-mono font-black text-xl">
+                      <span className="block text-purple-600 font-mono font-black text-lg xs:text-xl">
                         ₹{(48 * simWeight * currentZone.multiplier).toFixed(2)}
                       </span>
-                      <span className="block text-slate-500 text-xs">Estimated Delivery: {currentZone.eta}</span>
+                      <span className="block text-slate-500 text-[11px] xs:text-xs">Estimated Delivery: {currentZone.eta}</span>
                     </div>
                   </div>
                 </motion.div>
@@ -834,23 +834,23 @@ export const FeaturesPage: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -15 }}
                   transition={{ duration: 0.3 }}
-                  className="space-y-4"
+                  className="space-y-3.5 xs:space-y-4"
                 >
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                    <h4 className="font-black text-rose-600 text-base font-display">Automated NDR Buyer WhatsApp Bot Simulation</h4>
-                    <span className="text-[10px] font-mono text-emerald-700 font-bold bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-100 gap-2">
+                    <h4 className="font-black text-rose-600 text-sm xs:text-base font-display">Automated NDR Buyer WhatsApp Bot Simulation</h4>
+                    <span className="text-[9px] xs:text-[10px] font-mono text-emerald-700 font-bold bg-emerald-50 px-2 xs:px-2.5 py-1 rounded-full border border-emerald-200 shrink-0">
                       ● Live Simulation
                     </span>
                   </div>
 
-                  <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-4 text-xs">
-                    <div className="flex items-start gap-3.5">
-                      <div className="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-md">
+                  <div className="p-3.5 xs:p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3.5 xs:space-y-4 text-xs">
+                    <div className="flex items-start gap-2.5 xs:gap-3.5">
+                      <div className="w-8 h-8 xs:w-10 xs:h-10 rounded-xl xs:rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold text-xs xs:text-sm shrink-0 shadow-md">
                         WA
                       </div>
-                      <div className="space-y-1 w-full">
-                        <span className="block font-bold text-slate-900 text-sm">Automated WhatsApp Alert Sent to Buyer (+91 98765 43210)</span>
-                        <div className="p-3.5 rounded-xl bg-white text-slate-700 font-mono text-xs border border-slate-200 shadow-2xs leading-relaxed">
+                      <div className="space-y-1 w-full min-w-0">
+                        <span className="block font-bold text-slate-900 text-xs xs:text-sm leading-snug">Automated WhatsApp Alert Sent to Buyer (+91 98765 43210)</span>
+                        <div className="p-3 xs:p-3.5 rounded-xl bg-white text-slate-700 font-mono text-[11px] xs:text-xs border border-slate-200 shadow-2xs leading-relaxed">
                           "Hi Rahul! Courier delivery for Order #ORD-1002 failed due to incorrect landmark. Please choose an option below to update the courier rider."
                         </div>
                       </div>
@@ -858,12 +858,12 @@ export const FeaturesPage: React.FC = () => {
 
                     {/* Interactive Customer Reply Simulator Buttons */}
                     <div className="space-y-2 pt-2 border-t border-slate-200">
-                      <span className="text-[11px] font-bold text-slate-600 block">Simulate Buyer Action:</span>
-                      <div className="flex flex-wrap gap-2">
+                      <span className="text-[10px] xs:text-[11px] font-bold text-slate-600 block">Simulate Buyer Action:</span>
+                      <div className="flex flex-wrap gap-1.5 xs:gap-2">
                         <button
                           type="button"
                           onClick={() => setNdrSimulationStatus('address_updated')}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                          className={`px-2.5 xs:px-3 py-1.5 rounded-lg text-[11px] xs:text-xs font-bold transition-all cursor-pointer ${
                             ndrSimulationStatus === 'address_updated'
                               ? 'bg-emerald-600 text-white'
                               : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
@@ -874,7 +874,7 @@ export const FeaturesPage: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => setNdrSimulationStatus('rescheduled')}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                          className={`px-2.5 xs:px-3 py-1.5 rounded-lg text-[11px] xs:text-xs font-bold transition-all cursor-pointer ${
                             ndrSimulationStatus === 'rescheduled'
                               ? 'bg-blue-600 text-white'
                               : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
@@ -885,7 +885,7 @@ export const FeaturesPage: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => setNdrSimulationStatus('prepaid_converted')}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                          className={`px-2.5 xs:px-3 py-1.5 rounded-lg text-[11px] xs:text-xs font-bold transition-all cursor-pointer ${
                             ndrSimulationStatus === 'prepaid_converted'
                               ? 'bg-purple-600 text-white'
                               : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
@@ -897,8 +897,8 @@ export const FeaturesPage: React.FC = () => {
                     </div>
 
                     {/* Outcome Alert */}
-                    <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-mono font-bold flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <div className="p-3 xs:p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] xs:text-xs font-mono font-bold flex items-start xs:items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5 xs:mt-0" />
                       {ndrSimulationStatus === 'address_updated' && (
                         <span>Buyer Replied: "Sector 14 near metro station" &rarr; Rider Landmark Updated in Real-Time via Courier API!</span>
                       )}
@@ -921,23 +921,23 @@ export const FeaturesPage: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -15 }}
                   transition={{ duration: 0.3 }}
-                  className="space-y-5"
+                  className="space-y-4 xs:space-y-5"
                 >
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 xs:gap-3 pb-3 border-b border-slate-100">
                     <div>
-                      <h4 className="font-black text-emerald-600 text-base font-display">Interactive T+2 COD Cash Flow Calculator</h4>
-                      <p className="text-xs text-slate-500 font-medium">Slide your monthly COD volume to see net bank payout &amp; working capital impact</p>
+                      <h4 className="font-black text-emerald-600 text-sm xs:text-base font-display">Interactive T+2 COD Cash Flow Calculator</h4>
+                      <p className="text-[11px] xs:text-xs text-slate-500 font-medium">Slide your monthly COD volume to see net bank payout &amp; working capital impact</p>
                     </div>
-                    <span className="text-[10px] font-mono text-blue-700 font-bold bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200 shrink-0">
+                    <span className="text-[10px] font-mono text-blue-700 font-bold bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200 shrink-0 self-start sm:self-auto">
                       T+2 Business Days
                     </span>
                   </div>
 
                   {/* Volume Slider */}
-                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-                    <div className="flex justify-between items-center text-xs">
+                  <div className="p-3.5 xs:p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                    <div className="flex flex-col xs:flex-row justify-between xs:items-center gap-1 text-xs">
                       <span className="font-bold text-slate-700">Monthly Cash on Delivery Orders Volume:</span>
-                      <span className="font-mono font-black text-blue-600 text-sm">
+                      <span className="font-mono font-black text-blue-600 text-sm xs:text-base">
                         ₹{codMonthlyVolume.toLocaleString('en-IN')}
                       </span>
                     </div>
@@ -950,33 +950,33 @@ export const FeaturesPage: React.FC = () => {
                       onChange={(e) => setCodMonthlyVolume(parseInt(e.target.value))}
                       className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
                     />
-                    <div className="flex justify-between text-[10px] text-slate-400 font-mono">
+                    <div className="flex justify-between text-[9px] xs:text-[10px] text-slate-400 font-mono">
                       <span>₹25,000 / mo</span>
                       <span>₹5,00,000 / mo</span>
                       <span>₹10,00,000 / mo</span>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-medium">
-                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
-                      <span className="block text-[10px] text-slate-500 uppercase font-bold">Gross COD Collected</span>
-                      <span className="block text-lg font-black font-mono text-slate-900">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 xs:gap-3.5 sm:gap-4 text-xs font-medium">
+                    <div className="p-3 xs:p-4 rounded-xl xs:rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
+                      <span className="block text-[9px] xs:text-[10px] text-slate-500 uppercase font-bold">Gross COD Collected</span>
+                      <span className="block text-sm xs:text-base sm:text-lg font-black font-mono text-slate-900 truncate">
                         ₹{codMonthlyVolume.toLocaleString('en-IN')}.00
                       </span>
                     </div>
-                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
-                      <span className="block text-[10px] text-slate-500 uppercase font-bold">Est. Freight (8%)</span>
-                      <span className="block text-lg font-black font-mono text-rose-600">
+                    <div className="p-3 xs:p-4 rounded-xl xs:rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
+                      <span className="block text-[9px] xs:text-[10px] text-slate-500 uppercase font-bold">Est. Freight (8%)</span>
+                      <span className="block text-sm xs:text-base sm:text-lg font-black font-mono text-rose-600 truncate">
                         -₹{(codMonthlyVolume * 0.08).toLocaleString('en-IN')}.00
                       </span>
                     </div>
-                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
-                      <span className="block text-[10px] text-slate-500 uppercase font-bold">Remittance Fee</span>
-                      <span className="block text-lg font-black font-mono text-emerald-600">₹0.00 Free</span>
+                    <div className="p-3 xs:p-4 rounded-xl xs:rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
+                      <span className="block text-[9px] xs:text-[10px] text-slate-500 uppercase font-bold">Remittance Fee</span>
+                      <span className="block text-sm xs:text-base sm:text-lg font-black font-mono text-emerald-600 truncate">₹0.00 Free</span>
                     </div>
-                    <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 space-y-1">
-                      <span className="block text-[10px] text-emerald-700 uppercase font-bold">Net Bank Payout</span>
-                      <span className="block text-xl font-black font-mono text-emerald-700">
+                    <div className="p-3 xs:p-4 rounded-xl xs:rounded-2xl bg-emerald-50 border border-emerald-200 space-y-1">
+                      <span className="block text-[9px] xs:text-[10px] text-emerald-700 uppercase font-bold">Net Bank Payout</span>
+                      <span className="block text-base xs:text-lg sm:text-xl font-black font-mono text-emerald-700 truncate">
                         ₹{(codMonthlyVolume * 0.92).toLocaleString('en-IN')}.00
                       </span>
                     </div>
@@ -992,21 +992,21 @@ export const FeaturesPage: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -15 }}
                   transition={{ duration: 0.3 }}
-                  className="space-y-4"
+                  className="space-y-3.5 xs:space-y-4"
                 >
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                    <h4 className="font-black text-amber-600 text-base font-display">Weight Dispute Digital Evidence Locker</h4>
-                    <span className="text-[10px] font-mono text-amber-700 font-bold bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-100 gap-2">
+                    <h4 className="font-black text-amber-600 text-sm xs:text-base font-display">Weight Dispute Digital Evidence Locker</h4>
+                    <span className="text-[9px] xs:text-[10px] font-mono text-amber-700 font-bold bg-amber-50 px-2 xs:px-2.5 py-1 rounded-full border border-amber-200 shrink-0">
                       Dispute Ticket #WD-901
                     </span>
                   </div>
 
-                  <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+                  <div className="p-4 xs:p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 xs:gap-4 text-xs">
                     <div className="space-y-1.5 text-left">
-                      <span className="block font-bold text-slate-900 text-sm">AWB: DEL992817261 • Claimed 1.5 kg vs Billed 0.5 kg</span>
-                      <span className="block text-xs text-slate-500">Digital warehouse scale image attached (JPEG evidence validated with tamper-check)</span>
+                      <span className="block font-bold text-slate-900 text-xs xs:text-sm">AWB: DEL992817261 • Claimed 1.5 kg vs Billed 0.5 kg</span>
+                      <span className="block text-[11px] xs:text-xs text-slate-500">Digital warehouse scale image attached (JPEG evidence validated with tamper-check)</span>
                     </div>
-                    <span className="px-3.5 py-1.5 rounded-xl bg-amber-100 text-amber-800 text-xs font-bold border border-amber-200 shrink-0">
+                    <span className="px-3 py-1.5 rounded-xl bg-amber-100 text-amber-800 text-[11px] xs:text-xs font-bold border border-amber-200 shrink-0">
                       Pending Carrier Credit Note (₹35)
                     </span>
                   </div>
@@ -1017,52 +1017,52 @@ export const FeaturesPage: React.FC = () => {
         </div>
 
         {/* Feature Comparison Matrix */}
-        <div className="py-6 sm:py-8 border-t border-slate-200/80 space-y-6">
-          <div className="text-center space-y-3.5 max-w-5xl mx-auto">
+        <div className="py-6 sm:py-8 border-t border-slate-200/80 space-y-4 sm:space-y-6">
+          <div className="text-center space-y-3 sm:space-y-3.5 max-w-5xl mx-auto">
             <div className="inline-block">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
-                <span className="flex h-2 w-2 relative">
+              <div className="inline-flex items-center gap-1.5 xs:gap-2 px-3 py-1 xs:px-3.5 xs:py-1.5 rounded-full bg-blue-50 text-blue-700 text-[10px] xs:text-xs font-extrabold border border-blue-200/80 shadow-xs max-w-full">
+                <span className="flex h-2 w-2 relative shrink-0">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
                 </span>
-                <Layers className="w-3.5 h-3.5 text-blue-600" />
-                <span className="uppercase tracking-wider">PLATFORM COMPARISON • WHY SHIPFASTER</span>
+                <Layers className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                <span className="uppercase tracking-wider truncate">PLATFORM COMPARISON • WHY SHIPFASTER</span>
               </div>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto">
+            <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18] max-w-4xl mx-auto px-1 xs:px-2">
               Platform Capability{' '}
               <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
                 Comparison Matrix
               </span>
             </h2>
 
-            <p className="text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto">
+            <p className="text-xs xs:text-sm sm:text-base md:text-lg text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto px-1 xs:px-2">
               Compare how ShipFaster Logistic outperforms legacy aggregators and tedious direct courier agreements across every metric.
             </p>
           </div>
 
-          <div className="overflow-x-auto rounded-2xl border border-slate-200/90 shadow-sm bg-white">
-            <table className="w-full text-left text-xs sm:text-sm">
-              <thead className="bg-slate-900 text-white border-b border-slate-200 font-bold uppercase tracking-wider">
+          <div className="overflow-x-auto rounded-2xl border border-slate-200/90 shadow-sm bg-white -mx-1 xs:mx-0">
+            <table className="w-full text-left text-xs sm:text-sm min-w-[580px]">
+              <thead className="bg-slate-900 text-white border-b border-slate-200 font-bold uppercase tracking-wider text-[11px] sm:text-xs">
                 <tr>
-                  <th className="p-4 sm:p-5">Platform Capability</th>
-                  <th className="p-4 sm:p-5 text-center text-blue-400 font-black">ShipFaster Logistic Platform</th>
-                  <th className="p-4 sm:p-5 text-center text-slate-300">Traditional Aggregators</th>
-                  <th className="p-4 sm:p-5 text-center text-slate-300">Direct Courier Contracts</th>
+                  <th className="p-3 xs:p-4 sm:p-5">Platform Capability</th>
+                  <th className="p-3 xs:p-4 sm:p-5 text-center text-blue-400 font-black">ShipFaster Logistic Platform</th>
+                  <th className="p-3 xs:p-4 sm:p-5 text-center text-slate-300">Traditional Aggregators</th>
+                  <th className="p-3 xs:p-4 sm:p-5 text-center text-slate-300">Direct Courier Contracts</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 font-medium">
                 {featureComparison.map((row, idx) => (
                   <tr key={idx} className="hover:bg-blue-50/30 transition-colors">
-                    <td className="p-4 sm:p-4.5 font-bold text-slate-900">{row.capability}</td>
-                    <td className="p-4 sm:p-4.5 text-center bg-blue-50/50">
+                    <td className="p-3 xs:p-3.5 sm:p-4.5 font-bold text-slate-900">{row.capability}</td>
+                    <td className="p-3 xs:p-3.5 sm:p-4.5 text-center bg-blue-50/50">
                       <Check className="w-5 h-5 text-emerald-600 mx-auto" />
                     </td>
-                    <td className="p-4 sm:p-4.5 text-center">
+                    <td className="p-3 xs:p-3.5 sm:p-4.5 text-center">
                       {row.traditional ? <Check className="w-4 h-4 text-slate-400 mx-auto" /> : <X className="w-4 h-4 text-rose-400 mx-auto" />}
                     </td>
-                    <td className="p-4 sm:p-4.5 text-center">
+                    <td className="p-3 xs:p-3.5 sm:p-4.5 text-center">
                       {row.directContracts ? <Check className="w-4 h-4 text-slate-400 mx-auto" /> : <X className="w-4 h-4 text-rose-400 mx-auto" />}
                     </td>
                   </tr>
@@ -1073,38 +1073,38 @@ export const FeaturesPage: React.FC = () => {
         </div>
 
         {/* Feature FAQs Section */}
-        <div className="pt-6 pb-6 sm:pt-8 sm:pb-8 border-t border-slate-200/80 space-y-6">
+        <div className="pt-6 pb-6 sm:pt-8 sm:pb-8 border-t border-slate-200/80 space-y-4 sm:space-y-6">
           <div className="text-center space-y-2 max-w-5xl mx-auto">
             <div className="inline-block">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
-                <span className="flex h-2 w-2 relative">
+              <div className="inline-flex items-center gap-1.5 xs:gap-2 px-3 py-1 xs:px-3.5 xs:py-1.5 rounded-full bg-blue-50 text-blue-700 text-[10px] xs:text-xs font-extrabold border border-blue-200/80 shadow-xs max-w-full">
+                <span className="flex h-2 w-2 relative shrink-0">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
                 </span>
-                <HelpCircle className="w-3.5 h-3.5 text-blue-600" />
-                <span className="uppercase tracking-wider">FEATURE QUESTIONS • EVERYTHING ANSWERED</span>
+                <HelpCircle className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                <span className="uppercase tracking-wider truncate">FEATURE QUESTIONS • EVERYTHING ANSWERED</span>
               </div>
             </div>
 
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 font-display tracking-tight leading-tight max-w-4xl mx-auto">
+            <h2 className="text-2xl xs:text-3xl lg:text-4xl font-black text-slate-900 font-display tracking-tight leading-tight max-w-4xl mx-auto px-1 xs:px-2">
               Frequently Asked{' '}
               <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
                 Platform Questions
               </span>
             </h2>
 
-            <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed max-w-2xl mx-auto">
+            <p className="text-xs xs:text-sm text-slate-600 font-medium leading-relaxed max-w-2xl mx-auto px-1 xs:px-2">
               Got questions about our courier engine, NDR workflows, or early payouts? Find detailed answers below.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4 max-w-5xl mx-auto w-full">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 xs:gap-3.5 sm:gap-4 max-w-5xl mx-auto w-full">
             {faqs.map((faq, idx) => {
               const isOpen = openFaq === idx;
               return (
                 <div 
                   key={idx}
-                  className={`p-4 sm:p-5 rounded-2xl border transition-all duration-200 h-fit ${
+                  className={`p-3.5 xs:p-4 sm:p-5 rounded-2xl border transition-all duration-200 h-fit ${
                     isOpen 
                       ? 'bg-blue-50/40 border-blue-300 shadow-xs' 
                       : 'bg-slate-50/60 hover:bg-slate-50 border-slate-200/80'
@@ -1113,7 +1113,7 @@ export const FeaturesPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setOpenFaq(isOpen ? null : idx)}
-                    className="w-full text-left flex items-start justify-between gap-3 font-bold text-slate-900 text-sm sm:text-base hover:text-blue-600 transition-colors cursor-pointer group"
+                    className="w-full text-left flex items-start justify-between gap-3 font-bold text-slate-900 text-xs xs:text-sm sm:text-base hover:text-blue-600 transition-colors cursor-pointer group"
                   >
                     <span className="leading-snug pr-2">{faq.q}</span>
                     <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 mt-0.5 transition-transform duration-200 ${isOpen ? 'rotate-180 text-blue-600' : ''}`} />

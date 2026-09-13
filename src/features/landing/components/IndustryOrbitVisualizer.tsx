@@ -13,7 +13,7 @@ export interface CourierOrbitPartner {
 export const IndustryOrbitVisualizer: React.FC = () => {
   return (
     <section 
-      className="py-16 sm:py-20 px-4 sm:px-8 lg:px-12 bg-white border-b border-slate-200 overflow-hidden relative"
+      className="py-14 sm:py-20 px-3 xs:px-4 sm:px-8 lg:px-12 bg-white border-b border-slate-200 overflow-hidden relative"
     >
       <div className="relative max-w-6xl mx-auto space-y-8 sm:space-y-10">
         {/* Header Block (Standardized Chip, Heading & Subtitle) */}
@@ -22,22 +22,22 @@ export const IndustryOrbitVisualizer: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-40px' }}
           transition={{ duration: 0.5 }}
-          className="text-center space-y-3.5 max-w-5xl mx-auto px-4"
+          className="text-center space-y-3.5 max-w-5xl mx-auto px-1 xs:px-2 sm:px-4"
         >
           {/* Standardized Section Pill / Chip Badge */}
           <div className="inline-block">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-extrabold border border-blue-200/80 shadow-xs">
-              <span className="flex h-2 w-2 relative">
+            <div className="inline-flex items-center gap-1.5 xs:gap-2 px-3 xs:px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-[10px] xs:text-xs font-extrabold border border-blue-200/80 shadow-xs max-w-full">
+              <span className="flex h-2 w-2 relative shrink-0">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
               </span>
-              <Layers className="w-3.5 h-3.5 text-blue-600" />
-              <span className="uppercase tracking-wider">Industry Solutions • Built for Every Seller</span>
+              <Layers className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+              <span className="uppercase tracking-wider truncate">Industry Solutions • Built for Every Seller</span>
             </div>
           </div>
 
           {/* Standardized Heading */}
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18]">
+          <h2 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 font-display tracking-tight leading-[1.18]">
             Specialized Shipping Solutions,{' '}
             <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 bg-clip-text text-transparent">
               Tailored for Every Industry

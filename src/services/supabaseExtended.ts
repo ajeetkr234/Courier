@@ -1,4 +1,4 @@
-import { supabase } from '../lib/supabase';
+import { supabase, isValidUUID } from '../lib/supabase';
 import {
   BrandedTrackingConfig,
   CODPayoutBatch,
@@ -9,15 +9,31 @@ import {
   UserProfile,
 } from '../types';
 
+let hasNotifiedMissingTable = false;
+
 async function selectMany<T>(table: string, sellerId?: string): Promise<T[]> {
-  let query = supabase.from(table).select('*').order('created_at', { ascending: false });
-  if (sellerId) query = query.eq('seller_id', sellerId);
-  const { data, error } = await query;
-  if (error) {
-    console.warn(`Could not load ${table}:`, error.message);
+  try {
+    let query = supabase.from(table).select('*').order('created_at', { ascending: false });
+    if (sellerId) query = query.eq('seller_id', sellerId);
+    const { data, error } = await query;
+    if (error) {
+      if (error.code === 'PGRST205' || error.message?.includes('schema cache')) {
+        if (!hasNotifiedMissingTable) {
+          hasNotifiedMissingTable = true;
+          console.info(
+            '%c[ShipFaster] Notice: Supabase live panel tables (supabase/migrations/20260911000000_live_panel_data.sql) need to be run in your Supabase SQL Editor. Using local fallback data in the meantime.',
+            'color: #6366f1; font-weight: bold;'
+          );
+        }
+      } else {
+        console.warn(`Could not load ${table}:`, error.message);
+      }
+      return [];
+    }
+    return (data || []) as T[];
+  } catch {
     return [];
   }
-  return (data || []) as T[];
 }
 
 export const fetchTeamMembers = (sellerId?: string) => selectMany<UserProfile>('seller_team_members', sellerId);
@@ -28,17 +44,29 @@ export const fetchCODPayoutBatches = (sellerId?: string) => selectMany<CODPayout
 
 export async function fetchSellerBankAccount(sellerId?: string): Promise<SellerBankAccount | null> {
   if (!sellerId) return null;
-  const { data, error } = await supabase.from('seller_bank_accounts').select('*').eq('seller_id', sellerId)
-    .order('is_primary', { ascending: false }).limit(1).maybeSingle();
-  if (error) console.warn('Could not load seller bank account:', error.message);
-  return (data as SellerBankAccount | null) || null;
+  try {
+    const { data, error } = await supabase.from('seller_bank_accounts').select('*').eq('seller_id', sellerId)
+      .order('is_primary', { ascending: false }).limit(1).maybeSingle();
+    if (error && error.code !== 'PGRST205' && !error.message?.includes('schema cache')) {
+      console.warn('Could not load seller bank account:', error.message);
+    }
+    return (data as SellerBankAccount | null) || null;
+  } catch {
+    return null;
+  }
 }
 
 export async function fetchBrandedTrackingConfig(sellerId?: string): Promise<BrandedTrackingConfig | null> {
   if (!sellerId) return null;
-  const { data, error } = await supabase.from('branded_tracking_configs').select('*').eq('seller_id', sellerId).maybeSingle();
-  if (error) console.warn('Could not load branded tracking config:', error.message);
-  return (data as BrandedTrackingConfig | null) || null;
+  try {
+    const { data, error } = await supabase.from('branded_tracking_configs').select('*').eq('seller_id', sellerId).maybeSingle();
+    if (error && error.code !== 'PGRST205' && !error.message?.includes('schema cache')) {
+      console.warn('Could not load branded tracking config:', error.message);
+    }
+    return (data as BrandedTrackingConfig | null) || null;
+  } catch {
+    return null;
+  }
 }
 
 export async function saveBankAccount(account: SellerBankAccount): Promise<SellerBankAccount | null> {
@@ -54,7 +82,11 @@ export async function saveBrandedTrackingConfig(config: BrandedTrackingConfig): 
 }
 
 export async function saveNDREscalation(escalation: NDREscalation): Promise<NDREscalation | null> {
-  const payload = { ...escalation, id: escalation.id.startsWith('esc-') ? undefined : escalation.id };
+  const payload = {
+    ...escalation,
+    id: escalation.id.startsWith('esc-') ? undefined : escalation.id,
+    ndr_case_id: isValidUUID(escalation.ndr_case_id) ? escalation.ndr_case_id : undefined,
+  };
   const { data, error } = await supabase.from('ndr_escalations').insert(payload).select().single();
   if (error) console.error('Could not save NDR escalation:', error.message);
   return (data as NDREscalation | null) || null;

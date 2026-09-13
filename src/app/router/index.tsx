@@ -1,5 +1,5 @@
 import React, { lazy } from 'react';
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 
 // Layouts
 import { ScrollToTopWrapper } from '../../components/layout/ScrollToTopWrapper';
@@ -9,6 +9,7 @@ import { AdminLayout } from '../../components/layout/AdminLayout';
 
 // Eagerly loaded primary landing page for zero initial render delay
 import { LandingPage } from '../../features/landing/LandingPage';
+import { useAuth } from '../providers/AuthProvider';
 
 // Helper for type-safe named export lazy-loading
 const lazyNamed = <T extends Record<string, any>, K extends keyof T>(
@@ -25,6 +26,10 @@ const PricingPage = lazyNamed(() => import('../../features/landing/PricingPage')
 const AboutPage = lazyNamed(() => import('../../features/landing/AboutPage'), 'AboutPage');
 const ContactPage = lazyNamed(() => import('../../features/landing/ContactPage'), 'ContactPage');
 const PublicTrackingPage = lazyNamed(() => import('../../features/tracking/PublicTrackingPage'), 'PublicTrackingPage');
+const LoginPage = lazyNamed(() => import('../../features/auth/LoginPage'), 'LoginPage');
+const RegisterPage = lazyNamed(() => import('../../features/auth/RegisterPage'), 'RegisterPage');
+const ForgotPasswordPage = lazyNamed(() => import('../../features/auth/ForgotPasswordPage'), 'ForgotPasswordPage');
+const VerifyEmailPage = lazyNamed(() => import('../../features/auth/VerifyEmailPage'), 'VerifyEmailPage');
 
 const OnboardingPage = lazyNamed(() => import('../../features/onboarding/OnboardingPage'), 'OnboardingPage');
 
@@ -48,6 +53,9 @@ const ReportsPage = lazyNamed(() => import('../../features/reports/ReportsPage')
 const RateCalculatorPage = lazyNamed(() => import('../../features/rate-calculator/RateCalculatorPage'), 'RateCalculatorPage');
 const BrandedTrackingCustomizerPage = lazyNamed(() => import('../../features/tracking/BrandedTrackingCustomizerPage'), 'BrandedTrackingCustomizerPage');
 const SettingsPage = lazyNamed(() => import('../../features/settings/SettingsPage'), 'SettingsPage');
+const PickupsPage = lazyNamed(() => import('../../features/pickups/PickupsPage'), 'PickupsPage');
+const ClaimsPage = lazyNamed(() => import('../../features/claims/ClaimsPage'), 'ClaimsPage');
+const SupportPage = lazyNamed(() => import('../../features/support/SupportPage'), 'SupportPage');
 
 // Lazy-loaded Admin Feature Pages
 const AdminDashboardPage = lazyNamed(() => import('../../admin/dashboard/AdminDashboardPage'), 'AdminDashboardPage');
@@ -59,6 +67,14 @@ const AdminAuditLogsPage = lazyNamed(() => import('../../admin/audit/AdminAuditL
 const AdminNDREscalationsPage = lazyNamed(() => import('../../admin/ndr/AdminNDREscalationsPage'), 'AdminNDREscalationsPage');
 const AdminWeightDisputesPage = lazyNamed(() => import('../../admin/disputes/AdminWeightDisputesPage'), 'AdminWeightDisputesPage');
 const AdminCODPayoutsPage = lazyNamed(() => import('../../admin/finance/AdminCODPayoutsPage'), 'AdminCODPayoutsPage');
+
+const RequireAuth: React.FC<{ admin?: boolean }> = ({ admin = false }) => {
+  const { user, isLoading } = useAuth();
+  if (isLoading) return <div className="min-h-screen grid place-items-center text-sm font-bold text-slate-500">Checking secure session…</div>;
+  if (!user) return <Navigate to="/login" replace />;
+  if (admin && !user.role.startsWith('PLATFORM_')) return <Navigate to="/app/home" replace />;
+  return <React.Fragment><Outlet /></React.Fragment>;
+};
 
 export const router = createBrowserRouter([
   {
@@ -80,18 +96,15 @@ export const router = createBrowserRouter([
         ],
       },
 
-      /* Authentication is temporarily disabled. Preserve old URLs as redirects. */
-      { path: '/login', element: <Navigate to="/app/home" replace /> },
-      { path: '/register', element: <Navigate to="/app/home" replace /> },
-      { path: '/forgot-password', element: <Navigate to="/app/home" replace /> },
-      { path: '/verify-email', element: <Navigate to="/app/home" replace /> },
+      { path: '/login', element: <LoginPage /> },
+      { path: '/register', element: <RegisterPage /> },
+      { path: '/forgot-password', element: <ForgotPasswordPage /> },
+      { path: '/verify-email', element: <VerifyEmailPage /> },
       { path: '/onboarding', element: <OnboardingPage /> },
 
       /* Seller Application Scope */
-      {
-        path: '/app',
-        element: <SellerLayout />,
-        children: [
+      { element: <RequireAuth />, children: [{
+        path: '/app', element: <SellerLayout />, children: [
           { path: '', element: <Navigate to="/app/home" replace /> },
           { path: 'home', element: <SellerHomePage /> },
           { path: 'dashboard', element: <DashboardPage /> },
@@ -100,13 +113,14 @@ export const router = createBrowserRouter([
           { path: 'orders/import', element: <ImportOrdersPage /> },
           { path: 'orders/:id', element: <OrdersListPage /> },
           { path: 'shipments', element: <ShipmentsListPage /> },
-          { path: 'pickups', element: <ShipmentsListPage /> },
+          { path: 'pickups', element: <PickupsPage /> },
           { path: 'tracking', element: <PublicTrackingPage /> },
           { path: 'tracking/customizer', element: <BrandedTrackingCustomizerPage /> },
           { path: 'ndr', element: <NDRResolutionPage /> },
           { path: 'rto', element: <RTOTrackingPage /> },
           { path: 'returns', element: <ReturnsPage /> },
           { path: 'weight-disputes', element: <WeightDisputesPage /> },
+          { path: 'claims', element: <ClaimsPage /> },
           { path: 'rate-calculator', element: <RateCalculatorPage /> },
           { path: 'tools/rate-calculator', element: <RateCalculatorPage /> },
           { path: 'wallet', element: <WalletPage /> },
@@ -117,14 +131,13 @@ export const router = createBrowserRouter([
           { path: 'developers', element: <DeveloperPortalPage /> },
           { path: 'team', element: <TeamManagementPage /> },
           { path: 'settings', element: <SettingsPage /> },
+          { path: 'support', element: <SupportPage /> },
         ],
-      },
+      }]},
 
       /* Platform Admin Control Tower Scope */
-      {
-        path: '/admin',
-        element: <AdminLayout />,
-        children: [
+      { element: <RequireAuth admin />, children: [{
+        path: '/admin', element: <AdminLayout />, children: [
           { path: '', element: <AdminDashboardPage /> },
           { path: 'orders', element: <AdminDashboardPage /> },
           { path: 'sellers', element: <AdminSellersPage /> },
@@ -138,7 +151,7 @@ export const router = createBrowserRouter([
           { path: 'audit', element: <AdminAuditLogsPage /> },
           { path: 'reports', element: <ReportsPage /> },
         ],
-      },
+      }]},
       {
         path: '*',
         element: <Navigate to="/" replace />,
