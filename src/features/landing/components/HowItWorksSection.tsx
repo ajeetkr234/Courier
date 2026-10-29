@@ -170,7 +170,7 @@ export const HowItWorksSection: React.FC = () => {
     <section
       ref={sectionRef}
       id="how-it-works"
-      className="py-8 xs:py-10 sm:py-20 px-3 xs:px-4 sm:px-8 lg:px-12 bg-slate-50 border-b border-slate-200 overflow-hidden relative"
+      className="py-8 xs:py-10 sm:py-20 px-3 xs:px-4 sm:px-8 lg:px-12 bg-slate-50 border-b border-slate-200 overflow-hidden relative scroll-mt-20"
     >
 
       <div className="relative max-w-7xl mx-auto space-y-6 xs:space-y-8 sm:space-y-12">
@@ -242,7 +242,7 @@ export const HowItWorksSection: React.FC = () => {
         </div>
 
         {/* 3x2 DESKTOP STEP CARDS GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 xs:gap-4 sm:gap-6 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 xs:gap-4 sm:gap-6 items-stretch min-w-0">
           {steps.map((step, idx) => {
             const isActive = idx <= activeStepIndex;
             const isCurrent = idx === activeStepIndex;
@@ -252,7 +252,7 @@ export const HowItWorksSection: React.FC = () => {
                 key={step.id}
                 ref={(el) => { stepCardsRef.current[idx] = el; }}
                 onClick={() => setActiveStepIndex(idx)}
-                className={`bg-white p-3.5 xs:p-4 sm:p-6 rounded-2xl sm:rounded-3xl border transition-all duration-300 space-y-2.5 xs:space-y-3 sm:space-y-4 flex flex-col justify-between relative overflow-hidden group cursor-pointer ${
+                className={`min-w-0 bg-white p-3.5 xs:p-4 sm:p-6 rounded-2xl sm:rounded-3xl border transition-all duration-300 space-y-2.5 xs:space-y-3 sm:space-y-4 flex flex-col justify-between relative overflow-hidden group cursor-pointer ${
                   isCurrent
                     ? 'border-blue-400 shadow-xl shadow-blue-500/10 ring-2 ring-blue-500/20 -translate-y-1'
                     : isActive
@@ -269,7 +269,7 @@ export const HowItWorksSection: React.FC = () => {
 
                 <div className="space-y-3 sm:space-y-3.5">
                   {/* Card Header: Icon + Stage Badges */}
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col min-[360px]:flex-row min-[360px]:items-center gap-2.5 min-[360px]:justify-between">
                     <div className={`w-10 h-10 rounded-2xl flex items-center justify-center border transition-colors shrink-0 ${
                       isCurrent
                         ? 'bg-blue-50 border-blue-200 shadow-xs'
@@ -277,11 +277,11 @@ export const HowItWorksSection: React.FC = () => {
                     }`}>
                       {step.icon}
                     </div>
-                    <div className="flex items-center gap-1.5 xs:gap-2">
-                      <span className="text-[9px] xs:text-[10px] font-mono font-black text-blue-600 uppercase tracking-widest bg-blue-50 px-1.5 xs:px-2 py-0.5 rounded-md border border-blue-100">
+                    <div className="flex flex-wrap items-center gap-1.5 xs:gap-2 min-w-0 min-[360px]:justify-end">
+                      <span className="whitespace-nowrap text-[9px] xs:text-[10px] font-mono font-black text-blue-600 uppercase tracking-wider xs:tracking-widest bg-blue-50 px-1.5 xs:px-2 py-0.5 rounded-md border border-blue-100">
                         STAGE {step.stepNumber}
                       </span>
-                      <span className={`text-[9px] xs:text-[10px] font-extrabold uppercase px-1.5 xs:px-2 py-0.5 rounded-full border truncate max-w-[110px] xs:max-w-none ${step.activeBadgeColor}`}>
+                      <span className={`max-w-full text-[9px] xs:text-[10px] font-extrabold uppercase leading-tight px-1.5 xs:px-2 py-0.5 rounded-full border break-words ${step.activeBadgeColor}`}>
                         {step.badgeText}
                       </span>
                     </div>
@@ -295,13 +295,13 @@ export const HowItWorksSection: React.FC = () => {
                   </div>
 
                   {/* Description */}
-                  <p className="text-xs text-slate-600 font-medium leading-relaxed min-h-[36px]">
+                  <p className="text-xs text-slate-600 font-medium leading-relaxed sm:min-h-[36px]">
                     {step.description}
                   </p>
                 </div>
 
                 {/* Footer Step Indicator Bar */}
-                <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-slate-500">
+                <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-[11px] font-bold text-slate-500">
                   <span className="flex items-center gap-1.5">
                     <span className={`w-2.5 h-2.5 rounded-full transition-colors ${
                       isCurrent ? 'bg-blue-500 animate-ping' : isActive ? 'bg-emerald-500' : 'bg-slate-300'

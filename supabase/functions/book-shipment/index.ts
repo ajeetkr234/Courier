@@ -16,34 +16,50 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const idempotencyKey = String(body.idempotencyKey || '');
     if (!idempotencyKey || !body.orderId || !body.courierId) return json({ error: 'orderId, courierId and idempotencyKey are required' }, 400);
-    const { data: existing } = await admin.from('provider_operation_logs').select('response_reference,status').eq('idempotency_key', idempotencyKey).maybeSingle();
+    const { data: existing } = await admin.from('provider_operation_logs')
+      .select('response_reference,status')
+      .eq('idempotency_key', idempotencyKey)
+      .eq('seller_id', sellerId)
+      .maybeSingle();
     if (existing?.status === 'SUCCEEDED') return json(existing.response_reference);
 
-    const [{ data: seller }, { data: order }, { data: courier }, { data: wallet }, { data: credentials }] = await Promise.all([
+    const [sellerResult, orderResult, courierResult, walletResult, credentialsResult] = await Promise.all([
       admin.from('sellers').select('id,status').eq('id', sellerId).single(),
       admin.from('orders').select('*').eq('id', body.orderId).eq('seller_id', sellerId).single(),
       admin.from('couriers').select('*').eq('id', body.courierId).eq('is_active', true).single(),
       admin.from('wallets').select('balance').eq('seller_id', sellerId).single(),
       admin.from('courier_credentials').select('*').eq('courier_id', body.courierId).eq('is_active', true).maybeSingle(),
     ]);
+    const seller = sellerResult.data;
+    const order = orderResult.data;
+    const courier = courierResult.data;
+    const wallet = walletResult.data;
+    const credentials = credentialsResult.data;
     if (seller?.status !== 'ACTIVE') return json({ error: 'Seller verification is not active' }, 403);
-    if (!order || !courier) return json({ error: 'Order or courier is unavailable' }, 404);
+    if (!order) return json({ error: 'This order is not available in the signed-in seller account. Sign out and sign in again.' }, 404);
+    if (!courier) return json({ error: 'The selected courier is inactive or no longer available. Recalculate rates and select another courier.' }, 404);
     if (!['NEW','CONFIRMED'].includes(order.current_status)) return json({ error: `Order cannot ship from ${order.current_status}` }, 409);
     const charge = Number(body.shippingCost || 0) + Number(body.codCharge || 0);
     if (!wallet || Number(wallet.balance) < charge) return json({ error: 'Insufficient wallet balance' }, 409);
-    if (!credentials) return json({ error: 'Courier credentials are not configured' }, 503);
-
-    const secret = Deno.env.get(credentials.secret_name);
-    if (!secret) return json({ error: 'Courier credential secret is unavailable' }, 503);
     await admin.from('provider_operation_logs').upsert({ seller_id: sellerId, provider: courier.code, operation: 'CREATE_SHIPMENT', idempotency_key: idempotencyKey, status: 'PENDING', attempt_count: 1, request_reference: { orderId: order.id } });
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 15000);
-    let response: Response;
-    try {
-      response = await fetch(`${credentials.base_url}/shipments`, { method: 'POST', signal: controller.signal, headers: { authorization: `Bearer ${secret}`, 'content-type': 'application/json', 'idempotency-key': idempotencyKey }, body: JSON.stringify({ order, service_code: body.serviceCode }) });
-    } finally { clearTimeout(timeout); }
-    const provider = await response.json();
-    if (!response.ok || !provider.awb_number) throw new Error(provider.message || `Courier returned ${response.status}`);
+
+    const secret = credentials?.secret_name ? Deno.env.get(credentials.secret_name) : null;
+    let provider: { awb_number: string; shipment_id?: string | null; label_url?: string | null };
+
+    if (credentials && secret) {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 15000);
+      let response: Response;
+      try {
+        response = await fetch(`${credentials.base_url}/shipments`, { method: 'POST', signal: controller.signal, headers: { authorization: `Bearer ${secret}`, 'content-type': 'application/json', 'idempotency-key': idempotencyKey }, body: JSON.stringify({ order, service_code: body.serviceCode }) });
+      } finally { clearTimeout(timeout); }
+      provider = await response.json();
+      if (!response.ok || !provider.awb_number) throw new Error((provider as { message?: string }).message || `Courier returned ${response.status}`);
+    } else if (!credentials) {
+      return json({ error: 'Courier credentials are not configured' }, 503);
+    } else {
+      return json({ error: 'Courier credential secret is unavailable' }, 503);
+    }
 
     const { data, error } = await admin.rpc('finalize_shipment_booking', {
       p_seller_id: sellerId, p_order_id: order.id, p_courier_id: courier.id,

@@ -10,11 +10,12 @@ import { useAppStore } from '../../lib/store';
 import { usePlatformStore } from '../../services/store';
 import { toast } from 'sonner';
 import { usePincodeLookup } from '../../hooks/usePincodeLookup';
+import { submitSellerOnboarding } from '../../services/sellerProfile';
 
 export const OnboardingPage: React.FC = () => {
   const navigate = useNavigate();
   const { currentSeller, setCurrentSeller } = useAppStore();
-  const { addWarehouse, updateSellerBankDetails } = usePlatformStore();
+  const { addWarehouse, updateSellerBankDetails, setCurrentSeller: setPlatformSeller } = usePlatformStore();
 
   const [step, setStep] = useState<number>(1);
 
@@ -51,7 +52,7 @@ export const OnboardingPage: React.FC = () => {
     },
   });
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step === 1) {
       if (!brandName.trim() || !gstin.trim() || !pan.trim()) {
         toast.error('Please enter business details before continuing.');
@@ -68,11 +69,11 @@ export const OnboardingPage: React.FC = () => {
         bank_name: bankName,
         account_number: bankAccount,
         ifsc_code: ifsc,
-        is_verified: true,
+        is_verified: false,
       });
     }
     if (step === 4) {
-      if (!whName.trim() || !whContact.trim() || !whPhone.trim() || !whAddress.trim() || !whCity.trim() || !whState.trim() || !whPincode.trim()) {
+      if (!currentSeller?.id || !whName.trim() || !whContact.trim() || !whPhone.trim() || !whAddress.trim() || !whCity.trim() || !whState.trim() || !whPincode.trim()) {
         toast.error('Please enter pickup warehouse details before continuing.');
         return;
       }
@@ -80,13 +81,13 @@ export const OnboardingPage: React.FC = () => {
         name: whName,
         contact_name: whContact,
         phone: whPhone,
-        email: 'dispatch@seller.store',
+        email: currentSeller.contact_email || '',
         address_line1: whAddress,
         pincode: whPincode,
         city: whCity,
         state: whState,
         is_default: true,
-        seller_id: currentSeller?.id || '32d724db-23c4-4cba-a76f-f78e4022194e',
+        seller_id: currentSeller.id,
       });
     }
 
@@ -94,20 +95,20 @@ export const OnboardingPage: React.FC = () => {
     if (step < 5) {
       setStep(step + 1);
     } else {
-      // Final activation
-      if (currentSeller) {
-        const updated = {
-          ...currentSeller,
-          brand_name: brandName || currentSeller.brand_name,
-          company_name: brandName || currentSeller.company_name,
-          gstin: gstin || currentSeller.gstin,
-          pan: pan || currentSeller.pan,
-          status: 'ACTIVE' as const,
-        };
+      try {
+        const updated = await submitSellerOnboarding({
+          companyName: brandName,
+          brandName,
+          gstin,
+          pan,
+        });
         setCurrentSeller(updated);
+        setPlatformSeller(updated);
+        toast.success('Profile submitted for Super Admin verification. Verify your pickup address, then order creation unlocks after approval.');
+        navigate('/app/settings');
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : 'Could not submit profile for verification.');
       }
-      toast.success('KYC Approved! Your seller account is now ACTIVE.');
-      navigate('/app/dashboard');
     }
   };
 
@@ -302,16 +303,16 @@ export const OnboardingPage: React.FC = () => {
           </div>
         )}
 
-        {/* Step 5: Activation Review */}
+        {/* Step 5: Verification submission review */}
         {step === 5 && (
           <div className="space-y-6 animate-fadeIn text-center py-4">
             <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mx-auto shadow-glow-emerald">
               <ShieldCheck className="w-8 h-8" />
             </div>
             <div className="space-y-2">
-              <h2 className="text-2xl font-black text-white font-display">Ready for Account Activation</h2>
+              <h2 className="text-2xl font-black text-white font-display">Ready for Verification</h2>
               <p className="text-xs text-slate-300 max-w-md mx-auto">
-                All details, KYC files, bank accounts, and pickup warehouses have been validated. Click below to activate your seller account and enter the dashboard.
+                Submit your completed profile and KYC documents for Super Admin review. Order creation will unlock after approval.
               </p>
             </div>
           </div>
@@ -326,7 +327,7 @@ export const OnboardingPage: React.FC = () => {
           ) : <div />}
 
           <Button size="md" onClick={handleNext} rightIcon={<ArrowRight className="w-4 h-4" />}>
-            {step === 5 ? 'Activate Account' : 'Save & Continue'}
+            {step === 5 ? 'Submit for Verification' : 'Save & Continue'}
           </Button>
         </div>
       </div>

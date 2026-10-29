@@ -6,12 +6,20 @@ import { WeightDiscrepancy } from '../types';
  */
 export async function fetchWeightDisputesFromSupabase(sellerId?: string): Promise<WeightDiscrepancy[]> {
   try {
-    const effectiveSellerId = await getEffectiveSellerId(sellerId);
-    const { data, error } = await supabase
+    let query = supabase
       .from('weight_discrepancies')
       .select('*, shipments(*)')
-      .eq('seller_id', effectiveSellerId)
       .order('created_at', { ascending: false });
+
+    if (sellerId) {
+      query = query.eq('seller_id', await getEffectiveSellerId(sellerId));
+    } else {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user.app_metadata?.role?.startsWith('PLATFORM_')) {
+        query = query.eq('seller_id', await getEffectiveSellerId());
+      }
+    }
+    const { data, error } = await query;
 
     if (error) throw error;
 
@@ -28,6 +36,11 @@ export async function fetchWeightDisputesFromSupabase(sellerId?: string): Promis
       status: w.status as any,
       deadline: w.deadline,
       evidence_urls: w.evidence_urls || [],
+      evidence_scale_url: w.evidence_scale_url || undefined,
+      evidence_tape_url: w.evidence_tape_url || undefined,
+      sku_master_weight: w.sku_master_weight == null ? undefined : Number(w.sku_master_weight),
+      admin_arbitration_notes: w.admin_arbitration_notes || undefined,
+      resolution_outcome: w.resolution_outcome || undefined,
       created_at: w.created_at,
     }));
   } catch (err) {
@@ -42,27 +55,32 @@ export async function fetchWeightDisputesFromSupabase(sellerId?: string): Promis
 export async function resolveWeightDisputeInSupabase(
   disputeId: string,
   newStatus: string,
-  evidenceUrl?: string
+  evidence?: { evidenceUrl?: string; scaleUrl?: string; tapeUrl?: string; skuMasterWeight?: number; notes?: string }
 ): Promise<void> {
-  try {
-    if (isValidUUID(disputeId)) {
-      const updatePayload: any = { status: newStatus };
-      if (evidenceUrl) {
-        const { data: current } = await supabase
-          .from('weight_discrepancies')
-          .select('evidence_urls')
-          .eq('id', disputeId)
-          .single();
-        const existingUrls = current?.evidence_urls || [];
-        updatePayload.evidence_urls = [...existingUrls, evidenceUrl];
-      }
+  if (!isValidUUID(disputeId)) throw new Error('Invalid weight dispute id');
+  const { data: current, error: readError } = await supabase
+    .from('weight_discrepancies').select('evidence_urls').eq('id', disputeId).single();
+  if (readError) throw new Error(readError.message);
+  const addedUrls = [evidence?.evidenceUrl, evidence?.scaleUrl, evidence?.tapeUrl].filter(Boolean) as string[];
+  const updatePayload: Record<string, unknown> = {
+    status: newStatus,
+    evidence_urls: [...(current?.evidence_urls || []), ...addedUrls],
+  };
+  if (evidence?.scaleUrl) updatePayload.evidence_scale_url = evidence.scaleUrl;
+  if (evidence?.tapeUrl) updatePayload.evidence_tape_url = evidence.tapeUrl;
+  if (evidence?.skuMasterWeight != null) updatePayload.sku_master_weight = evidence.skuMasterWeight;
+  if (evidence?.notes) updatePayload.admin_arbitration_notes = evidence.notes;
+  const { error } = await supabase.from('weight_discrepancies').update(updatePayload).eq('id', disputeId);
+  if (error) throw new Error(error.message);
+}
 
-      await supabase
-        .from('weight_discrepancies')
-        .update(updatePayload)
-        .eq('id', disputeId);
-    }
-  } catch (err) {
-    console.error('Failed to update weight dispute in Supabase:', err);
-  }
+export async function arbitrateWeightDisputeInSupabase(
+  disputeId: string,
+  outcome: 'SELLER_REFUNDED' | 'COURIER_UPHELD',
+  notes: string,
+): Promise<void> {
+  const { error } = await supabase.rpc('arbitrate_weight_dispute', {
+    p_dispute_id: disputeId, p_outcome: outcome, p_notes: notes,
+  });
+  if (error) throw new Error(error.message);
 }

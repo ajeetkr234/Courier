@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users, ShieldCheck, CheckCircle2, XCircle, FileText, Eye, Wallet, CreditCard, ExternalLink } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Modal } from '../../components/ui/Modal';
 import { usePlatformStore } from '../../services/store';
-import { Seller } from '../../types';
+import { Seller, WalletRechargeRequest } from '../../types';
 import { toast } from 'sonner';
+import { fetchWalletRechargeRequests, reviewWalletRecharge } from '../../services/supabaseFinance';
 
 export const AdminSellersPage: React.FC = () => {
   const navigate = useNavigate();
@@ -14,6 +15,12 @@ export const AdminSellersPage: React.FC = () => {
   const [rechargeModalSeller, setRechargeModalSeller] = useState<Seller | null>(null);
   const [creditAmount, setCreditAmount] = useState('1000');
   const [creditReason, setCreditReason] = useState('Administrative credit adjustment');
+  const [rechargeRequests,setRechargeRequests]=useState<WalletRechargeRequest[]>([]);
+  const [reviewingRequest,setReviewingRequest]=useState<string|null>(null);
+
+  const loadRechargeRequests=async()=>{try{setRechargeRequests(await fetchWalletRechargeRequests(true))}catch(error){toast.error(error instanceof Error?error.message:'Unable to load recharge requests')}};
+  useEffect(()=>{void loadRechargeRequests()},[]);
+  const reviewRecharge=async(requestId:string,approve:boolean)=>{setReviewingRequest(requestId);try{await reviewWalletRecharge(requestId,approve,approve?'Bank UTR verified by Super Admin':'Bank UTR rejected');toast.success(approve?'Recharge approved and wallet credited':'Recharge request rejected');await loadRechargeRequests()}catch(error){toast.error(error instanceof Error?error.message:'Could not review recharge')}finally{setReviewingRequest(null)}};
 
   const handleApproveKYC = (sellerId: string) => {
     updateSellerKYC(sellerId, true);
@@ -63,6 +70,11 @@ export const AdminSellersPage: React.FC = () => {
         <p className="text-xs text-slate-400">Review seller KYC documentation, assign rate cards &amp; manage platform access</p>
       </div>
 
+      <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-xl">
+        <div className="flex items-center justify-between border-b border-slate-800 p-4"><div><h3 className="text-sm font-black uppercase text-white">Wallet Recharge Approvals</h3><p className="mt-1 text-xs text-slate-400">Match the UTR with the company bank statement before crediting the wallet.</p></div><span className="rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-bold text-amber-300">{rechargeRequests.filter(item=>item.status==='PENDING').length} pending</span></div>
+        <div className="divide-y divide-slate-800">{rechargeRequests.length===0?<div className="p-6 text-center text-xs text-slate-500">No recharge requests.</div>:rechargeRequests.map(request=><div key={request.id} className="flex flex-col gap-3 p-4 text-xs sm:flex-row sm:items-center sm:justify-between"><div><b className="text-white">{request.sellers?.company_name||'Seller'}</b><span className="ml-2 font-mono text-indigo-300">{request.payment_reference}</span><div className="mt-1 text-slate-400">Paid ₹{(request.paid_amount??request.amount+request.gst_amount).toLocaleString('en-IN')} · GST ₹{request.gst_amount.toLocaleString('en-IN')} · Wallet credit ₹{request.amount.toLocaleString('en-IN')} · {new Date(request.created_at).toLocaleString('en-IN')}</div></div><div className="flex items-center gap-2"><span className={`rounded-full px-2 py-1 font-black ${request.status==='APPROVED'?'bg-emerald-500/10 text-emerald-300':request.status==='REJECTED'?'bg-rose-500/10 text-rose-300':'bg-amber-500/10 text-amber-300'}`}>{request.status}</span>{request.status==='PENDING'&&<><Button size="sm" variant="ghost" disabled={reviewingRequest===request.id} onClick={()=>void reviewRecharge(request.id,false)}>Reject</Button><Button size="sm" isLoading={reviewingRequest===request.id} onClick={()=>void reviewRecharge(request.id,true)}>Verify &amp; Credit</Button></>}</div></div>)}</div>
+      </div>
+
       <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-300">
@@ -82,6 +94,7 @@ export const AdminSellersPage: React.FC = () => {
                   <td className="p-3.5">
                     <span className="font-bold text-white block">{s.company_name}</span>
                     <span className="text-[10px] text-indigo-400 font-semibold">{s.brand_name || 'Individual Seller'}</span>
+                    <span className="mt-1 block text-[10px] text-slate-400">{s.contact_email || 'Email unavailable'} · {s.contact_phone || 'Phone unavailable'}</span>
                   </td>
                   <td className="p-3.5 font-mono">
                     <span className="block text-slate-200">{s.gstin || 'N/A'}</span>
@@ -143,6 +156,11 @@ export const AdminSellersPage: React.FC = () => {
         subtitle="Review uploaded tax documents before granting platform access"
       >
         <div className="space-y-4">
+          <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+            <span className="block text-xs font-bold text-slate-300">Registered Contact</span>
+            <span className="text-xs text-slate-400">{kycModalSeller?.contact_email || 'Email unavailable'} · {kycModalSeller?.contact_phone || 'Phone unavailable'}</span>
+          </div>
+
           <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
             <span className="block text-xs font-bold text-slate-300">GST Certificate ({kycModalSeller?.gstin || '27AAACA123411Z5'})</span>
             <span className="text-xs text-emerald-400 font-semibold">✓ Verified with Govt GST Portal API</span>

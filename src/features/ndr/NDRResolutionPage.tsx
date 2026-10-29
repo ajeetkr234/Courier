@@ -247,7 +247,7 @@ export const NDRResolutionPage: React.FC = () => {
         subtitle="Provide updated customer instructions for the courier delivery team"
       >
         <div className="space-y-4 text-slate-900">
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 xs:grid-cols-3 gap-2">
             <button
               onClick={() => setActionType('REATTEMPT')}
               className={`p-3 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
@@ -278,7 +278,7 @@ export const NDRResolutionPage: React.FC = () => {
             <div className="space-y-3 pt-2">
               <div>
                 <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">Preferred Delivery Time Slot</label>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-1 xs:grid-cols-3 gap-2">
                   {[
                     { id: 'MORNING', label: 'Morning (9 AM - 1 PM)' },
                     { id: 'AFTERNOON', label: 'Afternoon (1 PM - 5 PM)' },

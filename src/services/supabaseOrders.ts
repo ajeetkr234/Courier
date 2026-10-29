@@ -15,7 +15,8 @@ export async function fetchOrdersFromSupabase(sellerId?: string): Promise<Order[
     let query = supabase
       .from('orders')
       .select('*, order_items(*), warehouses(*)')
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
+      .limit(200);
 
     if (sellerId && isValidUUID(sellerId)) {
       query = query.eq('seller_id', sellerId);
@@ -107,8 +108,37 @@ export async function createOrderInSupabase(
     }
   }
 
-  // 2. Validate warehouse UUID if provided
+  if (!verifiedSellerId) throw new Error('Seller profile could not be verified');
+  const { data: verifiedSeller, error: sellerError } = await supabase
+    .from('sellers')
+    .select('id, company_name, pan, status')
+    .eq('id', verifiedSellerId)
+    .single();
+  if (sellerError || !verifiedSeller) throw new Error('Seller profile could not be verified');
+  if (!verifiedSeller.company_name?.trim() || !verifiedSeller.pan?.trim()) {
+    throw new Error('Complete your seller profile before creating an order');
+  }
+  if (verifiedSeller.status !== 'ACTIVE') {
+    throw new Error('Super Admin verification is required before creating an order');
+  }
+
+  // 2. Require a complete seller-owned pickup address. The database repeats
+  // this check so API, CSV and future order paths cannot bypass it.
   const warehouseId = isValidUUID(orderData.warehouse_id) ? orderData.warehouse_id : null;
+  if (!warehouseId) throw new Error('Select a verified pickup address before creating an order');
+  const { data: pickupWarehouse, error: warehouseError } = await supabase
+    .from('warehouses')
+    .select('id, seller_id, address_line1, city, state, pincode, phone')
+    .eq('id', warehouseId)
+    .eq('seller_id', verifiedSellerId)
+    .maybeSingle();
+  const pickupPhone = String(pickupWarehouse?.phone || '').replace(/\D/g, '').slice(-10);
+  if (warehouseError || !pickupWarehouse || !pickupWarehouse.address_line1?.trim() || !pickupWarehouse.city?.trim() || !pickupWarehouse.state?.trim() || !/^\d{6}$/.test(pickupWarehouse.pincode || '')) {
+    throw new Error('Pickup address is incomplete or not verified. Update it in Settings first.');
+  }
+  if (!/^[6-9]\d{9}$/.test(pickupPhone)) {
+    throw new Error('Pickup mobile number is invalid. Update it in Settings first.');
+  }
 
   // 3. Insert order record
   const { data: createdOrder, error: orderError } = await supabase
@@ -122,6 +152,7 @@ export async function createOrderInSupabase(
       payment_type: orderData.payment_type,
       cod_amount: orderData.cod_amount,
       total_amount: orderData.total_amount,
+      pricing_breakdown: orderData.pricing_breakdown || {},
       weight_kg: orderData.weight_kg,
       length_cm: orderData.length_cm,
       width_cm: orderData.width_cm,
@@ -181,6 +212,7 @@ export async function createOrderInSupabase(
     payment_type: createdOrder.payment_type,
     cod_amount: Number(createdOrder.cod_amount),
     total_amount: Number(createdOrder.total_amount),
+    pricing_breakdown: createdOrder.pricing_breakdown || undefined,
     weight_kg: Number(createdOrder.weight_kg),
     length_cm: createdOrder.length_cm ? Number(createdOrder.length_cm) : undefined,
     width_cm: createdOrder.width_cm ? Number(createdOrder.width_cm) : undefined,

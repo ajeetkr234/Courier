@@ -159,7 +159,7 @@ export const CouriersPage: React.FC = () => {
                 </span>
               </div>
 
-              <div className="grid grid-cols-3 gap-4 pt-4 border-t border-slate-100 text-xs">
+              <div className="grid grid-cols-1 xs:grid-cols-3 gap-3 sm:gap-4 pt-4 border-t border-slate-100 text-xs">
                 <div>
                   <span className="text-slate-500 font-medium block">Pincodes</span>
                   <strong className="text-slate-900 font-bold">28,000+</strong>

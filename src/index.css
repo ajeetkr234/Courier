@@ -10,6 +10,15 @@
   --border-color: #e2e8f0;
 }
 
+html {
+  min-width: 320px;
+  max-width: 100%;
+  overflow-x: hidden;
+  text-size-adjust: 100%;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
 * {
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -27,6 +36,25 @@ body {
   font-family: 'Plus Jakarta Sans', sans-serif;
   overflow-x: hidden;
   scroll-behavior: smooth;
+  min-width: 320px;
+  min-height: 100dvh;
+  margin: 0;
+}
+
+#root { min-width: 0; min-height: 100dvh; }
+img, video, canvas, svg { max-width: 100%; }
+img, video { height: auto; }
+pre, code { max-width: 100%; overflow-wrap: anywhere; }
+table { width: 100%; }
+button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+
+@media (max-width: 767px) {
+  input, select, textarea { font-size: 16px !important; }
+  [role="dialog"] { max-height: calc(100dvh - 1rem); }
+}
+
+@media (pointer: coarse) {
+  button, [role="button"], input[type="button"], input[type="submit"] { min-height: 44px; }
 }
 
 /* Continuous Infinite Marquee Track */
@@ -119,5 +147,11 @@ body {
 
 .animate-indeterminate-bar {
   animation: indeterminate-bar 1.2s ease-in-out infinite;
+}
+
+/* Ensure mouse cursor remains visible and never disappears over inputs & textareas */
+input, textarea {
+  cursor: default;
+  caret-color: #4f46e5;
 }
 

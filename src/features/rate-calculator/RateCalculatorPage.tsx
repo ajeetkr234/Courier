@@ -459,7 +459,7 @@ export const RateCalculatorPage: React.FC = () => {
                 <label className="block text-xs font-bold text-slate-700 mb-1">
                   Dimensions <span className="text-slate-500 font-normal">(Optional)</span>
                 </label>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-1 xs:grid-cols-3 gap-2">
                   <div className="relative">
                     <Input
                       type="number"

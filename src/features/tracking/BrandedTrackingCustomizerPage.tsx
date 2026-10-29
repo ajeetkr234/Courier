@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Palette, Globe, Image, Tag, Phone, Mail, MessageSquare, 
@@ -12,16 +12,29 @@ import { toast } from 'sonner';
 export const BrandedTrackingCustomizerPage: React.FC = () => {
   const { brandedTrackingConfig, updateBrandedTrackingConfig } = usePlatformStore();
 
-  const [brandName, setBrandName] = useState(brandedTrackingConfig?.brand_name || 'Apex Retail');
-  const [logoUrl, setLogoUrl] = useState(brandedTrackingConfig?.logo_url || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=120&auto=format&fit=crop&q=80');
+  const [brandName, setBrandName] = useState(brandedTrackingConfig?.brand_name || '');
+  const [logoUrl, setLogoUrl] = useState(brandedTrackingConfig?.logo_url || '');
   const [brandColor, setBrandColor] = useState(brandedTrackingConfig?.brand_color || '#4f46e5');
-  const [supportPhone, setSupportPhone] = useState(brandedTrackingConfig?.support_phone || '+91 98765 43210');
-  const [supportEmail, setSupportEmail] = useState(brandedTrackingConfig?.support_email || 'support@apexretail.store');
-  const [promoBannerUrl, setPromoBannerUrl] = useState(brandedTrackingConfig?.promotional_banner_url || 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=800&auto=format&fit=crop&q=80');
-  const [promoLink, setPromoLink] = useState(brandedTrackingConfig?.promotional_banner_link || 'https://apexretail.store/festive-sale');
-  const [couponCode, setCouponCode] = useState(brandedTrackingConfig?.discount_coupon_code || 'FASTSHIP10');
-  const [discountPercent, setDiscountPercent] = useState<number>(brandedTrackingConfig?.discount_percentage || 10);
-  const [customDomain, setCustomDomain] = useState(brandedTrackingConfig?.custom_domain || 'track.apexretail.store');
+  const [supportPhone, setSupportPhone] = useState(brandedTrackingConfig?.support_phone || '');
+  const [supportEmail, setSupportEmail] = useState(brandedTrackingConfig?.support_email || '');
+  const [promoBannerUrl, setPromoBannerUrl] = useState(brandedTrackingConfig?.promotional_banner_url || '');
+  const [promoLink, setPromoLink] = useState(brandedTrackingConfig?.promotional_banner_link || '');
+  const [couponCode, setCouponCode] = useState(brandedTrackingConfig?.discount_coupon_code || '');
+  const [discountPercent, setDiscountPercent] = useState<number>(brandedTrackingConfig?.discount_percentage || 0);
+  const [customDomain, setCustomDomain] = useState(brandedTrackingConfig?.custom_domain || '');
+
+  useEffect(() => {
+    setBrandName(brandedTrackingConfig?.brand_name || '');
+    setLogoUrl(brandedTrackingConfig?.logo_url || '');
+    setBrandColor(brandedTrackingConfig?.brand_color || '#4f46e5');
+    setSupportPhone(brandedTrackingConfig?.support_phone || '');
+    setSupportEmail(brandedTrackingConfig?.support_email || '');
+    setPromoBannerUrl(brandedTrackingConfig?.promotional_banner_url || '');
+    setPromoLink(brandedTrackingConfig?.promotional_banner_link || '');
+    setCouponCode(brandedTrackingConfig?.discount_coupon_code || '');
+    setDiscountPercent(brandedTrackingConfig?.discount_percentage || 0);
+    setCustomDomain(brandedTrackingConfig?.custom_domain || '');
+  }, [brandedTrackingConfig]);
 
   const handleSaveConfig = (e: React.FormEvent) => {
     e.preventDefault();

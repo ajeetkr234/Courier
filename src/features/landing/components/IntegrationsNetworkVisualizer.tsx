@@ -711,7 +711,7 @@ export const IntegrationsNetworkVisualizer: React.FC = () => {
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-1.5 xs:gap-2 pt-2 border-t border-slate-100 text-[10px] xs:text-[11px] font-mono text-slate-600">
+                  <div className="grid grid-cols-1 xs:grid-cols-3 gap-1.5 xs:gap-2 pt-2 border-t border-slate-100 text-[10px] xs:text-[11px] font-mono text-slate-600">
                     <div>
                       <span className="block text-[9px] xs:text-[10px] text-slate-400">SLA Uptime</span>
                       <span className="text-emerald-600 font-bold">{c.uptime}</span>

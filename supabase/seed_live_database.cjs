@@ -1,11 +1,29 @@
 const { createClient } = require('@supabase/supabase-js');
 
-const supabaseUrl = 'https://ytydhmrcsowhygttdoiw.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0eWRobXJjc293aHlndHRkb2l3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg4MzE3MjksImV4cCI6MjEwNDQwNzcyOX0.Qgl7O2wBzghE1eunUgTOoIwO7_qmCQdxrFHcyOmH8Hw';
+const KNOWN_PRODUCTION_HOST = 'ytydhmrcsowhygttdoiw.supabase.co';
+
+const supabaseUrl = process.env.STAGING_SUPABASE_URL || process.env.SUPABASE_URL || '';
+const supabaseKey = process.env.STAGING_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || '';
+
+if (!supabaseUrl || !supabaseKey) {
+  console.error('Error: SUPABASE_URL and SUPABASE_ANON_KEY environment variables are required to seed.');
+  process.exit(1);
+}
+
+try {
+  const targetHost = new URL(supabaseUrl).hostname.toLowerCase();
+  if (targetHost === KNOWN_PRODUCTION_HOST && !process.env.ALLOW_PRODUCTION_SEED) {
+    console.error(`Refusal: Seeding is blocked against known production project (${KNOWN_PRODUCTION_HOST}).`);
+    process.exit(1);
+  }
+} catch {
+  console.error('Error: SUPABASE_URL is not a valid URL.');
+  process.exit(1);
+}
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-const SELLER_ID = '32d724db-23c4-4cba-a76f-f78e4022194e';
+const SELLER_ID = process.env.SEED_SELLER_ID || '32d724db-23c4-4cba-a76f-f78e4022194e';
 
 async function seed() {
   console.log('--- 1. Updating Primary Seller Profile ---');
@@ -654,7 +672,7 @@ async function seed() {
       {
         seller_id: SELLER_ID,
         url: 'https://api.apexretail.in/webhooks/shipfaster',
-        secret: 'whsec_99a8b7c6d5e4f3a2',
+        secret: `whsec_${require('node:crypto').randomBytes(12).toString('hex')}`,
         subscribed_events: ['shipment.in_transit', 'shipment.delivered', 'ndr.raised'],
         is_active: true
       }

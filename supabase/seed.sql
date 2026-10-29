@@ -1,5 +1,6 @@
--- Multi-Courier Platform Seed Data
--- Run this in your Supabase SQL Editor to populate sample Couriers, Rate Cards, and Slabs.
+-- Required courier and rate catalogue for development environments.
+-- This file intentionally contains no users, sellers, orders, shipments, or
+-- other transactional/demo records.
 
 -- 1. Insert Standard Couriers
 INSERT INTO couriers (id, code, name, logo_url, is_active) VALUES

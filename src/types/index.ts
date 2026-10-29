@@ -9,6 +9,8 @@ export interface Seller {
   id: string;
   company_name: string;
   brand_name?: string;
+  contact_email?: string;
+  contact_phone?: string;
   gstin?: string;
   pan: string;
   status: SellerStatus;
@@ -64,6 +66,9 @@ export interface Warehouse {
   state: string;
   pincode: string;
   is_default: boolean;
+  address_verified_at?: string;
+  phone_verified_at?: string;
+  pickup_verified?: boolean;
   created_at: string;
 }
 
@@ -117,6 +122,11 @@ export interface Order {
   payment_type: PaymentType;
   cod_amount: number;
   total_amount: number;
+  pricing_breakdown?: {
+    product_subtotal: number; product_tax: number; product_discount: number;
+    shipping_charges: number; cod_charges: number; gift_wrap_charges: number;
+    transaction_charges: number; order_discount: number;
+  };
   weight_kg: number;
   length_cm?: number;
   width_cm?: number;
@@ -346,6 +356,7 @@ export interface ReturnOrder {
   reason?: string;
   is_exchange?: boolean;
   exchange_item_name?: string;
+  pickup_details?: Record<string, string>;
   status: 'REQUESTED' | 'APPROVED' | 'PICKED_UP' | 'RECEIVED' | 'REJECTED';
   created_at: string;
 }
@@ -462,6 +473,7 @@ export interface APIKey {
   name: string;
   key_prefix: string;
   secret_key_masked: string;
+  secret?: string;
   scopes: string[];
   is_active: boolean;
   last_used_at?: string;
@@ -488,7 +500,38 @@ export interface IntegrationAccount {
   auto_sync_orders: boolean;
   sync_tracking: boolean;
   last_synced_at?: string;
+  default_warehouse_id?: string;
+  settings?: Record<string, unknown>;
+  last_error?: string;
+  updated_at?: string;
   created_at: string;
+}
+
+export interface WalletRechargeRequest {
+  id: string;
+  seller_id: string;
+  amount: number;
+  paid_amount?: number;
+  gst_amount: number;
+  payment_reference: string;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  requested_by: string;
+  reviewed_by?: string;
+  review_note?: string;
+  reviewed_at?: string;
+  created_at: string;
+  sellers?: { company_name?: string; brand_name?: string };
+}
+
+export interface IntegrationSyncEvent {
+  id: string; seller_id: string; integration_account_id?: string; direction: 'INBOUND' | 'OUTBOUND';
+  event_type: string; external_id?: string; status: 'SUCCESS' | 'WARNING' | 'FAILED' | 'PENDING';
+  message?: string; created_at: string;
+}
+
+export interface IntegrationImportError {
+  id: string; seller_id: string; integration_account_id?: string; external_order_id?: string;
+  error_code: string; error_message: string; status: 'OPEN' | 'RESOLVED' | 'IGNORED'; created_at: string;
 }
 
 export interface BackgroundJob {

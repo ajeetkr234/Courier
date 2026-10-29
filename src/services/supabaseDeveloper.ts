@@ -44,54 +44,12 @@ export async function createAPIKeyInSupabase(
   scopes: string[]
 ): Promise<APIKey> {
   const effectiveSellerId = await getEffectiveSellerId(sellerId);
-  const prefix = `pk_live_${Math.random().toString(36).substring(2, 6)}_`;
-  const rawSecret = `${prefix}${Math.random().toString(36).substring(2, 16)}`;
-  const keyHash = `hash_${Math.random().toString(36).substring(2, 18)}`;
-  const masked = `${prefix}••••${Math.floor(1000 + Math.random() * 9000)}`;
-  const now = new Date().toISOString();
-
-  if (!isMockMode) {
-    try {
-      const { data, error } = await supabase
-        .from('api_keys')
-        .insert({
-          seller_id: effectiveSellerId,
-          name,
-          key_prefix: prefix,
-          key_hash: keyHash,
-          scopes,
-          is_active: true,
-        })
-        .select()
-        .single();
-
-      if (!error && data) {
-        return {
-          id: data.id,
-          seller_id: data.seller_id,
-          name: data.name,
-          key_prefix: data.key_prefix,
-          secret_key_masked: masked,
-          scopes: data.scopes,
-          is_active: data.is_active,
-          created_at: data.created_at,
-        };
-      }
-    } catch (e) {
-      console.error('Failed to insert API key to Supabase:', e);
-    }
-  }
-
-  return {
-    id: `key-${Date.now()}`,
-    seller_id: effectiveSellerId,
-    name,
-    key_prefix: prefix,
-    secret_key_masked: masked,
-    scopes,
-    is_active: true,
-    created_at: now,
-  };
+  if (isMockMode) throw new Error('API key creation is unavailable in mock mode.');
+  const { data, error } = await supabase.functions.invoke('manage-developer-credentials', {
+    body: { action: 'create_api_key', name, scopes },
+  });
+  if (error || !data?.credential) throw error || new Error('API key creation failed');
+  return { ...data.credential, seller_id: effectiveSellerId } as APIKey;
 }
 
 /**
@@ -149,48 +107,12 @@ export async function createWebhookInSupabase(
   events: string[]
 ): Promise<WebhookEndpoint> {
   const effectiveSellerId = await getEffectiveSellerId(sellerId);
-  const secret = `whsec_${Math.random().toString(36).substring(2, 14)}`;
-  const now = new Date().toISOString();
-
-  if (!isMockMode) {
-    try {
-      const { data, error } = await supabase
-        .from('webhook_endpoints')
-        .insert({
-          seller_id: effectiveSellerId,
-          url,
-          secret,
-          subscribed_events: events,
-          is_active: true,
-        })
-        .select()
-        .single();
-
-      if (!error && data) {
-        return {
-          id: data.id,
-          seller_id: data.seller_id,
-          url: data.url,
-          secret: data.secret,
-          subscribed_events: data.subscribed_events,
-          is_active: data.is_active,
-          created_at: data.created_at,
-        };
-      }
-    } catch (e) {
-      console.error('Failed to create webhook in Supabase:', e);
-    }
-  }
-
-  return {
-    id: `whk-${Date.now()}`,
-    seller_id: effectiveSellerId,
-    url,
-    secret,
-    subscribed_events: events,
-    is_active: true,
-    created_at: now,
-  };
+  if (isMockMode) throw new Error('Webhook creation is unavailable in mock mode.');
+  const { data, error } = await supabase.functions.invoke('manage-developer-credentials', {
+    body: { action: 'create_webhook', url, events },
+  });
+  if (error || !data?.credential) throw error || new Error('Webhook creation failed');
+  return { ...data.credential, seller_id: effectiveSellerId } as WebhookEndpoint;
 }
 
 /**

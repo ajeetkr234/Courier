@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AlertTriangle, ArrowLeft, CheckCircle2, FileSpreadsheet, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '../../components/ui/Button';
+import { Select } from '../../components/ui/Input';
 import { usePlatformStore } from '../../services/store';
 
 type ParsedRow = {
@@ -115,12 +116,21 @@ export const ImportOrdersPage: React.FC = () => {
   const navigate = useNavigate();
   const { bulkImportOrders, currentSeller, warehouses } = usePlatformStore();
 
+  const defaultWh = warehouses.find((w) => w.is_default) || warehouses[0];
+  const [selectedWarehouseId, setSelectedWarehouseId] = useState(defaultWh?.id || '');
   const [step, setStep] = useState<'UPLOAD' | 'MAP' | 'IMPORTING' | 'DONE'>('UPLOAD');
   const [fileName, setFileName] = useState('');
   const [progress, setProgress] = useState(0);
   const [parsedRows, setParsedRows] = useState<ParsedRow[]>([]);
   const [importedCount, setImportedCount] = useState(0);
   const validRows = useMemo(() => parsedRows.filter((row) => row.status === 'VALID'), [parsedRows]);
+
+  React.useEffect(() => {
+    if (warehouses.length > 0 && (!selectedWarehouseId || !warehouses.some((w) => w.id === selectedWarehouseId))) {
+      const fallback = warehouses.find((w) => w.is_default) || warehouses[0];
+      if (fallback) setSelectedWarehouseId(fallback.id);
+    }
+  }, [warehouses, selectedWarehouseId]);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -140,9 +150,10 @@ export const ImportOrdersPage: React.FC = () => {
 
   const startImporting = () => {
     const activeSellerId = currentSeller?.id || '32d724db-23c4-4cba-a76f-f78e4022194e';
+    const targetWhId = selectedWarehouseId || warehouses[0]?.id;
 
-    if (!warehouses[0]?.id) {
-      toast.error('Please add a pickup warehouse before importing orders');
+    if (!targetWhId) {
+      toast.error('Please select or add a pickup warehouse before importing orders');
       return;
     }
     if (validRows.length === 0) {
@@ -155,7 +166,7 @@ export const ImportOrdersPage: React.FC = () => {
 
     const count = bulkImportOrders(validRows.map((row) => ({
       seller_id: activeSellerId,
-      warehouse_id: warehouses[0].id,
+      warehouse_id: targetWhId,
       customer_id: '',
       external_order_id: row.externalOrderId,
       source: 'CSV',
@@ -212,12 +223,25 @@ export const ImportOrdersPage: React.FC = () => {
 
       {step === 'MAP' && (
         <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h3 className="text-base font-black text-slate-900 uppercase tracking-wider font-display">Review Uploaded Data</h3>
               <p className="text-xs text-slate-500 font-medium">File: {fileName} ({parsedRows.length} rows, {validRows.length} valid)</p>
             </div>
-            <Button size="sm" onClick={startImporting} className="font-bold">Import Valid Rows</Button>
+            <div className="flex items-center gap-3">
+              <div className="min-w-64">
+                <Select
+                  label="Pickup Warehouse"
+                  value={selectedWarehouseId}
+                  onChange={(e) => setSelectedWarehouseId(e.target.value)}
+                  options={warehouses.map((w) => ({
+                    value: w.id,
+                    label: `${w.name} — ${w.city} (${w.pincode})`,
+                  }))}
+                />
+              </div>
+              <Button size="sm" onClick={startImporting} className="font-bold mt-5 sm:mt-0">Import Valid Rows</Button>
+            </div>
           </div>
 
           <div className="overflow-x-auto rounded-xl border border-slate-200">

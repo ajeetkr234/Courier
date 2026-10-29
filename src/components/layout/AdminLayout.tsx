@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { 
   ShieldCheck, Users, Truck, DollarSign, FileCheck, 
-  Activity, ArrowLeft, Scale, BarChart3, Search, Menu, X,
-  AlertTriangle, Landmark, ShieldAlert, ShoppingBag
+  Activity, Scale, BarChart3, Search, Menu, X,
+  AlertTriangle, Landmark, ShieldAlert, ShoppingBag, Headphones, LogOut
 } from 'lucide-react';
 import { useAuth } from '../../app/providers/AuthProvider';
 import { usePlatformStore } from '../../services/store';
@@ -13,7 +13,7 @@ import { PageLoadingFallback } from '../ui/PageLoadingFallback';
 export const AdminLayout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, switchDemoRole } = useAuth();
+  const { user, logout } = useAuth();
   const { ndrEscalations, weightDiscrepancies, orders, loadSupabaseData } = usePlatformStore();
 
   const mainRef = useRef<HTMLElement>(null);
@@ -47,11 +47,11 @@ export const AdminLayout: React.FC = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <div className="h-screen overflow-hidden bg-slate-950 text-slate-100 flex flex-col md:flex-row">
+    <div className="h-dvh min-h-0 overflow-hidden bg-slate-950 text-slate-100 flex flex-col lg:flex-row">
       <CommandPalette isOpen={isCmdKOpen} onClose={() => setIsCmdKOpen(false)} />
 
       {/* Mobile Top Header */}
-      <div className="md:hidden flex items-center justify-between px-4 py-3 bg-slate-900 border-b border-slate-800 shrink-0">
+      <div className="lg:hidden flex items-center justify-between gap-2 px-3 sm:px-4 py-2.5 bg-slate-900 border-b border-slate-800 shrink-0">
         <div className="flex items-center gap-2">
           <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 text-slate-300">
             {isSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -69,14 +69,14 @@ export const AdminLayout: React.FC = () => {
       {isSidebarOpen && (
         <div 
           onClick={() => setIsSidebarOpen(false)} 
-          className="fixed inset-0 bg-slate-950/75 backdrop-blur-xs z-30 md:hidden" 
+          className="fixed inset-0 bg-slate-950/75 backdrop-blur-xs z-30 lg:hidden"
         />
       )}
 
       {/* Admin Sidebar */}
       <aside className={`
-        fixed md:static inset-y-0 left-0 z-40 w-64 h-screen shrink-0 bg-slate-900 border-r border-slate-800 flex flex-col transition-transform duration-200 shadow-xl md:shadow-none
-        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+        fixed lg:static inset-y-0 left-0 z-40 w-[min(18rem,86vw)] lg:w-64 h-dvh shrink-0 bg-slate-900 border-r border-slate-800 flex flex-col transition-transform duration-200 shadow-xl lg:shadow-none
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         <div className="p-6 border-b border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -130,6 +130,10 @@ export const AdminLayout: React.FC = () => {
           >
             <Users className="w-4 h-4" />
             <span>Sellers &amp; KYC Approval</span>
+          </Link>
+
+          <Link to="/admin/support" className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all ${isActive('/admin/support') ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}>
+            <Headphones className="w-4 h-4"/><span>Seller Support Tickets</span>
           </Link>
 
           {/* NDR Escalations Queue */}
@@ -230,24 +234,12 @@ export const AdminLayout: React.FC = () => {
           </Link>
         </nav>
 
-        <div className="p-4 border-t border-slate-800 bg-slate-900">
-          <button
-            onClick={() => {
-              switchDemoRole('SELLER');
-              navigate('/app/dashboard');
-            }}
-            className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-all border border-slate-700 cursor-pointer"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Seller App
-          </button>
-        </div>
       </aside>
 
       {/* Main Admin Content Viewport */}
-      <div className="flex-1 flex flex-col h-screen min-w-0 overflow-hidden bg-slate-950">
+      <div className="flex-1 flex flex-col h-full min-h-0 min-w-0 overflow-hidden bg-slate-950">
         {/* Desktop Fixed Top Header Navbar */}
-        <header className="hidden md:flex px-6 h-16 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 items-center justify-between shadow-xs shrink-0 z-30">
+        <header className="hidden lg:flex px-4 xl:px-6 h-16 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 items-center justify-between gap-4 shadow-xs shrink-0 z-30">
           <div className="flex items-center gap-3">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
             <h1 className="text-base font-black text-white font-display tracking-tight">
@@ -277,11 +269,12 @@ export const AdminLayout: React.FC = () => {
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
               <span>All Courier APIs Operational</span>
             </div>
+            <button type="button" title={`Sign out ${user?.email || ''}`} onClick={async()=>{await logout();navigate('/login',{replace:true})}} className="rounded-xl border border-slate-700 bg-slate-800 p-2 text-slate-300 hover:border-rose-500/50 hover:text-rose-400"><LogOut className="h-4 w-4" /></button>
           </div>
         </header>
 
         {/* Scrollable Page Content Body */}
-        <main ref={mainRef} className="flex-1 overflow-y-auto p-4 md:p-6 w-full max-w-none">
+        <main ref={mainRef} className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-3 sm:p-4 lg:p-6 w-full max-w-none">
           <Suspense fallback={<PageLoadingFallback />}>
             <Outlet />
           </Suspense>

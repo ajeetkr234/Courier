@@ -257,7 +257,7 @@ export const PincodeRateWidget: React.FC<PincodeRateWidgetProps> = ({
               <span>Dead / Chargeable Weight</span>
               <span className="text-[11px] font-mono text-blue-600 font-extrabold">{weightKg} kg</span>
             </label>
-            <div className="grid grid-cols-4 gap-1.5">
+            <div className="grid grid-cols-2 xs:grid-cols-4 gap-1.5">
               {[0.5, 1.0, 2.0, 5.0].map((w) => (
                 <button
                   key={w}

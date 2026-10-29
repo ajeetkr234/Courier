@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Key, Globe, Plus, Copy, CheckCircle2, ShieldCheck, FileCode } from 'lucide-react';
+import { Key, Globe, Plus, Copy, MessageCircle, Radio } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Modal } from '../../components/ui/Modal';
 import { usePlatformStore } from '../../services/store';
 import { APIKey, WebhookEndpoint } from '../../types';
 import { toast } from 'sonner';
+import { fetchNotificationSettings, getOrdersApiUrl, getRatesApiUrl, getShipmentsApiUrl, getTrackingApiUrl, NotificationSettings, saveNotificationSettings } from '../../services/integrationHub';
 
 export const DeveloperPortalPage: React.FC = () => {
   const { apiKeys, webhooks, createAPIKey, addWebhookEndpoint, loadSupabaseData, isLoadingData } = usePlatformStore();
@@ -15,23 +16,45 @@ export const DeveloperPortalPage: React.FC = () => {
 
   const [keyName, setKeyName] = useState('');
   const [webhookUrl, setWebhookUrl] = useState('https://api.mybrand.com/webhooks/shipping');
+  const [newApiSecret, setNewApiSecret] = useState('');
+  const [notificationSettings, setNotificationSettings] = useState<NotificationSettings>({ whatsapp_enabled:false, sms_enabled:false, shipment_updates_enabled:true, tracking_base_url:window.location.origin, whatsapp_template_name:'shipment_update', whatsapp_language_code:'en' });
+  const [savingNotifications, setSavingNotifications] = useState(false);
 
   React.useEffect(() => {
     loadSupabaseData();
+    fetchNotificationSettings().then(setNotificationSettings).catch(() => undefined);
   }, []);
 
-  const handleGenerateKey = (e: React.FormEvent) => {
+  const handleSaveNotifications = async () => {
+    setSavingNotifications(true);
+    try { await saveNotificationSettings(notificationSettings); toast.success('Buyer notification settings saved'); }
+    catch (error) { toast.error(error instanceof Error ? error.message : 'Unable to save notification settings'); }
+    finally { setSavingNotifications(false); }
+  };
+
+  const handleGenerateKey = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newKey = createAPIKey(keyName || 'Production API Key', ['orders:read', 'orders:write', 'rates:read', 'shipments:write']);
-    toast.success(`API Key '${newKey.name}' generated! Keep secret key safe.`);
+    try {
+      const newKey = await createAPIKey(keyName || 'Production API Key', ['orders:read', 'orders:write', 'rates:read', 'shipments:write']);
+      setNewApiSecret(newKey.secret || '');
+      toast.success(`API Key '${newKey.name}' generated securely.`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'API key creation failed');
+      return;
+    }
     setKeyName('');
     setIsKeyModalOpen(false);
   };
 
-  const handleSaveWebhook = (e: React.FormEvent) => {
+  const handleSaveWebhook = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newWh = addWebhookEndpoint(webhookUrl, ['shipment.created', 'shipment.delivered', 'shipment.ndr']);
-    toast.success('Webhook endpoint saved & signature secret generated!');
+    try {
+      await addWebhookEndpoint(webhookUrl, ['order.created', 'shipment.created', 'shipment.picked_up', 'shipment.in_transit', 'shipment.out_for_delivery', 'shipment.delivered', 'shipment.ndr', 'shipment.rto', 'shipment.cancelled']);
+      toast.success('Webhook endpoint and signing secret created securely.');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Webhook creation failed');
+      return;
+    }
     setIsWebhookModalOpen(false);
   };
 
@@ -41,6 +64,31 @@ export const DeveloperPortalPage: React.FC = () => {
       <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
         <h2 className="text-base font-extrabold text-slate-900 font-display">Developer Portal &amp; Webhooks</h2>
         <p className="text-xs text-slate-500 font-medium">Generate API keys, configure event webhooks &amp; view real-time delivery logs</p>
+      </div>
+
+      <div className="grid gap-5 xl:grid-cols-2">
+        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
+          <div className="flex items-center gap-2"><Radio className="h-5 w-5 text-indigo-600"/><div><h3 className="font-black text-slate-900">ShipFaster API endpoints</h3><p className="text-xs text-slate-500">Call these only from your website backend.</p></div></div>
+          <div className="space-y-2 font-mono text-[11px]">
+            {[
+              ['Create / list orders', getOrdersApiUrl()],
+              ['Compare courier rates', getRatesApiUrl()],
+              ['Book / list shipments', getShipmentsApiUrl()],
+              ['Public order tracking', `${getTrackingApiUrl()}?q=AWB_OR_ORDER_ID`],
+            ].map(([label,url])=><div key={label} className="rounded-xl bg-slate-950 p-3 text-emerald-300"><span className="block font-sans text-[10px] font-bold text-slate-400 mb-1">{label}</span>{url}</div>)}
+          </div>
+          <p className="text-xs text-slate-600">Use <code>Authorization: Bearer pk_live_...</code>. Order and shipment creation also require a unique <code>Idempotency-Key</code>.</p>
+        </section>
+
+        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
+          <div className="flex items-center gap-2"><MessageCircle className="h-5 w-5 text-emerald-600"/><div><h3 className="font-black text-slate-900">Buyer WhatsApp &amp; SMS</h3><p className="text-xs text-slate-500">Queue tracking updates to the phone saved on each order.</p></div></div>
+          <label className="flex items-center justify-between rounded-xl border border-slate-200 p-3 text-sm font-bold"><span>WhatsApp updates</span><input type="checkbox" checked={notificationSettings.whatsapp_enabled} onChange={(e)=>setNotificationSettings({...notificationSettings,whatsapp_enabled:e.target.checked})}/></label>
+          <label className="flex items-center justify-between rounded-xl border border-slate-200 p-3 text-sm font-bold"><span>SMS updates</span><input type="checkbox" checked={notificationSettings.sms_enabled} onChange={(e)=>setNotificationSettings({...notificationSettings,sms_enabled:e.target.checked})}/></label>
+          <Input label="Public tracking website URL" value={notificationSettings.tracking_base_url} onChange={(e)=>setNotificationSettings({...notificationSettings,tracking_base_url:e.target.value})} placeholder="https://ship.example.com"/>
+          <Input label="Approved Meta template name" value={notificationSettings.whatsapp_template_name} onChange={(e)=>setNotificationSettings({...notificationSettings,whatsapp_template_name:e.target.value})}/>
+          <Button onClick={handleSaveNotifications} isLoading={savingNotifications} className="w-full">Save notification settings</Button>
+          <p className="text-[11px] text-amber-700">Delivery starts after Meta WhatsApp and Twilio credentials are configured in Supabase secrets.</p>
+        </section>
       </div>
 
       {/* API Keys Section */}
@@ -81,7 +129,7 @@ export const DeveloperPortalPage: React.FC = () => {
                     <td className="p-3.5 font-bold text-slate-600">{k.scopes.join(', ')}</td>
                     <td className="p-3.5 text-slate-600">{k.last_used_at ? new Date(k.last_used_at).toLocaleDateString('en-IN') : 'Never'}</td>
                     <td className="p-3.5 text-right">
-                      <Button size="sm" variant="outline" className="text-xs" onClick={() => toast.success('API Key copied to clipboard')}>
+                      <Button size="sm" variant="outline" className="text-xs" disabled={!k.secret} onClick={() => { if(k.secret) { navigator.clipboard.writeText(k.secret); toast.success('API key copied'); } }}>
                         <Copy className="w-3.5 h-3.5" />
                       </Button>
                     </td>
@@ -143,13 +191,23 @@ export const DeveloperPortalPage: React.FC = () => {
 
       {/* Modal: Generate Key */}
       <Modal isOpen={isKeyModalOpen} onClose={() => setIsKeyModalOpen(false)} title="Generate REST API Key">
-        <form onSubmit={handleGenerateKey} className="space-y-4">
+        <form onSubmit={handleGenerateKey} className="space-y-3 sm:space-y-4">
           <Input label="Key Label Name" value={keyName} onChange={(e) => setKeyName(e.target.value)} placeholder="e.g. ERP Integration Key" required />
-          <div className="pt-4 border-t border-slate-200 flex justify-end gap-3">
+          <div className="pt-2 sm:pt-4 border-t border-slate-200 flex justify-end gap-2 sm:gap-3">
             <Button type="button" variant="outline" onClick={() => setIsKeyModalOpen(false)}>Cancel</Button>
             <Button type="submit">Create Key</Button>
           </div>
         </form>
+      </Modal>
+
+      <Modal isOpen={!!newApiSecret} onClose={() => setNewApiSecret('')} title="Save Your API Key Now" subtitle="The complete key is shown only once.">
+        <div className="space-y-2 sm:space-y-4">
+          <div className="rounded-lg sm:rounded-xl border border-amber-200 bg-amber-50 p-2 sm:p-3 text-[11px] sm:text-xs font-semibold leading-4 text-amber-900">
+            Paste it into your backend <code>.env</code> as <code>SHIPFASTER_API_KEY</code>. Never use a <code>VITE_</code> variable.
+          </div>
+          <div className="max-h-16 overflow-y-auto break-all rounded-lg sm:rounded-xl bg-slate-950 p-2.5 sm:p-4 font-mono text-[10px] sm:text-xs leading-4 text-emerald-300">{newApiSecret}</div>
+          <Button size="sm" className="w-full sm:min-h-11" onClick={()=>{navigator.clipboard.writeText(newApiSecret);toast.success('API key copied securely');}}>Copy API Key</Button>
+        </div>
       </Modal>
 
       {/* Modal: Add Webhook */}

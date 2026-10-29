@@ -1,0 +1,41 @@
+name: Staging capacity test
+on:
+  workflow_dispatch:
+    inputs:
+      duration:
+        description: Test duration (use 10m or 60m for certification)
+        required: true
+        default: 30s
+      request_rps:
+        description: Batch requests per second
+        required: true
+        default: '20'
+      batch_size:
+        description: Orders per request
+        required: true
+        default: '10'
+concurrency:
+  group: shipfaster-staging-capacity
+  cancel-in-progress: false
+jobs:
+  capacity:
+    runs-on: ubuntu-latest
+    environment: staging
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: grafana/setup-k6-action@v1
+      - name: Run capacity and drain assertions
+        env:
+          STAGING_SUPABASE_URL: ${{ secrets.STAGING_SUPABASE_URL }}
+          STAGING_SERVICE_ROLE_KEY: ${{ secrets.STAGING_SERVICE_ROLE_KEY }}
+          QUEUE_WORKER_SECRET: ${{ secrets.QUEUE_WORKER_SECRET }}
+          DURATION: ${{ inputs.duration }}
+          TARGET_RPS: ${{ inputs.request_rps }}
+          BATCH_SIZE: ${{ inputs.batch_size }}
+          WORKER_CONCURRENCY: '8'
+          DRAIN_TIMEOUT_MS: '900000'
+        run: node tests/load/run-capacity.mjs

@@ -188,7 +188,7 @@ export const AdminNDREscalationsPage: React.FC = () => {
               />
             </div>
 
-            <div className="grid grid-cols-3 gap-2 pt-2">
+            <div className="grid grid-cols-1 xs:grid-cols-3 gap-2 pt-2">
               <Button
                 variant="outline"
                 className="border-indigo-300 text-indigo-700 hover:bg-indigo-50 font-bold"

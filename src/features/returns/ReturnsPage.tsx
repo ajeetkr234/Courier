@@ -11,8 +11,10 @@ import { StatusBadge } from '../../components/ui/Badge';
 import { usePlatformStore } from '../../services/store';
 import { Order, ReturnOrder } from '../../types';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 export const ReturnsPage: React.FC = () => {
+  const navigate = useNavigate();
   const { orders, warehouses, returnRequests, createReturnRequest, loadSupabaseData, isLoadingData } = usePlatformStore();
 
   React.useEffect(() => {
@@ -176,7 +178,7 @@ export const ReturnsPage: React.FC = () => {
 
           <Button
             size="sm"
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => navigate('/app/returns/new')}
             className="bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold px-5 py-2.5 rounded-xl shadow-md shadow-indigo-600/20 shrink-0"
             leftIcon={<Plus className="w-4 h-4" />}
           >

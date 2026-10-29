@@ -44,13 +44,10 @@ export async function createReturnInSupabase(
   reason: string,
   isExchange?: boolean,
   exchangeItem?: string,
-  fallbackSellerId?: string
+  fallbackSellerId?: string,
+  pickupDetails?: Record<string,string>
 ): Promise<ReturnOrder> {
   const effectiveSellerId = await getEffectiveSellerId(fallbackSellerId);
-  const revAwb = `REV${Math.floor(1000000000 + Math.random() * 9000000000)}`;
-  const returnAwb = `RET-AWB-${Math.floor(100000 + Math.random() * 900000)}`;
-  const now = new Date().toISOString();
-
   if (!isValidUUID(originalOrderId)) {
     throw new Error('A valid live order is required to create a return');
   }
@@ -60,52 +57,16 @@ export async function createReturnInSupabase(
     ? `${reason} (Exchange for: ${exchangeItem})`
     : reason;
 
-  {
-    try {
-      const { data, error } = await supabase
-        .from('returns')
-        .insert({
-          seller_id: effectiveSellerId,
-          original_order_id: verifiedOrderId,
-          return_reason: finalReason,
-          return_awb: returnAwb,
-          status: 'REQUESTED',
-        })
-        .select('*, orders(*)')
-        .single();
-
-      if (!error && data) {
-        return {
-          id: data.id,
-          seller_id: data.seller_id,
-          original_order_id: data.original_order_id,
-          original_order: data.orders,
-          return_reason: data.return_reason,
-          return_awb: data.return_awb,
-          reverse_awb_number: revAwb,
-          reason: data.return_reason,
-          is_exchange: isExchange || false,
-          exchange_item_name: exchangeItem,
-          status: 'REQUESTED',
-          created_at: data.created_at,
-        };
-      }
-    } catch (e) {
-      console.error('Failed to create return in Supabase:', e);
-    }
+  const { data, error } = await supabase.functions.invoke('manage-return', { body: {
+    action: 'book', originalOrderId: verifiedOrderId, reason: finalReason,
+    resolutionType: isExchange ? 'EXCHANGE' : 'REFUND', exchangeItem, pickupDetails: pickupDetails || {},
+  } });
+  if (error) {
+    let message = error.message || 'Return booking failed';
+    const response = (error as { context?: Response }).context;
+    if (response) try { const payload = await response.clone().json(); message = payload.error || message; } catch { /* retain SDK error */ }
+    throw new Error(message);
   }
-
-  return {
-    id: `ret-${Date.now()}`,
-    seller_id: effectiveSellerId,
-    original_order_id: verifiedOrderId,
-    return_reason: finalReason,
-    return_awb: returnAwb,
-    reverse_awb_number: revAwb,
-    reason: finalReason,
-    is_exchange: isExchange || false,
-    exchange_item_name: exchangeItem,
-    status: 'REQUESTED',
-    created_at: now,
-  };
+  if (!data?.return) throw new Error(data?.error || 'Courier did not confirm the reverse pickup');
+  return { ...data.return, seller_id: effectiveSellerId, reason: data.return.return_reason } as ReturnOrder;
 }

@@ -21,16 +21,20 @@ export const AdminWeightDisputesPage: React.FC = () => {
     return true;
   });
 
-  const handleArbitrate = (outcome: 'SELLER_REFUNDED' | 'COURIER_UPHELD') => {
+  const handleArbitrate = async (outcome: 'SELLER_REFUNDED' | 'COURIER_UPHELD') => {
     if (!selectedDispute) return;
-    arbitrateWeightDispute(selectedDispute.id, outcome, arbitrationNotes || (outcome === 'SELLER_REFUNDED' ? 'Approved based on photographic scale evidence' : 'Rejected after carrier sort-hub scan review'));
-    toast.success(
-      outcome === 'SELLER_REFUNDED' 
-        ? `Dispute approved! Refunded ₹${selectedDispute.excess_charge} back to seller wallet.`
-        : `Dispute rejected. Courier volumetric audit upheld.`
-    );
-    setSelectedDispute(null);
-    setArbitrationNotes('');
+    try {
+      await arbitrateWeightDispute(selectedDispute.id, outcome, arbitrationNotes || (outcome === 'SELLER_REFUNDED' ? 'Approved based on photographic scale evidence' : 'Rejected after carrier sort-hub scan review'));
+      toast.success(
+        outcome === 'SELLER_REFUNDED'
+          ? `Dispute approved! Refunded ₹${selectedDispute.excess_charge} back to seller wallet.`
+          : `Dispute rejected. Courier volumetric audit upheld.`
+      );
+      setSelectedDispute(null);
+      setArbitrationNotes('');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Unable to save arbitration');
+    }
   };
 
   return (

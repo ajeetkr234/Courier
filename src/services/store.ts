@@ -42,7 +42,13 @@ import {
 import {
   fetchWarehousesFromSupabase,
   createWarehouseInSupabase,
+  saveLocalWarehouse,
+  updateLocalWarehouse,
+  deleteLocalWarehouse,
+  updateWarehouseInSupabase,
+  deleteWarehouseInSupabase,
 } from './supabaseWarehouses';
+import { getSellerOrderEligibility } from './sellerEligibility';
 import {
   fetchWalletFromSupabase,
   fetchLedgerEntriesFromSupabase,
@@ -65,6 +71,7 @@ import {
   createReturnInSupabase,
 } from './supabaseReturns';
 import {
+  arbitrateWeightDisputeInSupabase,
   fetchWeightDisputesFromSupabase,
   resolveWeightDisputeInSupabase,
 } from './supabaseDisputes';
@@ -140,18 +147,18 @@ const DEFAULT_BANK_ACCOUNT: SellerBankAccount = {
   created_at: '2026-08-10T10:00:00Z',
 };
 
-const DEFAULT_BRANDED_TRACKING: BrandedTrackingConfig = {
-  seller_id: '32d724db-23c4-4cba-a76f-f78e4022194e',
-  brand_name: 'Apex Retail',
-  logo_url: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=120&auto=format&fit=crop&q=80',
+const EMPTY_BRANDED_TRACKING: BrandedTrackingConfig = {
+  seller_id: '',
+  brand_name: '',
+  logo_url: '',
   brand_color: '#4f46e5',
-  support_phone: '+91 98765 43210',
-  support_email: 'support@apexretail.store',
-  promotional_banner_url: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=800&auto=format&fit=crop&q=80',
-  promotional_banner_link: 'https://apexretail.store/festive-sale',
-  discount_coupon_code: 'FASTSHIP10',
-  discount_percentage: 10,
-  custom_domain: 'track.apexretail.store',
+  support_phone: '',
+  support_email: '',
+  promotional_banner_url: '',
+  promotional_banner_link: '',
+  discount_coupon_code: '',
+  discount_percentage: 0,
+  custom_domain: '',
   help_whatsapp_number: '+91 98765 43210',
 };
 
@@ -337,9 +344,11 @@ interface PlatformStore {
   updateSellerStatus: (sellerId: string, status: Seller['status']) => void;
   updateSellerKYC: (sellerId: string, isApproved: boolean, reason?: string) => void;
   addWarehouse: (warehouse: Omit<Warehouse, 'id' | 'created_at'>) => Warehouse;
+  updateWarehouse: (warehouse: Warehouse) => void;
+  deleteWarehouse: (warehouseId: string) => void;
 
   // Actions — Orders & Shipping
-  addOrder: (order: Omit<Order, 'id' | 'created_at' | 'updated_at'>) => Order;
+  addOrder: (order: Omit<Order, 'id' | 'created_at' | 'updated_at'>) => Promise<Order>;
   bulkImportOrders: (newOrders: Array<Omit<Order, 'id' | 'created_at' | 'updated_at'>>) => number;
   updateOrderStatus: (orderId: string, status: OrderStatus) => Promise<void>;
   createShipment: (orderId: string, courierId: string, courierName: string, courierCode: string, shippingCost: number, codCharge: number) => Promise<Shipment>;
@@ -355,15 +364,15 @@ interface PlatformStore {
   resolveNDR: (ndrCaseId: string, actionType: 'REATTEMPT' | 'ADDRESS_UPDATE' | 'PHONE_UPDATE' | 'RTO', details?: any) => void;
   escalateFakeNDR: (ndrCaseId: string, reason: string, notes: string) => NDREscalation;
   resolveAdminNDREscalation: (escalationId: string, action: NDREscalation['carrier_escalation_status'], adminNotes?: string) => void;
-  createReturnOrder: (originalOrderId: string, reason: string, isExchange?: boolean, exchangeItem?: string) => ReturnOrder;
-  createReturnRequest: (originalOrderId: string, reason: string) => ReturnOrder;
+  createReturnOrder: (originalOrderId: string, reason: string, isExchange?: boolean, exchangeItem?: string, pickupDetails?: Record<string,string>) => ReturnOrder;
+  createReturnRequest: (originalOrderId: string, reason: string, pickupDetails?: Record<string,string>) => ReturnOrder;
   resolveWeightDispute: (disputeId: string, acceptOrStatus: boolean | string, evidenceUrl?: string) => void;
   contestWeightDisputeWithProof: (disputeId: string, data: { scaleUrl?: string; tapeUrl?: string; skuMasterWeight?: number; notes?: string }) => void;
-  arbitrateWeightDispute: (disputeId: string, outcome: 'SELLER_REFUNDED' | 'COURIER_UPHELD', notes: string) => void;
+  arbitrateWeightDispute: (disputeId: string, outcome: 'SELLER_REFUNDED' | 'COURIER_UPHELD', notes: string) => Promise<void>;
 
   // Actions — Wallet & Finance
-  rechargeWallet: (amount: number, paymentRef: string) => void;
-  creditWallet: (amount: number, paymentRef: string) => void;
+  rechargeWallet: (amount: number, paymentRef: string) => Promise<void>;
+  creditWallet: (amount: number, paymentRef: string) => Promise<void>;
   addLedgerEntry: (entry: Omit<LedgerEntry, 'id' | 'created_at'>) => void;
   settleCODRemittance: (remittanceId: string) => void;
   addReconciliationOverride: (recId: string, newStatus: ReconciliationRecord['status'], notes?: string) => void;
@@ -380,9 +389,9 @@ interface PlatformStore {
   // Actions — Team & Developer API
   addTeamMember: (member: Omit<UserProfile, 'id'>) => void;
   toggleTeamMemberStatus: (userId: string) => void;
-  createAPIKey: (name: string, scopes: string[]) => APIKey;
+  createAPIKey: (name: string, scopes: string[]) => Promise<APIKey>;
   revokeAPIKey: (keyId: string) => void;
-  addWebhookEndpoint: (url: string, events: string[]) => WebhookEndpoint;
+  addWebhookEndpoint: (url: string, events: string[]) => Promise<WebhookEndpoint>;
   toggleWebhookStatus: (webhookId: string) => void;
   toggleIntegrationSync: (integrationId: string) => void;
 
@@ -391,8 +400,8 @@ interface PlatformStore {
 }
 
 export const usePlatformStore = create<PlatformStore>((set, get) => ({
-  currentSeller: DEFAULT_PRIMARY_SELLER,
-  currentUser: DEFAULT_PRIMARY_USER,
+  currentSeller: null,
+  currentUser: null,
 
   realtimeStatus: 'CONNECTING',
 
@@ -420,7 +429,7 @@ export const usePlatformStore = create<PlatformStore>((set, get) => ({
   // Extended Advanced Platform State
   ndrEscalations: [],
   sellerBankAccount: null,
-  brandedTrackingConfig: DEFAULT_BRANDED_TRACKING,
+  brandedTrackingConfig: EMPTY_BRANDED_TRACKING,
   codPayoutBatches: [],
   isEarlyCODEnabled: true,
   lastOrderNotification: null,
@@ -663,9 +672,9 @@ export const usePlatformStore = create<PlatformStore>((set, get) => ({
           liveSellers[0] ||
           state.currentSeller ||
           DEFAULT_PRIMARY_SELLER,
-        couriers,
-        rateCards,
-        warehouses: liveWarehouses,
+        couriers: couriers || [],
+        rateCards: rateCards || [],
+        warehouses: liveWarehouses || [],
         orders: enrichedOrders,
         shipments: liveShipments,
         walletBalance: liveBalance,
@@ -679,13 +688,19 @@ export const usePlatformStore = create<PlatformStore>((set, get) => ({
         webhooks: liveWebhooks,
         auditLogs: liveAuditLogs,
         pickups: livePickups,
-        userProfiles: (liveTeamMembers && liveTeamMembers.length > 0) ? liveTeamMembers : [DEFAULT_PRIMARY_USER],
-        integrations: (liveIntegrations && liveIntegrations.length > 0) ? liveIntegrations : INITIAL_INTEGRATIONS,
-        reconciliations: (liveReconciliations && liveReconciliations.length > 0) ? liveReconciliations : INITIAL_RECONCILIATIONS,
-        ndrEscalations: (liveEscalations && liveEscalations.length > 0) ? liveEscalations : INITIAL_ESCALATIONS,
-        sellerBankAccount: liveBankAccount || DEFAULT_BANK_ACCOUNT,
-        brandedTrackingConfig: liveTrackingConfig || { ...DEFAULT_BRANDED_TRACKING, seller_id: sellerId || state.currentSeller?.id || DEFAULT_PRIMARY_SELLER.id, brand_name: state.currentSeller?.brand_name || state.currentSeller?.company_name || '' },
-        codPayoutBatches: (livePayoutBatches && livePayoutBatches.length > 0) ? livePayoutBatches : INITIAL_COD_BATCHES,
+        userProfiles: liveTeamMembers || [],
+        integrations: liveIntegrations || [],
+        reconciliations: liveReconciliations || [],
+        ndrEscalations: liveEscalations || [],
+        sellerBankAccount: liveBankAccount || null,
+        brandedTrackingConfig: liveTrackingConfig || {
+          ...EMPTY_BRANDED_TRACKING,
+          seller_id: sellerId || state.currentSeller?.id || '',
+          brand_name: state.currentSeller?.brand_name || state.currentSeller?.company_name || '',
+          support_phone: state.currentSeller?.contact_phone || '',
+          support_email: state.currentSeller?.contact_email || '',
+        },
+        codPayoutBatches: livePayoutBatches || [],
         isLoadingData: false,
         isInitialHydrated: true,
       }));
@@ -700,9 +715,11 @@ export const usePlatformStore = create<PlatformStore>((set, get) => ({
 
     const cleanup = initSupabaseRealtime({
       onStatusChange: (status) => set({ realtimeStatus: status }),
-      onOrdersChange: () => {
+      onOrdersChange: (payload) => {
         fetchOrdersFromSupabase(get().currentSeller?.id).then((orders) => {
-          set({ orders });
+          const insertedId = payload?.eventType === 'INSERT' ? payload.new?.id : undefined;
+          const imported = insertedId ? orders.find((order) => order.id === insertedId && order.source !== 'MANUAL') : undefined;
+          set({ orders, ...(imported ? { lastOrderNotification: { order: imported, sellerName: get().currentSeller?.brand_name || get().currentSeller?.company_name || 'Your store', timestamp: Date.now() } } : {}) });
         });
       },
       onShipmentsChange: () => {
@@ -741,7 +758,9 @@ export const usePlatformStore = create<PlatformStore>((set, get) => ({
       },
       onWarehousesChange: () => {
         fetchWarehousesFromSupabase(get().currentSeller?.id).then((warehouses) => {
-          set({ warehouses });
+          if (warehouses && warehouses.length > 0) {
+            set({ warehouses });
+          }
         });
       },
       onCouriersChange: () => {
@@ -754,7 +773,7 @@ export const usePlatformStore = create<PlatformStore>((set, get) => ({
           set({ auditLogs });
         });
       },
-    });
+    }, sellerId);
 
     return cleanup;
   },
@@ -798,11 +817,13 @@ export const usePlatformStore = create<PlatformStore>((set, get) => ({
       id: tempId,
       created_at: new Date().toISOString(),
     };
-    set((state) => ({ warehouses: [newWh, ...state.warehouses] }));
+    saveLocalWarehouse(newWh);
+    set((state) => ({ warehouses: [newWh, ...state.warehouses.filter((w) => w.id !== tempId)] }));
     get().logAuditAction('ADD_WAREHOUSE', 'WAREHOUSE', newWh.id, '', warehouseData.name);
 
     if (!isMockMode) {
       createWarehouseInSupabase(warehouseData, get().currentSeller?.id).then((saved) => {
+        saveLocalWarehouse(saved);
         set((state) => ({
           warehouses: state.warehouses.map((w) => (w.id === tempId ? saved : w)),
         }));
@@ -812,7 +833,26 @@ export const usePlatformStore = create<PlatformStore>((set, get) => ({
     return newWh;
   },
 
-  addOrder: (orderData) => {
+  updateWarehouse: (warehouse) => {
+    updateLocalWarehouse(warehouse);
+    set((state) => ({
+      warehouses: state.warehouses.map((item) => item.id === warehouse.id ? warehouse : item),
+    }));
+    get().logAuditAction('UPDATE_WAREHOUSE', 'WAREHOUSE', warehouse.id, '', warehouse.name);
+    if (!isMockMode) updateWarehouseInSupabase(warehouse).catch((err) => console.error('Warehouse update sync failed:', err));
+  },
+
+  deleteWarehouse: (warehouseId) => {
+    const warehouse = get().warehouses.find((item) => item.id === warehouseId);
+    deleteLocalWarehouse(warehouseId);
+    set((state) => ({ warehouses: state.warehouses.filter((item) => item.id !== warehouseId) }));
+    get().logAuditAction('DELETE_WAREHOUSE', 'WAREHOUSE', warehouseId, warehouse?.name || '', '');
+    if (!isMockMode) deleteWarehouseInSupabase(warehouseId).catch((err) => console.error('Warehouse delete sync failed:', err));
+  },
+
+  addOrder: async (orderData) => {
+    const eligibility = getSellerOrderEligibility(get().currentSeller);
+    if (!eligibility.eligible) throw new Error(eligibility.reason);
     const tempId = `ord-${1000 + get().orders.length + 1}`;
     const now = new Date().toISOString();
     const effectiveSellerId = orderData.seller_id || get().currentSeller?.id || DEFAULT_PRIMARY_SELLER.id;
@@ -832,22 +872,35 @@ export const usePlatformStore = create<PlatformStore>((set, get) => ({
     }));
     get().logAuditAction('CREATE_ORDER', 'ORDER', tempId, '', `Seller: ${sellerName}`);
 
-    if (!isMockMode) {
-      createOrderInSupabase({ ...orderData, seller_id: effectiveSellerId }, effectiveSellerId)
-        .then((savedOrder) => {
-          set((state) => ({
-            orders: state.orders.map((o) => (o.id === tempId ? savedOrder : o)),
-          }));
-        })
-        .catch((err) => {
-          console.error('Supabase live order sync failed:', err);
-        });
-    }
+    if (isMockMode) return newOrder;
 
-    return newOrder;
+    try {
+      const savedOrder = await createOrderInSupabase(
+        { ...orderData, seller_id: effectiveSellerId },
+        effectiveSellerId,
+      );
+      set((state) => ({
+        orders: state.orders.map((order) => (order.id === tempId ? savedOrder : order)),
+        lastOrderNotification: { order: savedOrder, sellerName, timestamp: Date.now() },
+      }));
+      return savedOrder;
+    } catch (error) {
+      // Do not leave an order on the dashboard that was never persisted.
+      set((state) => ({
+        orders: state.orders.filter((order) => order.id !== tempId),
+        lastOrderNotification: state.lastOrderNotification?.order.id === tempId
+          ? null
+          : state.lastOrderNotification,
+      }));
+      throw error;
+    }
   },
 
   bulkImportOrders: (newOrdersData) => {
+    const eligibility = getSellerOrderEligibility(get().currentSeller);
+    if (!eligibility.eligible) {
+      throw new Error(eligibility.reason);
+    }
     const now = new Date().toISOString();
     const effectiveSellerId = get().currentSeller?.id || DEFAULT_PRIMARY_SELLER.id;
     const seller = get().sellers.find((s) => s.id === effectiveSellerId) || get().currentSeller;
@@ -1052,7 +1105,7 @@ export const usePlatformStore = create<PlatformStore>((set, get) => ({
     }
   },
 
-  createReturnOrder: (originalOrderId, reason, isExchange, exchangeItem) => {
+  createReturnOrder: (originalOrderId, reason, isExchange, exchangeItem, pickupDetails) => {
     const state = get();
     const origOrder = state.orders.find((o) => o.id === originalOrderId);
     const newReturn: ReturnOrder = {
@@ -1066,6 +1119,7 @@ export const usePlatformStore = create<PlatformStore>((set, get) => ({
       reason,
       is_exchange: isExchange || false,
       exchange_item_name: exchangeItem,
+      pickup_details: pickupDetails,
       status: 'APPROVED',
       created_at: new Date().toISOString(),
     };
@@ -1077,7 +1131,7 @@ export const usePlatformStore = create<PlatformStore>((set, get) => ({
     get().logAuditAction('CREATE_RETURN', 'RETURN_ORDER', newReturn.id);
 
     if (!isMockMode) {
-      createReturnInSupabase(originalOrderId, reason, isExchange, exchangeItem, state.currentSeller?.id)
+      createReturnInSupabase(originalOrderId, reason, isExchange, exchangeItem, state.currentSeller?.id, pickupDetails)
         .then((saved) => {
           set((s) => ({
             returns: s.returns.map((r) => (r.id === newReturn.id ? saved : r)),
@@ -1090,8 +1144,8 @@ export const usePlatformStore = create<PlatformStore>((set, get) => ({
     return newReturn;
   },
 
-  createReturnRequest: (originalOrderId, reason) => {
-    return get().createReturnOrder(originalOrderId, reason);
+  createReturnRequest: (originalOrderId, reason, pickupDetails) => {
+    return get().createReturnOrder(originalOrderId, reason, undefined, undefined, pickupDetails);
   },
 
   resolveWeightDispute: (disputeId, acceptOrStatus, evidenceUrl) => {
@@ -1115,46 +1169,19 @@ export const usePlatformStore = create<PlatformStore>((set, get) => ({
     get().logAuditAction('RESOLVE_WEIGHT_DISPUTE', 'WEIGHT_DISCREPANCY', disputeId);
 
     if (!isMockMode) {
-      resolveWeightDisputeInSupabase(disputeId, newStatus, evidenceUrl).catch((err) =>
+      resolveWeightDisputeInSupabase(disputeId, newStatus, { evidenceUrl }).catch((err) =>
         console.error('Supabase weight dispute sync error:', err)
       );
     }
   },
 
-  rechargeWallet: (amount, paymentRef) => {
-    const now = new Date().toISOString();
-    const tempEntry: LedgerEntry = {
-      id: `led-${Date.now()}`,
-      seller_id: get().currentSeller?.id || DEFAULT_PRIMARY_SELLER.id,
-      type: 'RECHARGE',
-      amount,
-      direction: 'CREDIT',
-      reference_type: 'MANUAL_WALLET_CREDIT',
-      reference_id: paymentRef,
-      description: `Verified wallet credit recorded in ledger (${paymentRef})`,
-      created_at: now,
-    };
-
-    set((state) => ({
-      ledgerEntries: [tempEntry, ...state.ledgerEntries],
-      walletBalance: state.walletBalance + amount,
-    }));
-    get().logAuditAction('RECHARGE_WALLET', 'WALLET', paymentRef, '', `+₹${amount}`);
-
-    if (!isMockMode) {
-      rechargeWalletInSupabase(get().currentSeller?.id, amount, paymentRef)
-        .then(({ balance, entry }) => {
-          set((s) => ({
-            walletBalance: balance,
-            ledgerEntries: s.ledgerEntries.map((l) => (l.id === tempEntry.id ? entry : l)),
-          }));
-        })
-        .catch((err) => console.error('Supabase recharge sync error:', err));
-    }
+  rechargeWallet: async (amount, paymentRef) => {
+    await rechargeWalletInSupabase(get().currentSeller?.id, amount, paymentRef);
+    get().logAuditAction('REQUEST_WALLET_RECHARGE', 'WALLET', paymentRef, '', `₹${amount} pending approval`);
   },
 
-  creditWallet: (amount, paymentRef) => {
-    get().rechargeWallet(amount, paymentRef);
+  creditWallet: async (amount, paymentRef) => {
+    await get().rechargeWallet(amount, paymentRef);
   },
 
   addLedgerEntry: (entryData) => {
@@ -1253,34 +1280,11 @@ export const usePlatformStore = create<PlatformStore>((set, get) => ({
     toggleTeamMember(userId, nextStatus);
   },
 
-  createAPIKey: (name, scopes) => {
-    const prefix = `pk_live_${Math.random().toString(36).substring(2, 6)}_`;
-    const masked = `${prefix}••••${Math.floor(1000 + Math.random() * 9000)}`;
-    const tempKey: APIKey = {
-      id: `key-${Date.now()}`,
-      seller_id: get().currentSeller?.id || DEFAULT_PRIMARY_SELLER.id,
-      name,
-      key_prefix: prefix,
-      secret_key_masked: masked,
-      scopes,
-      is_active: true,
-      created_at: new Date().toISOString(),
-    };
-
-    set((state) => ({ apiKeys: [tempKey, ...state.apiKeys] }));
-    get().logAuditAction('CREATE_API_KEY', 'API_KEY', tempKey.id, '', name);
-
-    if (!isMockMode) {
-      createAPIKeyInSupabase(get().currentSeller?.id, name, scopes)
-        .then((saved) => {
-          set((s) => ({
-            apiKeys: s.apiKeys.map((k) => (k.id === tempKey.id ? saved : k)),
-          }));
-        })
-        .catch((err) => console.error('Supabase API key sync error:', err));
-    }
-
-    return tempKey;
+  createAPIKey: async (name, scopes) => {
+    const saved = await createAPIKeyInSupabase(get().currentSeller?.id, name, scopes);
+    set((state) => ({ apiKeys: [saved, ...state.apiKeys] }));
+    get().logAuditAction('CREATE_API_KEY', 'API_KEY', saved.id, '', name);
+    return saved;
   },
 
   revokeAPIKey: (keyId) => {
@@ -1294,31 +1298,11 @@ export const usePlatformStore = create<PlatformStore>((set, get) => ({
     }
   },
 
-  addWebhookEndpoint: (url, events) => {
-    const tempWebhook: WebhookEndpoint = {
-      id: `whk-${Date.now()}`,
-      seller_id: get().currentSeller?.id || DEFAULT_PRIMARY_SELLER.id,
-      url,
-      secret: `whsec_${Math.random().toString(36).substring(2, 14)}`,
-      subscribed_events: events,
-      is_active: true,
-      created_at: new Date().toISOString(),
-    };
-
-    set((state) => ({ webhooks: [tempWebhook, ...state.webhooks] }));
-    get().logAuditAction('CREATE_WEBHOOK', 'WEBHOOK', tempWebhook.id, '', url);
-
-    if (!isMockMode) {
-      createWebhookInSupabase(get().currentSeller?.id, url, events)
-        .then((saved) => {
-          set((s) => ({
-            webhooks: s.webhooks.map((w) => (w.id === tempWebhook.id ? saved : w)),
-          }));
-        })
-        .catch((err) => console.error('Supabase webhook sync error:', err));
-    }
-
-    return tempWebhook;
+  addWebhookEndpoint: async (url, events) => {
+    const saved = await createWebhookInSupabase(get().currentSeller?.id, url, events);
+    set((state) => ({ webhooks: [saved, ...state.webhooks] }));
+    get().logAuditAction('CREATE_WEBHOOK', 'WEBHOOK', saved.id, '', url);
+    return saved;
   },
 
   toggleWebhookStatus: (webhookId) => {
@@ -1473,24 +1457,19 @@ export const usePlatformStore = create<PlatformStore>((set, get) => ({
       ),
     }));
     get().logAuditAction('CONTEST_WEIGHT_DISPUTE', 'WEIGHT_DISCREPANCY', disputeId);
+    if (!isMockMode) {
+      resolveWeightDisputeInSupabase(disputeId, 'DISPUTED', data).catch((err) =>
+        console.error('Supabase weight dispute evidence sync error:', err)
+      );
+    }
   },
 
-  arbitrateWeightDispute: (disputeId, outcome, notes) => {
+  arbitrateWeightDispute: async (disputeId, outcome, notes) => {
     const state = get();
     const dispute = state.weightDiscrepancies.find((w) => w.id === disputeId);
     if (!dispute) return;
 
-    if (outcome === 'SELLER_REFUNDED') {
-      get().addLedgerEntry({
-        seller_id: dispute.seller_id,
-        type: 'REFUND',
-        amount: dispute.excess_charge,
-        direction: 'CREDIT',
-        reference_type: 'WEIGHT_DISPUTE_REFUND',
-        reference_id: dispute.id,
-        description: `Weight dispute resolved in seller favor. Refunded excess charge: ₹${dispute.excess_charge} (${notes})`,
-      });
-    }
+    await arbitrateWeightDisputeInSupabase(disputeId, outcome, notes);
 
     set((s) => ({
       weightDiscrepancies: s.weightDiscrepancies.map((w) =>
@@ -1505,6 +1484,7 @@ export const usePlatformStore = create<PlatformStore>((set, get) => ({
       ),
     }));
     get().logAuditAction('ARBITRATE_WEIGHT_DISPUTE', 'WEIGHT_DISCREPANCY', disputeId, '', outcome);
+    await get().loadSupabaseData(true);
   },
 
   updateSellerBankDetails: (bankDetails) => {

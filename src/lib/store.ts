@@ -1,25 +1,6 @@
 import { create } from 'zustand';
 import { Seller, Warehouse, UserProfile } from '../types';
-
-const DEFAULT_PRIMARY_SELLER: Seller = {
-  id: '32d724db-23c4-4cba-a76f-f78e4022194e',
-  company_name: 'Seller Account',
-  brand_name: 'Seller Account',
-  gstin: '',
-  pan: '',
-  status: 'ACTIVE',
-  created_at: '2026-09-08T07:55:49.261651+00:00',
-  updated_at: '2026-09-08T07:55:49.261651+00:00',
-};
-
-const DEFAULT_PRIMARY_USER: UserProfile = {
-  id: '00000000-0000-0000-0000-000000000001',
-  name: 'Seller User',
-  email: 'seller@shipfaster.local',
-  role: 'OWNER',
-  seller_id: '32d724db-23c4-4cba-a76f-f78e4022194e',
-  is_active: true,
-};
+import { DEFAULT_SEED_WAREHOUSES } from '../services/supabaseWarehouses';
 
 interface AppState {
   currentUser: UserProfile | null;
@@ -38,9 +19,9 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>((set) => ({
-  currentUser: import.meta.env.VITE_ENABLE_DEMO_MODE === 'true' ? DEFAULT_PRIMARY_USER : null,
-  currentSeller: import.meta.env.VITE_ENABLE_DEMO_MODE === 'true' ? DEFAULT_PRIMARY_SELLER : null,
-  warehouses: [],
+  currentUser: null,
+  currentSeller: null,
+  warehouses: DEFAULT_SEED_WAREHOUSES,
   activeWarehouseId: null,
   walletBalance: 0,
   isSidebarOpen: true,

@@ -732,7 +732,7 @@ export const OrdersListPage: React.FC = () => {
 
           <div className="space-y-2">
             <label className="block font-bold text-slate-700 uppercase text-[10px]">Courier Allocation Algorithm</label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 xs:grid-cols-3 gap-2">
               <button
                 type="button"
                 onClick={() => setBulkStrategy('CHEAPEST')}

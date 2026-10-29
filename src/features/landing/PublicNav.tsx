@@ -3,9 +3,11 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '../../components/ui/Button';
 import { ArrowRight, Menu, X, ChevronRight, Phone, Mail, MapPin } from 'lucide-react';
+import { useAuth } from '../../app/providers/AuthProvider';
 
 export const PublicNavbar: React.FC = () => {
   const location = useLocation();
+  const { user } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAnnouncementVisible, setIsAnnouncementVisible] = useState(true);
   const [isNavHidden, setIsNavHidden] = useState(false);
@@ -53,6 +55,10 @@ export const PublicNavbar: React.FC = () => {
     { label: 'Track Order', path: '/track' },
     { label: 'Contact', path: '/contact' },
   ];
+  const dashboardPath = user?.role.startsWith('PLATFORM_') ? '/admin' : '/app/home';
+  const accountPath = user ? dashboardPath : '/login';
+  const accountLabel = user ? 'Open Dashboard' : 'Seller Login';
+  const shippingPath = user ? dashboardPath : '/register';
 
   return (
     <motion.div 
@@ -140,13 +146,13 @@ export const PublicNavbar: React.FC = () => {
           </nav>
 
           {/* Desktop Right CTAs */}
-          <div className="hidden md:flex items-center gap-2.5 sm:gap-3.5">
-            <Link to="/app/home">
+          <div className="hidden lg:flex items-center gap-2.5 sm:gap-3.5">
+            <Link to={accountPath}>
               <Button variant="ghost" size="sm" className="font-bold text-slate-700 hover:text-blue-600 px-2.5 sm:px-3 text-xs">
-                Open Dashboard
+                {accountLabel}
               </Button>
             </Link>
-            <Link to="/app/home">
+            <Link to={shippingPath}>
               <Button 
                 size="sm" 
                 className="font-bold text-xs shadow-xs hover:shadow-md hover:shadow-blue-500/20 hover:-translate-y-0.5 transition-all duration-200 group"
@@ -171,7 +177,7 @@ export const PublicNavbar: React.FC = () => {
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="absolute top-[72px] left-0 right-0 lg:hidden border-b border-slate-200 bg-white/98 backdrop-blur-xl px-4 sm:px-6 py-4 space-y-3 font-semibold text-sm shadow-xl max-h-[calc(100vh-80px)] overflow-y-auto z-50">
+          <div className="absolute top-[72px] left-0 right-0 lg:hidden border-b border-slate-200 bg-white/98 backdrop-blur-xl px-4 sm:px-6 py-4 space-y-3 font-semibold text-sm shadow-xl max-h-[calc(100dvh-72px)] overflow-y-auto overscroll-contain z-50">
             {navLinks.map((link) => {
               const active = isActive(link.path);
               return (
@@ -190,10 +196,10 @@ export const PublicNavbar: React.FC = () => {
             })}
             
             <div className="pt-3 flex flex-col gap-2.5">
-              <Link to="/app/home" onClick={() => setMobileMenuOpen(false)}>
-                <Button variant="outline" className="w-full justify-center">Open Dashboard</Button>
+              <Link to={accountPath} onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="outline" className="w-full justify-center">{accountLabel}</Button>
               </Link>
-              <Link to="/app/home" onClick={() => setMobileMenuOpen(false)}>
+              <Link to={shippingPath} onClick={() => setMobileMenuOpen(false)}>
                 <Button className="w-full justify-center" rightIcon={<ArrowRight className="w-4 h-4" />}>Start Shipping</Button>
               </Link>
             </div>

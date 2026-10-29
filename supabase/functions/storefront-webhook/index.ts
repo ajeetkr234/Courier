@@ -11,6 +11,8 @@ Deno.serve(async (req) => {
   const eventId = req.headers.get('x-event-id') || req.headers.get('x-shopify-webhook-id') || '';
   const { data: account } = await admin.from('integration_accounts').select('*').eq('id', accountId).eq('platform', platform).eq('status', 'CONNECTED').single();
   if (!account || !eventId) return json({ error: 'Unknown integration' }, 401);
+  const { data: seller } = await admin.from('sellers').select('status,company_name,pan').eq('id', account.seller_id).single();
+  if (!seller || seller.status !== 'ACTIVE' || !seller.company_name || !seller.pan) return json({ error: 'Verified active seller profile required' }, 403);
   const secret = Deno.env.get(`STOREFRONT_SECRET_${accountId.replaceAll('-', '_').toUpperCase()}`);
   if (!secret) return json({ error: 'Integration secret unavailable' }, 503);
   const expectedHex = await hmacHex(secret, raw);
@@ -23,6 +25,7 @@ Deno.serve(async (req) => {
   const address = payload.shipping_address || payload.billing || {};
   const { data, error } = await admin.from('orders').upsert({
     seller_id: account.seller_id, external_order_id: sourceId, idempotency_key: idempotencyKey,
+    integration_account_id: account.id, warehouse_id: account.default_warehouse_id,
     source: platform, payment_type: payload.financial_status === 'paid' ? 'PREPAID' : 'COD',
     cod_amount: payload.financial_status === 'paid' ? 0 : Number(payload.total_price || payload.total || 0),
     total_amount: Number(payload.total_price || payload.total || 0), weight_kg: Number(payload.total_weight || 500) / 1000,
@@ -30,5 +33,6 @@ Deno.serve(async (req) => {
     current_status: 'NEW',
   }, { onConflict: 'seller_id,idempotency_key', ignoreDuplicates: true }).select().maybeSingle();
   if (error) return json({ error: error.message }, 409);
+  await admin.from('integration_sync_events').insert({ seller_id: account.seller_id, integration_account_id: account.id, direction: 'INBOUND', event_type: 'ORDER_IMPORT', external_id: sourceId, status: 'SUCCESS', message: `${platform} order imported` });
   return json({ accepted: true, duplicate: !data });
 });

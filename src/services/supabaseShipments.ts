@@ -1,6 +1,18 @@
 import { supabase, supabaseUrl, supabaseAnonKey, isMockMode, getEffectiveSellerId, isValidUUID } from '../lib/supabase';
 import { Shipment, ShipmentStatus, PickupRequest } from '../types';
 
+async function functionErrorMessage(error: unknown, fallback: string): Promise<string> {
+  const functionError = error as { message?: string; context?: Response };
+  let message = functionError.message || fallback;
+  if (functionError.context) {
+    try {
+      const payload = await functionError.context.clone().json() as { error?: string; message?: string };
+      message = payload.error || payload.message || message;
+    } catch { /* retain SDK error */ }
+  }
+  return message;
+}
+
 /**
  * Fetch all shipments for the current seller from Supabase, joined with courier & order details
  */
@@ -10,7 +22,8 @@ export async function fetchShipmentsFromSupabase(sellerId?: string): Promise<Shi
     let query = supabase
       .from('shipments')
       .select('*, couriers(*), orders(*)')
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
+      .limit(200);
 
     if (isValidUUID(effectiveSellerId)) {
       query = query.eq('seller_id', effectiveSellerId);
@@ -82,7 +95,19 @@ export async function createShipmentInSupabase(
   const { data, error } = await supabase.functions.invoke('book-shipment', {
     body: { orderId, courierId, shippingCost, codCharge, idempotencyKey },
   });
-  if (error) throw new Error(error.message || 'Courier booking failed');
+  if (error) {
+    let message = error.message || 'Courier booking failed';
+    const response = (error as { context?: Response }).context;
+    if (response) {
+      try {
+        const payload = await response.clone().json() as { error?: string; message?: string };
+        message = payload.error || payload.message || message;
+      } catch {
+        // Keep the SDK error when the Edge Function did not return JSON.
+      }
+    }
+    throw new Error(message);
+  }
   if (!data?.awb_number) throw new Error(data?.error || 'Courier did not return an AWB');
   return { ...data, courier_name: courierName, courier_code: courierCode } as Shipment;
 }
@@ -113,55 +138,13 @@ export async function schedulePickupInSupabase(
   fallbackSellerId?: string
 ): Promise<PickupRequest> {
   const effectiveSellerId = await getEffectiveSellerId(fallbackSellerId);
-  const pickupRef = `PKP-${courierId.substring(0, 3).toUpperCase()}-${Math.floor(100000 + Math.random() * 900000)}`;
-
-  let verifiedWhId = isValidUUID(warehouseId) ? warehouseId : null;
-  let verifiedCourierId = isValidUUID(courierId) ? courierId : null;
-
-  if (!isMockMode) {
-    try {
-      const { data, error } = await supabase
-        .from('pickup_requests')
-        .insert({
-          seller_id: effectiveSellerId,
-          warehouse_id: verifiedWhId,
-          courier_id: verifiedCourierId,
-          pickup_date: pickupDate,
-          status: 'SCHEDULED',
-          pickup_reference: pickupRef,
-        })
-        .select()
-        .single();
-
-      if (!error && data) {
-        return {
-          id: data.id,
-          seller_id: data.seller_id,
-          warehouse_id: data.warehouse_id,
-          courier_id: data.courier_id,
-          pickup_date: data.pickup_date,
-          status: data.status as any,
-          pickup_reference: data.pickup_reference,
-          expected_package_count: count,
-          created_at: data.created_at,
-        };
-      }
-    } catch (e) {
-      console.error('Failed to schedule pickup in Supabase:', e);
-    }
-  }
-
-  return {
-    id: `pick-${Date.now()}`,
-    seller_id: effectiveSellerId,
-    warehouse_id: warehouseId,
-    courier_id: courierId,
-    pickup_date: pickupDate,
-    status: 'SCHEDULED',
-    pickup_reference: pickupRef,
-    expected_package_count: count,
-    created_at: new Date().toISOString(),
-  };
+  if (!isValidUUID(warehouseId) || !isValidUUID(courierId)) throw new Error('A saved warehouse and courier are required');
+  const { data, error } = await supabase.functions.invoke('manage-pickup', {
+    body: { action: 'schedule', warehouseId, courierId, pickupDate, expectedPackageCount: count },
+  });
+  if (error) throw new Error(await functionErrorMessage(error, 'Pickup scheduling failed'));
+  if (!data?.pickup) throw new Error(data?.error || 'Courier did not confirm the pickup');
+  return { ...data.pickup, seller_id: effectiveSellerId } as PickupRequest;
 }
 
 /**

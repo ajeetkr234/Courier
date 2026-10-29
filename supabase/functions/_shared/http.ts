@@ -1,6 +1,8 @@
 export const corsHeaders = {
   'access-control-allow-origin': '*',
-  'access-control-allow-headers': 'authorization, apikey, content-type, x-webhook-signature, x-webhook-timestamp, x-event-id',
+  // supabase-js adds x-client-info to Edge Function requests. It must be
+  // accepted by the browser preflight or the actual POST is never sent.
+  'access-control-allow-headers': 'authorization, apikey, content-type, x-client-info, idempotency-key, x-integration-account-id, x-webhook-signature, x-webhook-timestamp, x-event-id',
 };
 
 export function json(body: unknown, status = 200): Response {

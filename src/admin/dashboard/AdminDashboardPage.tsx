@@ -548,7 +548,7 @@ export const AdminDashboardPage: React.FC = () => {
             </div>
 
             {/* Parcel Specs & Value */}
-            <div className="grid grid-cols-3 gap-3 p-4 rounded-xl bg-slate-950 border border-slate-800 text-center">
+            <div className="grid grid-cols-1 xs:grid-cols-3 gap-3 p-4 rounded-xl bg-slate-950 border border-slate-800 text-center">
               <div>
                 <span className="text-[10px] text-slate-400 font-bold uppercase block">Chargeable Weight</span>
                 <span className="text-sm font-bold text-white">{inspectedOrder.weight_kg} Kg</span>

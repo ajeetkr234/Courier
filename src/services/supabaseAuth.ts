@@ -7,14 +7,91 @@ export interface AuthSessionData {
   warehouses: Warehouse[];
 }
 
+export const DEMO_SELLER_ID = '32d724db-23c4-4cba-a76f-f78e4022194e';
+
+export const DEMO_WAREHOUSES: Warehouse[] = [
+  {
+    id: 'wh-delhi-01',
+    seller_id: DEMO_SELLER_ID,
+    name: 'Primary Delhi Fulfilment Hub',
+    contact_name: 'Rajesh Sharma',
+    phone: '9876543210',
+    email: 'delhi.hub@shipfaster.in',
+    address_line1: 'Plot 42, Okhla Industrial Area Phase III',
+    city: 'New Delhi',
+    state: 'Delhi',
+    pincode: '110020',
+    is_default: true,
+    address_verified_at: new Date().toISOString(),
+    phone_verified_at: new Date().toISOString(),
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'wh-mumbai-02',
+    seller_id: DEMO_SELLER_ID,
+    name: 'Mumbai Bhiwandi Logistics Hub',
+    contact_name: 'Vikram Joshi',
+    phone: '9822334455',
+    email: 'mumbai.hub@shipfaster.in',
+    address_line1: 'Shed 12, Indian Logistics Park, Mankoli',
+    city: 'Bhiwandi',
+    state: 'Maharashtra',
+    pincode: '421302',
+    is_default: false,
+    address_verified_at: new Date().toISOString(),
+    phone_verified_at: new Date().toISOString(),
+    created_at: new Date().toISOString(),
+  }
+];
+
+export function createDemoSession(email: string, isAdmin = false): AuthSessionData {
+  const isSeller = !isAdmin;
+  const seller: Seller = {
+    id: DEMO_SELLER_ID,
+    company_name: isSeller ? 'ShipFaster Logistics India Pvt Ltd' : 'ShipFaster Control Tower HQ',
+    brand_name: isSeller ? 'Apex D2C Logistics' : 'Control Tower HQ',
+    gstin: '07AAAAA0000A1Z5',
+    pan: 'AAACA1234F',
+    status: 'ACTIVE',
+    rate_card_id: 'rc-standard',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+
+  const user: UserProfile = {
+    id: isAdmin ? '00000000-0000-0000-0000-000000000002' : '00000000-0000-0000-0000-000000000001',
+    email: email || (isAdmin ? 'admin.demo@shipfaster.test' : 'seller.demo@shipfaster.test'),
+    name: isAdmin ? 'Platform Control Tower' : 'Demo Seller',
+    phone: '+91 9000000001',
+    seller_id: seller.id,
+    role: isAdmin ? 'PLATFORM_ADMIN' : 'OWNER',
+    is_active: true,
+  };
+
+  const sessionData: AuthSessionData = {
+    user,
+    seller,
+    warehouses: DEMO_WAREHOUSES,
+  };
+
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem('shipfaster_session', JSON.stringify(sessionData));
+    } catch {}
+  }
+
+  return sessionData;
+}
+
 /**
  * Ensure the authenticated user has an associated seller tenant, membership, and default warehouse.
  */
 export async function provisionSellerAccount(
   userId: string,
   email: string,
-  companyName: string = 'My Brand Logistics',
-  phone: string = '+91 9876543210'
+  companyName: string = '',
+  phone: string = '',
+  platformRole?: UserProfile['role']
 ): Promise<AuthSessionData> {
   // 1. Check if user is already linked to a seller
   const { data: existingMembership } = await supabase
@@ -37,26 +114,11 @@ export async function provisionSellerAccount(
         name: companyName || email.split('@')[0],
         phone,
         seller_id: seller.id,
-        role: existingMembership.role || 'OWNER',
+        role: platformRole?.startsWith('PLATFORM_') ? platformRole : (existingMembership.role || 'OWNER'),
         is_active: true,
       },
       seller,
-      warehouses: warehouses && warehouses.length > 0 ? warehouses : [
-        {
-          id: `wh-${seller.id.slice(0, 8)}`,
-          seller_id: seller.id,
-          name: 'Primary Fulfillment Center',
-          contact_name: companyName,
-          phone,
-          email,
-          address_line1: 'B-401 Logistics Park, Andheri East',
-          city: 'Mumbai',
-          state: 'Maharashtra',
-          pincode: '400069',
-          is_default: true,
-          created_at: new Date().toISOString(),
-        }
-      ],
+      warehouses: warehouses || [],
     };
   }
 
@@ -66,8 +128,8 @@ export async function provisionSellerAccount(
     .insert({
       company_name: companyName,
       brand_name: companyName,
-      pan: 'PAN999999X',
-      status: 'ACTIVE',
+      pan: `PENDING-${userId.replaceAll('-', '').slice(0, 10).toUpperCase()}`,
+      status: 'DRAFT',
     })
     .select()
     .single();
@@ -85,27 +147,6 @@ export async function provisionSellerAccount(
       role: 'OWNER',
     });
 
-  // 4. Create a default primary warehouse
-  const defaultWarehouse: Omit<Warehouse, 'created_at'> = {
-    id: crypto.randomUUID ? crypto.randomUUID() : `wh-${Date.now()}`,
-    seller_id: newSeller.id,
-    name: 'Primary Fulfillment Center',
-    contact_name: companyName,
-    phone,
-    email,
-    address_line1: 'B-401 Logistics Park, Andheri East',
-    city: 'Mumbai',
-    state: 'Maharashtra',
-    pincode: '400069',
-    is_default: true,
-  };
-
-  const { data: createdWh } = await supabase
-    .from('warehouses')
-    .insert(defaultWarehouse)
-    .select()
-    .single();
-
   return {
     user: {
       id: userId,
@@ -117,7 +158,7 @@ export async function provisionSellerAccount(
       is_active: true,
     },
     seller: newSeller,
-    warehouses: [createdWh || { ...defaultWarehouse, created_at: new Date().toISOString() }],
+    warehouses: [],
   };
 }
 
@@ -130,63 +171,166 @@ export async function signUpUser(
   companyName: string,
   phone: string
 ): Promise<AuthSessionData> {
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: { company_name: companyName, phone },
-    },
-  });
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { company_name: companyName, phone },
+      },
+    });
 
-  if (error) throw error;
-  if (!data.user) throw new Error('Registration failed: no user returned from Supabase.');
+    if (error) {
+      const message = error.message.toLowerCase();
+      if (error.status === 429 || message.includes('rate limit')) {
+        throw new Error('Too many registration attempts. Please wait a few minutes before trying again. If this account was already created, sign in instead.');
+      }
+      if (message.includes('already registered') || message.includes('already exists')) {
+        throw new Error('An account with this email already exists. Please sign in instead.');
+      }
+      throw error;
+    }
+    if (!data.user) throw new Error('Registration failed: no user returned from Supabase.');
 
-  if (!data.session) {
-    throw new Error('Account created. Verify the email we sent you, then sign in to continue onboarding.');
+    if (!data.session) {
+      throw new Error('Email confirmation is enabled, but no sign-in session was created. Configure SMTP for verification emails or disable Confirm email in Supabase to sign in immediately.');
+    }
+
+    try {
+      await supabase.auth.refreshSession();
+    } catch {}
+
+    const sessionData = await provisionSellerAccount(data.user.id, email, companyName, phone, data.user.app_metadata?.role);
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('shipfaster_session', JSON.stringify(sessionData));
+      } catch {}
+    }
+    return sessionData;
+  } catch (err: any) {
+    const isNetworkError =
+      err?.message?.toLowerCase().includes('failed to fetch') ||
+      err?.message?.toLowerCase().includes('network') ||
+      err?.name === 'AuthRetryableFetchError';
+
+    if (isNetworkError) {
+      throw new Error(
+        'Cannot reach Supabase server (the project is paused or offline). ' +
+        'New seller accounts require an active database to store your business profile, warehouses, and credentials. ' +
+        'Please restore your project on the Supabase dashboard.'
+      );
+    }
+    throw err;
   }
-
-  // The database bootstrap trigger adds seller_id/role to app_metadata. Refresh
-  // once so tenant RLS sees those claims before loading the new workspace.
-  await supabase.auth.refreshSession();
-
-  return await provisionSellerAccount(data.user.id, email, companyName, phone);
 }
 
 /**
- * Sign in an existing user with Supabase Auth
+ * Sign in an existing user with Supabase Auth or fallback to demo account if unreachable
  */
 export async function signInUser(email: string, password: string): Promise<AuthSessionData> {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+  const normalizedEmail = (email || '').trim().toLowerCase();
 
-  if (error) throw error;
-  if (!data.user) throw new Error('Sign in failed: invalid credentials.');
+  // All email addresses must be validated against the Supabase database.
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: normalizedEmail,
+      password,
+    });
 
-  const companyName = data.user.user_metadata?.company_name || email.split('@')[0];
-  const phone = data.user.user_metadata?.phone || '+91 9876543210';
+    if (error) {
+      const isNetworkError =
+        error.message?.toLowerCase().includes('failed to fetch') ||
+        error.message?.toLowerCase().includes('network') ||
+        (error as any)?.status === 0 ||
+        (error as any)?.name === 'AuthRetryableFetchError';
 
-  return await provisionSellerAccount(data.user.id, email, companyName, phone);
+      if (isNetworkError) {
+        throw new Error(
+          'Cannot reach the Supabase backend server (the database project is paused or offline). ' +
+          'Personal email accounts cannot be authenticated without an active database connection. ' +
+          'Please restore your Supabase project in the Supabase dashboard or use the Quick Demo buttons to test.'
+        );
+      }
+      throw new Error('Invalid email or password. Please check your credentials or register a new account.');
+    }
+
+    if (!data.user) throw new Error('Sign in failed: invalid credentials.');
+
+    const companyName = data.user.user_metadata?.company_name || normalizedEmail.split('@')[0];
+    const phone = data.user.user_metadata?.phone || '';
+
+    const sessionData = await provisionSellerAccount(data.user.id, normalizedEmail, companyName, phone, data.user.app_metadata?.role);
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('shipfaster_session', JSON.stringify(sessionData));
+      } catch {}
+    }
+    return sessionData;
+  } catch (err: any) {
+    const isNetworkError =
+      err?.message?.toLowerCase().includes('failed to fetch') ||
+      err?.message?.toLowerCase().includes('network') ||
+      err?.name === 'AuthRetryableFetchError';
+
+    if (isNetworkError) {
+      throw new Error(
+        'Cannot reach the Supabase backend server (the database project is paused or offline). ' +
+        'Personal email accounts cannot be authenticated without an active database connection. ' +
+        'Please restore your Supabase project in the Supabase dashboard or use the Quick Demo buttons to test.'
+      );
+    }
+    throw err;
+  }
 }
 
 /**
  * Sign out current session
  */
 export async function signOutUser(): Promise<void> {
-  await supabase.auth.signOut();
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.removeItem('shipfaster_session');
+    } catch {}
+  }
+  try {
+    await supabase.auth.signOut();
+  } catch {}
 }
 
 /**
  * Get active session user and seller data
  */
 export async function getActiveSession(): Promise<AuthSessionData | null> {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session?.user) return null;
+  // 1. Check local session cache (for offline / demo login support)
+  if (typeof window !== 'undefined') {
+    try {
+      const cached = localStorage.getItem('shipfaster_session');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed?.user?.id && parsed?.seller?.id) {
+          return parsed;
+        }
+      }
+    } catch {}
+  }
 
-  const user = session.user;
-  const companyName = user.user_metadata?.company_name || user.email?.split('@')[0] || 'Brand Logistics';
-  const phone = user.user_metadata?.phone || '+91 9876543210';
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.user) return null;
 
-  return await provisionSellerAccount(user.id, user.email || '', companyName, phone);
+    const user = session.user;
+    const companyName = user.user_metadata?.company_name || user.email?.split('@')[0] || '';
+    const phone = user.user_metadata?.phone || '';
+
+    const sessionData = await provisionSellerAccount(user.id, user.email || '', companyName, phone, user.app_metadata?.role);
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('shipfaster_session', JSON.stringify(sessionData));
+      } catch {}
+    }
+    return sessionData;
+  } catch (err) {
+    console.warn('Unable to retrieve session from Supabase:', err);
+    return null;
+  }
 }

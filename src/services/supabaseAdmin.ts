@@ -13,6 +13,8 @@ export async function fetchSellersFromSupabase(): Promise<Seller[]> {
       id: s.id,
       company_name: s.company_name,
       brand_name: s.brand_name || s.company_name,
+      contact_email: s.contact_email,
+      contact_phone: s.contact_phone,
       gstin: s.gstin,
       pan: s.pan,
       status: s.status,

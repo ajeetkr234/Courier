@@ -47,12 +47,15 @@ export const Modal: React.FC<ModalProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ type: 'spring', duration: 0.3, bounce: 0 }}
-            className={`relative w-full ${maxWidths[maxWidth]} bg-white border border-slate-200 rounded-2xl shadow-2xl overflow-hidden z-10`}
+            role="dialog"
+            aria-modal="true"
+            aria-label={title}
+            className={`relative w-full ${maxWidths[maxWidth]} max-h-[calc(100dvh-2rem)] sm:max-h-[90dvh] bg-white border border-slate-200 rounded-2xl shadow-2xl overflow-hidden z-10`}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4.5 border-b border-slate-100 bg-slate-50">
+            <div className="flex items-start justify-between gap-3 px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-100 bg-slate-50">
               <div>
-                <h3 className="text-lg font-extrabold text-slate-900 font-display">{title}</h3>
+                <h3 className="text-base sm:text-lg font-extrabold text-slate-900 font-display">{title}</h3>
                 {subtitle && <p className="text-xs text-slate-500 mt-0.5 font-medium">{subtitle}</p>}
               </div>
               <button
@@ -64,7 +67,7 @@ export const Modal: React.FC<ModalProps> = ({
             </div>
 
             {/* Content Body */}
-            <div className="p-6 max-h-[78vh] overflow-y-auto">
+            <div className="p-3 sm:p-6 max-h-[calc(100dvh-6rem)] sm:max-h-[78vh] overflow-y-auto overscroll-contain">
               {children}
             </div>
           </motion.div>

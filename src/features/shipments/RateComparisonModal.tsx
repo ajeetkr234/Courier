@@ -50,8 +50,10 @@ export const RateComparisonModal: React.FC<RateComparisonModalProps> = ({
         if (!isMounted) return;
         setQuotes(resQuotes);
         if (resQuotes.length > 0) {
-          // Preselect recommended or cheapest
-          const rec = resQuotes.find((q) => q.recommendation_badge === 'Recommended') || resQuotes[0];
+          const requestedCourierId = new URLSearchParams(window.location.search).get('courierId');
+          const rec = resQuotes.find((q) => q.courier_id === requestedCourierId)
+            || resQuotes.find((q) => q.recommendation_badge === 'Recommended')
+            || resQuotes[0];
           setSelectedQuote(rec);
         }
         setLoading(false);

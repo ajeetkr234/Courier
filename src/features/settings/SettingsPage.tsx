@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { 
   Building2, MapPin, Plus, ShieldCheck, Wallet, Bell, 
   Settings, CheckCircle2, Phone, Mail, FileText, Check, 
   Sparkles, ExternalLink, Printer, Box, AlertCircle, Trash2,
-  Lock, ArrowRight, ShieldAlert, Zap, Loader2
+  Lock, ArrowRight, ShieldAlert, Zap, Loader2, Pencil
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Input, Select } from '../../components/ui/Input';
@@ -13,6 +13,8 @@ import { usePlatformStore } from '../../services/store';
 import { Warehouse, SellerBankAccount } from '../../types';
 import { toast } from 'sonner';
 import { usePincodeLookup } from '../../hooks/usePincodeLookup';
+import { submitSellerOnboarding } from '../../services/sellerProfile';
+import { sendPickupOtp, verifyPickupOtp } from '../../services/pickupVerification';
 
 type SettingsTab = 'WAREHOUSES' | 'PROFILE' | 'SHIPPING' | 'BANK' | 'NOTIFICATIONS';
 
@@ -20,6 +22,8 @@ export const SettingsPage: React.FC = () => {
   const { 
     warehouses, 
     addWarehouse, 
+    updateWarehouse,
+    deleteWarehouse,
     currentSeller, 
     setCurrentSeller, 
     sellerBankAccount, 
@@ -28,10 +32,21 @@ export const SettingsPage: React.FC = () => {
     toggleEarlyCOD
   } = usePlatformStore();
 
-  const [activeTab, setActiveTab] = useState<SettingsTab>('WAREHOUSES');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const queryTab = searchParams.get('tab')?.toUpperCase() as SettingsTab | null;
+  const validTabs: SettingsTab[] = ['WAREHOUSES', 'PROFILE', 'SHIPPING', 'BANK', 'NOTIFICATIONS'];
+  const initialTab: SettingsTab = queryTab && validTabs.includes(queryTab) ? queryTab : 'WAREHOUSES';
+  const [activeTab, setActiveTab] = useState<SettingsTab>(initialTab);
+
+  useEffect(() => {
+    if (queryTab && validTabs.includes(queryTab) && queryTab !== activeTab) {
+      setActiveTab(queryTab);
+    }
+  }, [queryTab]);
 
   // New Warehouse Modal State
   const [isAddWarehouseOpen, setIsAddWarehouseOpen] = useState(false);
+  const [editingWarehouse, setEditingWarehouse] = useState<Warehouse | null>(null);
   const [whName, setWhName] = useState('');
   const [whContact, setWhContact] = useState('');
   const [whPhone, setWhPhone] = useState('');
@@ -57,15 +72,19 @@ export const SettingsPage: React.FC = () => {
   });
 
   const [whIsDefault, setWhIsDefault] = useState(false);
+  const [verifyingWarehouse, setVerifyingWarehouse] = useState<Warehouse | null>(null);
+  const [pickupOtp, setPickupOtp] = useState('');
+  const [pickupOtpSent, setPickupOtpSent] = useState(false);
+  const [pickupOtpBusy, setPickupOtpBusy] = useState(false);
 
   // Profile Form State
-  const [companyName, setCompanyName] = useState(currentSeller?.company_name || 'Apex Retail Logistics Private Limited');
-  const [brandName, setBrandName] = useState(currentSeller?.brand_name || 'Apex Retail');
-  const [gstin, setGstin] = useState(currentSeller?.gstin || '27AAACA123411Z5');
-  const [pan, setPan] = useState(currentSeller?.pan || 'AAACA1234A');
-  const [supportEmail, setSupportEmail] = useState('support@apexretail.store');
-  const [supportPhone, setSupportPhone] = useState('+91 98765 43210');
-  const [returnAddress, setReturnAddress] = useState('Central Returns Hub, Unit 4B, Bhiwandi, Maharashtra 421302');
+  const [companyName, setCompanyName] = useState(currentSeller?.company_name || '');
+  const [brandName, setBrandName] = useState(currentSeller?.brand_name || '');
+  const [gstin, setGstin] = useState(currentSeller?.gstin || '');
+  const [pan, setPan] = useState(currentSeller?.pan?.startsWith('PENDING-') ? '' : currentSeller?.pan || '');
+  const [supportEmail, setSupportEmail] = useState(currentSeller?.contact_email || '');
+  const [supportPhone, setSupportPhone] = useState(currentSeller?.contact_phone || '');
+  const [returnAddress, setReturnAddress] = useState('');
 
   // Shipping & Packaging Defaults
   const [defaultWeight, setDefaultWeight] = useState('0.5');
@@ -76,10 +95,10 @@ export const SettingsPage: React.FC = () => {
   const [autoTransitInsurance, setAutoTransitInsurance] = useState(true);
 
   // Bank & Payouts Form State
-  const [accountHolder, setAccountHolder] = useState(sellerBankAccount?.account_holder_name || 'Apex Retail Pvt Ltd');
-  const [bankName, setBankName] = useState(sellerBankAccount?.bank_name || 'HDFC Bank Ltd');
-  const [accountNumber, setAccountNumber] = useState(sellerBankAccount?.account_number || '50200084920194');
-  const [ifscCode, setIfscCode] = useState(sellerBankAccount?.ifsc_code || 'HDFC0001248');
+  const [accountHolder, setAccountHolder] = useState(sellerBankAccount?.account_holder_name || '');
+  const [bankName, setBankName] = useState(sellerBankAccount?.bank_name || '');
+  const [accountNumber, setAccountNumber] = useState(sellerBankAccount?.account_number || '');
+  const [ifscCode, setIfscCode] = useState(sellerBankAccount?.ifsc_code || '');
 
   // Notification Preferences
   const [notifyWhatsapp, setNotifyWhatsapp] = useState(true);
@@ -88,25 +107,35 @@ export const SettingsPage: React.FC = () => {
 
   const handleCreateWarehouse = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!whName || !whPincode || !whAddress) {
-      toast.error('Please provide warehouse name, address and valid 6-digit pincode');
+    if (!currentSeller?.id || !whName.trim() || !whContact.trim() || !/^\d{6}$/.test(whPincode) || !whAddress.trim() || !whCity.trim() || !whState.trim()) {
+      toast.error('Please provide the contact, complete warehouse address and a valid pincode');
+      return;
+    }
+    if (!/^\d{10}$/.test(whPhone)) {
+      toast.error('Contact mobile number must be exactly 10 digits');
       return;
     }
 
-    addWarehouse({
-      name: whName,
-      contact_name: whContact || 'Warehouse Dispatch Incharge',
-      phone: whPhone || '9876543210',
-      email: 'dispatch@apexretail.store',
-      address_line1: whAddress,
+    const warehouseData = {
+      name: whName.trim(),
+      contact_name: whContact.trim(),
+      phone: whPhone,
+      email: editingWarehouse?.email || currentSeller.contact_email || '',
+      address_line1: whAddress.trim(),
       pincode: whPincode,
-      city: whCity || 'City Hub',
-      state: whState || 'State Hub',
+      city: whCity.trim(),
+      state: whState.trim(),
       is_default: whIsDefault || warehouses.length === 0,
-      seller_id: currentSeller?.id || '32d724db-23c4-4cba-a76f-f78e4022194e',
-    });
+      seller_id: currentSeller.id,
+    };
 
-    toast.success(`Warehouse "${whName}" registered & verified for carrier pickups!`);
+    if (editingWarehouse) {
+      updateWarehouse({ ...editingWarehouse, ...warehouseData });
+    } else {
+      addWarehouse(warehouseData);
+    }
+
+    toast.success(editingWarehouse ? `Warehouse "${whName}" updated; re-verification is required after protected address changes.` : `Warehouse "${whName}" registered. Verify its phone before creating orders.`);
     setIsAddWarehouseOpen(false);
     setWhName('');
     setWhContact('');
@@ -115,20 +144,79 @@ export const SettingsPage: React.FC = () => {
     resetWhPincode();
     setWhCity('');
     setWhState('');
+    setWhIsDefault(false);
+    setEditingWarehouse(null);
   };
 
-  const handleSaveProfile = (e: React.FormEvent) => {
+  const openAddWarehouse = () => {
+    setEditingWarehouse(null);
+    setWhName(''); setWhContact(''); setWhPhone(''); setWhAddress('');
+    resetWhPincode(); setWhCity(''); setWhState(''); setWhIsDefault(false);
+    setIsAddWarehouseOpen(true);
+  };
+
+  const openEditWarehouse = (warehouse: Warehouse) => {
+    setEditingWarehouse(warehouse);
+    setWhName(warehouse.name); setWhContact(warehouse.contact_name);
+    setWhPhone(warehouse.phone.replace(/\D/g, '').slice(-10));
+    setWhAddress(warehouse.address_line1); setWhPincode(warehouse.pincode);
+    setWhCity(warehouse.city); setWhState(warehouse.state); setWhIsDefault(warehouse.is_default);
+    setIsAddWarehouseOpen(true);
+  };
+
+  const handleDeleteWarehouse = (warehouse: Warehouse) => {
+    if (!window.confirm(`Delete warehouse "${warehouse.name}"? This cannot be undone.`)) return;
+    deleteWarehouse(warehouse.id);
+    toast.success(`Warehouse "${warehouse.name}" deleted`);
+  };
+
+  const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (currentSeller) {
-      setCurrentSeller({
-        ...currentSeller,
-        company_name: companyName,
-        brand_name: brandName,
-        gstin,
-        pan,
-      });
+    try {
+      const updated = await submitSellerOnboarding({ companyName, brandName, gstin, pan });
+      setCurrentSeller(updated);
+      toast.success('Company profile saved and submitted for Super Admin verification.');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Company profile could not be saved.');
     }
-    toast.success('Company legal profile & brand identity updated successfully!');
+  };
+
+  const handleSendPickupOtp = async (warehouse: Warehouse) => {
+    if (!/^[0-9a-f-]{36}$/i.test(warehouse.id)) {
+      toast.error('Wait for this warehouse to finish syncing, then try again.');
+      return;
+    }
+    setPickupOtpBusy(true);
+    try {
+      await sendPickupOtp(warehouse.id);
+      setVerifyingWarehouse(warehouse);
+      setPickupOtpSent(true);
+      toast.success('Verification OTP sent to the warehouse contact phone.');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Could not send verification OTP.');
+    } finally {
+      setPickupOtpBusy(false);
+    }
+  };
+
+  const handleVerifyPickupOtp = async () => {
+    if (!verifyingWarehouse || !/^\d{6}$/.test(pickupOtp)) {
+      toast.error('Enter the 6-digit verification code.');
+      return;
+    }
+    setPickupOtpBusy(true);
+    try {
+      await verifyPickupOtp(verifyingWarehouse.id, pickupOtp);
+      updateWarehouse({ ...verifyingWarehouse, address_verified_at: new Date().toISOString(), phone_verified_at: new Date().toISOString() });
+      setVerifyingWarehouse(null);
+      setPickupOtp('');
+      setPickupOtpSent(false);
+      toast.success('Pickup address verified. It can now be used for order creation.');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Invalid or expired verification code.');
+    } finally {
+      setPickupOtpBusy(false);
+    }
   };
 
   const handleSaveShippingDefaults = (e: React.FormEvent) => {
@@ -185,7 +273,10 @@ export const SettingsPage: React.FC = () => {
         ].map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id as SettingsTab)}
+            onClick={() => {
+              setActiveTab(tab.id as SettingsTab);
+              setSearchParams({ tab: tab.id });
+            }}
             className={`flex items-center gap-2 px-4 py-3 text-xs font-bold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
               activeTab === tab.id
                 ? 'border-indigo-600 text-indigo-600 bg-indigo-50/50 rounded-t-xl'
@@ -217,7 +308,7 @@ export const SettingsPage: React.FC = () => {
               size="sm"
               variant="primary"
               leftIcon={<Plus className="w-4 h-4" />}
-              onClick={() => setIsAddWarehouseOpen(true)}
+              onClick={openAddWarehouse}
             >
               Add Pickup Warehouse
             </Button>
@@ -252,21 +343,26 @@ export const SettingsPage: React.FC = () => {
                     </p>
                     <p className="flex items-center gap-1.5 pt-1">
                       <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      <span>{wh.contact_name || (wh as any).contact_person} ({wh.phone || '9876543210'})</span>
+                      <span>{wh.contact_name || (wh as any).contact_person} ({wh.phone || 'Phone unavailable'})</span>
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between border-t border-slate-100 pt-3 text-xs">
-                  <span className="text-emerald-600 font-semibold flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5" /> Serviceable for Pickups
-                  </span>
-                  <Link
-                    to={`/app/rate-calculator`}
-                    className="text-indigo-600 hover:text-indigo-700 font-bold flex items-center gap-1 hover:underline"
-                  >
-                    Rates <ArrowRight className="w-3 h-3" />
-                  </Link>
+                <div className="flex items-center justify-between border-t border-slate-100 pt-3 text-xs gap-2">
+                  {wh.address_verified_at && wh.phone_verified_at ? (
+                    <span className="text-emerald-600 font-semibold flex items-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5" /> Pickup verified
+                    </span>
+                  ) : (
+                    <button type="button" disabled={pickupOtpBusy} onClick={() => void handleSendPickupOtp(wh)} className="text-amber-700 font-bold flex items-center gap-1 hover:underline disabled:opacity-50">
+                      <ShieldAlert className="w-3.5 h-3.5" /> Verify pickup
+                    </button>
+                  )}
+                  <div className="flex items-center gap-1">
+                    <button type="button" onClick={() => openEditWarehouse(wh)} className="p-1.5 text-indigo-600 hover:bg-indigo-50 rounded-lg" title="Edit warehouse"><Pencil className="w-3.5 h-3.5" /></button>
+                    <button type="button" onClick={() => handleDeleteWarehouse(wh)} className="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg" title="Delete warehouse"><Trash2 className="w-3.5 h-3.5" /></button>
+                    <Link to="/app/rate-calculator" className="text-indigo-600 hover:text-indigo-700 font-bold flex items-center gap-1 hover:underline">Rates <ArrowRight className="w-3 h-3" /></Link>
+                  </div>
                 </div>
               </div>
             ))}
@@ -278,12 +374,33 @@ export const SettingsPage: React.FC = () => {
       {activeTab === 'PROFILE' && (
         <form onSubmit={handleSaveProfile} className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-6 max-w-3xl animate-fadeIn">
           <div>
-            <h3 className="text-base font-extrabold text-slate-900 font-display flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-indigo-600" /> Legal Entity &amp; Store Branding
-            </h3>
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <h3 className="text-base font-extrabold text-slate-900 font-display flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-indigo-600" /> Legal Entity &amp; Store Branding
+              </h3>
+              <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full border ${
+                currentSeller?.status === 'ACTIVE'
+                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                  : currentSeller?.status === 'UNDER_REVIEW' || currentSeller?.status === 'KYC_PENDING'
+                  ? 'bg-blue-50 text-blue-700 border-blue-200'
+                  : currentSeller?.status === 'REJECTED' || currentSeller?.status === 'SUSPENDED'
+                  ? 'bg-rose-50 text-rose-700 border-rose-200'
+                  : 'bg-amber-50 text-amber-700 border-amber-200'
+              }`}>
+                Account Status: {currentSeller?.status ? currentSeller.status.replace(/_/g, ' ') : 'DRAFT'}
+              </span>
+            </div>
             <p className="text-xs text-slate-500 font-medium mt-0.5">
               These details appear on customer invoices, GST tax reporting, and branded tracking URLs
             </p>
+            {currentSeller?.status !== 'ACTIVE' && (
+              <div className="mt-3 p-3 rounded-xl bg-amber-50/80 border border-amber-200 flex items-start gap-2.5 text-xs text-amber-900">
+                <AlertCircle className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
+                <p>
+                  Saving this profile will submit your PAN and company information for Super Admin verification. Order creation unlocks once your profile is verified.
+                </p>
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -414,7 +531,7 @@ export const SettingsPage: React.FC = () => {
 
           <div>
             <label className="block text-xs font-bold text-slate-700 mb-2">Default Package Dimensions &amp; Weight</label>
-            <div className="grid grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <Input
                 label="Weight (kg)"
                 value={defaultWeight}
@@ -605,9 +722,24 @@ export const SettingsPage: React.FC = () => {
 
       {/* Add Pickup Warehouse Modal */}
       <Modal
+        isOpen={!!verifyingWarehouse}
+        onClose={() => { setVerifyingWarehouse(null); setPickupOtp(''); setPickupOtpSent(false); }}
+        title="Verify pickup address"
+        subtitle={verifyingWarehouse ? `Enter the OTP sent to ${verifyingWarehouse.phone}` : undefined}
+      >
+        <div className="space-y-4 text-slate-900">
+          <Input label="6-digit OTP" value={pickupOtp} onChange={(event) => setPickupOtp(event.target.value.replace(/\D/g, '').slice(0, 6))} inputMode="numeric" maxLength={6} />
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" type="button" disabled={pickupOtpBusy} onClick={() => verifyingWarehouse && void handleSendPickupOtp(verifyingWarehouse)}>{pickupOtpSent ? 'Resend OTP' : 'Send OTP'}</Button>
+            <Button type="button" disabled={pickupOtpBusy || pickupOtp.length !== 6} onClick={() => void handleVerifyPickupOtp()}>{pickupOtpBusy ? 'Verifying…' : 'Verify address'}</Button>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
         isOpen={isAddWarehouseOpen}
-        onClose={() => setIsAddWarehouseOpen(false)}
-        title="Register New Pickup Warehouse"
+        onClose={() => { setIsAddWarehouseOpen(false); setEditingWarehouse(null); }}
+        title={editingWarehouse ? 'Edit Pickup Warehouse' : 'Register New Pickup Warehouse'}
         subtitle="Add fulfillment center address for carrier pickup executive visits"
       >
         <form onSubmit={handleCreateWarehouse} className="space-y-4 text-slate-900 text-xs">
@@ -630,8 +762,12 @@ export const SettingsPage: React.FC = () => {
             <Input
               label="Contact Mobile"
               value={whPhone}
-              onChange={(e) => setWhPhone(e.target.value)}
+              onChange={(e) => setWhPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
               placeholder="e.g. 9820192831"
+              inputMode="numeric"
+              maxLength={10}
+              pattern="[0-9]{10}"
+              helperText={`${whPhone.length}/10 digits`}
               required
             />
           </div>
@@ -704,11 +840,11 @@ export const SettingsPage: React.FC = () => {
           </div>
 
           <div className="flex justify-end gap-2 pt-3 border-t border-slate-200">
-            <Button size="sm" variant="outline" type="button" onClick={() => setIsAddWarehouseOpen(false)}>
+            <Button size="sm" variant="outline" type="button" onClick={() => { setIsAddWarehouseOpen(false); setEditingWarehouse(null); }}>
               Cancel
             </Button>
             <Button size="sm" variant="primary" type="submit">
-              Save Warehouse
+              {editingWarehouse ? 'Update Warehouse' : 'Save Warehouse'}
             </Button>
           </div>
         </form>

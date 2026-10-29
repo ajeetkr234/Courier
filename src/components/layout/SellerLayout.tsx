@@ -6,7 +6,7 @@ import {
   AlertTriangle, RotateCcw, Scale, Wallet, FileText, Globe, 
   BarChart3, Code2, Users, Settings, ChevronDown,
   Menu, X, Building2, PlusCircle, Upload, ShieldCheck, Search, Activity, Calculator,
-  Palette, Headphones
+  Palette, Headphones, LogOut
 } from 'lucide-react';
 import { usePlatformStore } from '../../services/store';
 import { useAuth } from '../../app/providers/AuthProvider';
@@ -29,7 +29,7 @@ export const SellerLayout: React.FC = () => {
     realtimeStatus,
     currentSeller 
   } = usePlatformStore();
-  const { user, switchDemoRole } = useAuth();
+  const { user, logout } = useAuth();
 
   const mainRef = useRef<HTMLElement>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -106,11 +106,11 @@ export const SellerLayout: React.FC = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <div className="h-screen overflow-hidden bg-slate-50 text-slate-900 flex flex-col md:flex-row">
+    <div className="h-dvh min-h-0 overflow-hidden bg-slate-50 text-slate-900 flex flex-col lg:flex-row">
       <CommandPalette isOpen={isCmdKOpen} onClose={() => setIsCmdKOpen(false)} />
 
       {/* Mobile Top Header */}
-      <div className="md:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-slate-200 shrink-0">
+      <div className="lg:hidden flex items-center justify-between gap-2 px-3 sm:px-4 py-2.5 bg-white border-b border-slate-200 shrink-0">
         <div className="flex items-center gap-2">
           <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 text-slate-600">
             {isSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -128,14 +128,14 @@ export const SellerLayout: React.FC = () => {
       {isSidebarOpen && (
         <div 
           onClick={() => setIsSidebarOpen(false)} 
-          className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-30 md:hidden" 
+          className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-30 lg:hidden"
         />
       )}
 
       {/* Sidebar */}
       <aside className={`
-        fixed md:static inset-y-0 left-0 z-40 w-64 h-screen shrink-0 bg-white border-r border-slate-200 flex flex-col transition-transform duration-200 shadow-xs
-        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+        fixed lg:static inset-y-0 left-0 z-40 w-[min(18rem,86vw)] lg:w-64 h-dvh shrink-0 bg-white border-r border-slate-200 flex flex-col transition-transform duration-200 shadow-xs
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
         {/* Brand Header */}
         <div className="hidden md:flex items-center justify-between px-6 py-5 border-b border-slate-200">
@@ -341,6 +341,10 @@ export const SellerLayout: React.FC = () => {
           {/* Finance Parent */}
           <div>
             <button
+              type="button"
+              onClick={() => setFinanceOpen((open) => !open)}
+              aria-expanded={financeOpen}
+              aria-controls="seller-finance-submenu"
               className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all cursor-pointer"
             >
               <div className="flex items-center gap-3">
@@ -350,7 +354,7 @@ export const SellerLayout: React.FC = () => {
               <ChevronDown className={`w-3.5 h-3.5 transition-transform ${financeOpen ? 'rotate-180' : ''}`} />
             </button>
             {financeOpen && (
-              <div className="ml-7 my-1 space-y-1 border-l border-slate-200 pl-3">
+              <div id="seller-finance-submenu" className="ml-7 my-1 space-y-1 border-l border-slate-200 pl-3">
                 <Link
                   to="/app/wallet"
                   className={`block py-1.5 text-xs transition-colors ${isActive('/app/wallet') ? 'text-indigo-600 font-bold' : 'text-slate-600 hover:text-slate-900'}`}
@@ -441,8 +445,8 @@ export const SellerLayout: React.FC = () => {
           </Link>
         </nav>
 
-        {/* Footer User & Role Switcher */}
-        <div className="p-4 border-t border-slate-200 bg-slate-50 space-y-3">
+        {/* Footer User */}
+        <div className="p-4 border-t border-slate-200 bg-slate-50">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center font-bold text-white text-xs">
@@ -453,24 +457,13 @@ export const SellerLayout: React.FC = () => {
                 <span className="block text-[10px] text-slate-500 font-semibold truncate">{user?.role}</span>
               </div>
             </div>
-          </div>
-          <div className="pt-2 border-t border-slate-200">
-            <button
-              onClick={() => {
-                switchDemoRole('ADMIN');
-                navigate('/admin');
-              }}
-              className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-[11px] font-bold border border-indigo-200 transition-all cursor-pointer"
-            >
-              <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
-              Switch to Platform Admin
-            </button>
+            <button type="button" title="Sign out" aria-label="Sign out" onClick={async()=>{await logout();navigate('/login',{replace:true})}} className="rounded-lg p-2 text-slate-500 hover:bg-slate-200 hover:text-rose-600"><LogOut className="h-4 w-4" /></button>
           </div>
         </div>
       </aside>
 
       {/* Main App Content Viewport */}
-      <div className="flex-1 flex flex-col h-screen min-w-0 overflow-hidden">
+      <div className="flex-1 flex flex-col h-full min-h-0 min-w-0 overflow-hidden">
         {/* Desktop Fixed Top Header Navbar — Smart Auto-Hide on Scroll */}
         <motion.header 
           variants={{
@@ -479,7 +472,7 @@ export const SellerLayout: React.FC = () => {
           }}
           animate={isHeaderHidden ? 'hidden' : 'visible'}
           transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className="hidden md:flex items-center justify-between px-6 h-16 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs shrink-0 z-30 will-change-transform"
+          className="hidden lg:flex items-center justify-between gap-4 px-4 xl:px-6 h-16 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs shrink-0 z-30 will-change-transform"
         >
           <div className="flex items-center gap-3">
             <span className="w-2.5 h-2.5 rounded-full bg-indigo-600 animate-pulse"></span>
@@ -555,7 +548,7 @@ export const SellerLayout: React.FC = () => {
         </motion.header>
 
         {/* Scrollable Page Content Body */}
-        <main ref={mainRef} className="flex-1 overflow-y-auto p-4 md:p-6 w-full max-w-none">
+        <main ref={mainRef} className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-3 sm:p-4 lg:p-6 w-full max-w-none">
           <Suspense fallback={<PageLoadingFallback />}>
             <Outlet />
           </Suspense>

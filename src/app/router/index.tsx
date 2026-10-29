@@ -43,6 +43,7 @@ const ShipmentsListPage = lazyNamed(() => import('../../features/shipments/Shipm
 const NDRResolutionPage = lazyNamed(() => import('../../features/ndr/NDRResolutionPage'), 'NDRResolutionPage');
 const RTOTrackingPage = lazyNamed(() => import('../../features/rto/RTOTrackingPage'), 'RTOTrackingPage');
 const ReturnsPage = lazyNamed(() => import('../../features/returns/ReturnsPage'), 'ReturnsPage');
+const NewReturnPage = lazyNamed(() => import('../../features/returns/NewReturnPage'), 'NewReturnPage');
 const WeightDisputesPage = lazyNamed(() => import('../../features/weight-disputes/WeightDisputesPage'), 'WeightDisputesPage');
 const WalletPage = lazyNamed(() => import('../../features/wallet/WalletPage'), 'WalletPage');
 const CODRemittancePage = lazyNamed(() => import('../../features/cod/CODRemittancePage'), 'CODRemittancePage');
@@ -67,6 +68,7 @@ const AdminAuditLogsPage = lazyNamed(() => import('../../admin/audit/AdminAuditL
 const AdminNDREscalationsPage = lazyNamed(() => import('../../admin/ndr/AdminNDREscalationsPage'), 'AdminNDREscalationsPage');
 const AdminWeightDisputesPage = lazyNamed(() => import('../../admin/disputes/AdminWeightDisputesPage'), 'AdminWeightDisputesPage');
 const AdminCODPayoutsPage = lazyNamed(() => import('../../admin/finance/AdminCODPayoutsPage'), 'AdminCODPayoutsPage');
+const AdminSupportTicketsPage = lazyNamed(() => import('../../admin/support/AdminSupportTicketsPage'), 'AdminSupportTicketsPage');
 
 const RequireAuth: React.FC<{ admin?: boolean }> = ({ admin = false }) => {
   const { user, isLoading } = useAuth();
@@ -119,6 +121,7 @@ export const router = createBrowserRouter([
           { path: 'ndr', element: <NDRResolutionPage /> },
           { path: 'rto', element: <RTOTrackingPage /> },
           { path: 'returns', element: <ReturnsPage /> },
+          { path: 'returns/new', element: <NewReturnPage /> },
           { path: 'weight-disputes', element: <WeightDisputesPage /> },
           { path: 'claims', element: <ClaimsPage /> },
           { path: 'rate-calculator', element: <RateCalculatorPage /> },
@@ -149,6 +152,7 @@ export const router = createBrowserRouter([
           { path: 'finance', element: <CODRemittancePage /> },
           { path: 'reconciliation', element: <AdminReconciliationPage /> },
           { path: 'audit', element: <AdminAuditLogsPage /> },
+          { path: 'support', element: <AdminSupportTicketsPage /> },
           { path: 'reports', element: <ReportsPage /> },
         ],
       }]},

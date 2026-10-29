@@ -2,24 +2,29 @@ import React, { useState } from 'react';
 import { 
   ShoppingBag, RefreshCw, CheckCircle2, 
   ArrowRight, ShieldCheck, Zap, Activity, 
-  Clock, UploadCloud, ChevronRight, Check
+  Clock, UploadCloud, ChevronRight, Check, Code2, Copy, AlertTriangle
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Badge } from '../../components/ui/Badge';
 import { toast } from 'sonner';
-
-interface SyncLog {
-  id: string;
-  channel: string;
-  type: 'ORDER_IMPORT' | 'TRACKING_PUSH' | 'INVENTORY_SYNC';
-  status: 'SUCCESS' | 'WARNING';
-  count: number;
-  timestamp: string;
-}
+import { usePlatformStore } from '../../services/store';
+import { createCustomIntegration, createShippingRule, fetchIntegrationTelemetry, getOrdersApiUrl, resolveImportError, saveSkuShippingProfile, updateIntegrationConnection } from '../../services/integrationHub';
+import { IntegrationImportError, IntegrationSyncEvent } from '../../types';
 
 export const IntegrationsPage: React.FC = () => {
+  const { integrations, warehouses, loadSupabaseData, currentSeller } = usePlatformStore();
+  const [customStoreName, setCustomStoreName] = useState('');
+  const [customStoreUrl, setCustomStoreUrl] = useState('');
+  const [customWarehouseId, setCustomWarehouseId] = useState('');
+  const [isConnectingCustom, setIsConnectingCustom] = useState(false);
+  const [liveEvents, setLiveEvents] = useState<IntegrationSyncEvent[]>([]);
+  const [importErrors, setImportErrors] = useState<IntegrationImportError[]>([]);
+  const [sku, setSku] = useState('');
+  const [skuWeight, setSkuWeight] = useState('');
+  const [ruleName, setRuleName] = useState('');
+  const [ruleStrategy, setRuleStrategy] = useState<'CHEAPEST'|'FASTEST'|'MANUAL'>('CHEAPEST');
   const [shopifyDomain, setShopifyDomain] = useState('');
   const [shopifyConnected, setShopifyConnected] = useState(false);
   const [shopifyAutoSync, setShopifyAutoSync] = useState(false);
@@ -36,14 +41,42 @@ export const IntegrationsPage: React.FC = () => {
 
   const [isSyncingAll, setIsSyncingAll] = useState(false);
   const [syncingChannel, setSyncingChannel] = useState<string | null>(null);
-  const [lastSyncTime, setLastSyncTime] = useState('Never');
-
-  const [syncLogs, setSyncLogs] = useState<SyncLog[]>([]);
-
-  const activeChannelsCount = (shopifyConnected ? 1 : 0) + 
+  const customIntegrations = integrations.filter((item) => item.platform === 'CUSTOM_API');
+  const importedOrderCount = liveEvents.filter((item) => item.event_type === 'ORDER_IMPORT' && item.status === 'SUCCESS').length;
+  const lastSyncTime = liveEvents[0] ? new Date(liveEvents[0].created_at).toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit'}) : 'Never';
+  const webhookSuccesses = liveEvents.filter((item) => item.direction === 'OUTBOUND');
+  const webhookHealth = webhookSuccesses.length ? Math.round(webhookSuccesses.filter((item) => item.status === 'SUCCESS').length / webhookSuccesses.length * 100) : 100;
+  const activeChannelsCount = integrations.filter((item) => item.status === 'CONNECTED').length + (shopifyConnected ? 1 : 0) +
                               (wooConnected ? 1 : 0) + 
                               (amazonConnected ? 1 : 0) + 
                               (flipkartConnected ? 1 : 0);
+
+  React.useEffect(() => {
+    loadSupabaseData();
+    fetchIntegrationTelemetry().then(({events,errors}) => { setLiveEvents(events); setImportErrors(errors); }).catch(() => undefined);
+  }, []);
+
+  React.useEffect(() => {
+    if (!customWarehouseId && warehouses.length) setCustomWarehouseId(warehouses.find((item) => item.is_default)?.id || warehouses[0].id);
+  }, [customWarehouseId, warehouses]);
+
+  const handleConnectCustom = async (event:React.FormEvent) => {
+    event.preventDefault();
+    if (currentSeller?.status !== 'ACTIVE') { toast.error('Super Admin verification is required before connecting a store'); return; }
+    if (!customStoreName.trim() || !customStoreUrl.trim() || !customWarehouseId) { toast.error('Complete website name, URL and warehouse mapping'); return; }
+    setIsConnectingCustom(true);
+    try {
+      await createCustomIntegration({storeName:customStoreName,storeUrl:customStoreUrl,warehouseId:customWarehouseId});
+      await loadSupabaseData(); setCustomStoreName(''); setCustomStoreUrl('');
+      toast.success('Custom website connected. Generate an orders:write API key to start importing orders.');
+    } catch(error) { toast.error(error instanceof Error ? error.message : 'Connection failed'); }
+    finally { setIsConnectingCustom(false); }
+  };
+
+  const handleToggleCustom = async (integrationId:string, connected:boolean) => {
+    try { await updateIntegrationConnection(integrationId,{status:connected?'DISCONNECTED':'CONNECTED',auto_sync_orders:!connected}); await loadSupabaseData(); }
+    catch(error) { toast.error(error instanceof Error ? error.message : 'Update failed'); }
+  };
 
   const handleSyncAll = () => {
     if (isSyncingAll) return;
@@ -131,6 +164,36 @@ export const IntegrationsPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Production Custom Website API */}
+      <div className="grid grid-cols-1 xl:grid-cols-5 gap-5">
+        <div className="xl:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+          <div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 grid place-items-center"><Code2 className="w-5 h-5" /></div><div><h2 className="font-black text-slate-900">Connect Custom Website</h2><p className="text-xs text-slate-500">Automatic order import and two-way tracking sync</p></div></div>
+          <form onSubmit={handleConnectCustom} className="space-y-3">
+            <Input label="Website / Store Name" value={customStoreName} onChange={(e)=>setCustomStoreName(e.target.value)} placeholder="My Online Store" required />
+            <Input label="Website URL" value={customStoreUrl} onChange={(e)=>setCustomStoreUrl(e.target.value)} placeholder="https://store.example.com" required />
+            <div><label className="block text-xs font-bold text-slate-700 mb-1">Default Pickup Warehouse</label><select value={customWarehouseId} onChange={(e)=>setCustomWarehouseId(e.target.value)} className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm bg-white" required><option value="">Select warehouse</option>{warehouses.map((warehouse)=><option key={warehouse.id} value={warehouse.id}>{warehouse.name} — {warehouse.pincode}</option>)}</select></div>
+            <Button type="submit" className="w-full" isLoading={isConnectingCustom}>Connect Website</Button>
+          </form>
+          <p className="text-[11px] text-slate-500">Only verified ACTIVE sellers can connect websites and import orders.</p>
+        </div>
+        <div className="xl:col-span-3 bg-slate-950 text-white p-6 rounded-2xl border border-slate-800 shadow-sm space-y-4">
+          <div className="flex items-center justify-between"><div><h2 className="font-black">Order Import Endpoint</h2><p className="text-xs text-slate-400">Call from your website backend whenever a customer places an order.</p></div><Button size="sm" variant="outline" onClick={()=>{navigator.clipboard.writeText(getOrdersApiUrl());toast.success('Endpoint copied');}}><Copy className="w-3.5 h-3.5" /> Copy</Button></div>
+          <div className="rounded-xl bg-black/40 border border-slate-800 p-4 font-mono text-xs text-emerald-300 overflow-x-auto whitespace-pre">{`POST ${getOrdersApiUrl()}\nAuthorization: Bearer pk_live_...\nIdempotency-Key: WEBSITE-ORDER-ID\nX-Integration-Account-Id: YOUR_CONNECTION_ID`}</div>
+          <div className="grid sm:grid-cols-2 gap-3">
+            {customIntegrations.map((integration)=><div key={integration.id} className="rounded-xl border border-slate-800 bg-slate-900 p-3"><div className="flex justify-between gap-2"><div><strong className="text-sm">{integration.store_name}</strong><p className="text-[11px] text-slate-400 truncate">{integration.store_url}</p></div><span className={`text-[10px] font-bold ${integration.status==='CONNECTED'?'text-emerald-400':'text-slate-400'}`}>{integration.status}</span></div><p className="mt-2 text-[10px] font-mono text-slate-500">ID: {integration.id}</p><button type="button" onClick={()=>handleToggleCustom(integration.id,integration.status==='CONNECTED')} className="mt-2 text-xs font-bold text-indigo-300 hover:text-white">{integration.status==='CONNECTED'?'Disconnect':'Reconnect'}</button></div>)}
+            {!customIntegrations.length && <div className="sm:col-span-2 py-5 text-center text-xs text-slate-500">Connect a website to receive its integration ID.</div>}
+          </div>
+          <Link to="/app/developers" className="inline-flex text-xs font-bold text-indigo-300 hover:text-white">Generate API key and configure status webhook →</Link>
+        </div>
+      </div>
+
+      {importErrors.length > 0 && <div className="rounded-2xl border border-rose-200 bg-rose-50 p-5"><div className="flex items-center gap-2 mb-3"><AlertTriangle className="w-5 h-5 text-rose-600"/><h3 className="font-black text-rose-900">Orders needing attention ({importErrors.length})</h3></div><div className="space-y-2">{importErrors.map((error)=><div key={error.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-white border border-rose-100 rounded-xl p-3 text-xs"><div><strong className="text-slate-900">{error.external_order_id || 'Unknown order'} · {error.error_code}</strong><p className="text-slate-600">{error.error_message}</p></div><Button size="sm" variant="outline" onClick={async()=>{await resolveImportError(error.id);setImportErrors((items)=>items.filter((item)=>item.id!==error.id));}}>Mark Resolved</Button></div>)}</div></div>}
+
+      <div className="grid md:grid-cols-2 gap-5">
+        <form onSubmit={async(e)=>{e.preventDefault();const weight=Number(skuWeight);if(!sku.trim()||weight<=0){toast.error('Enter SKU and valid weight');return;}try{await saveSkuShippingProfile({sku,weightKg:weight});setSku('');setSkuWeight('');toast.success('SKU shipping profile saved');}catch(error){toast.error(error instanceof Error?error.message:'Unable to save SKU');}}} className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3"><div><h3 className="font-black text-slate-900">SKU Weight Catalogue</h3><p className="text-xs text-slate-500">Imported orders without weight use these SKU defaults.</p></div><div className="grid grid-cols-2 gap-3"><Input label="Product SKU" value={sku} onChange={(e)=>setSku(e.target.value)} placeholder="TSHIRT-BLK-M"/><Input label="Weight (kg)" type="number" min="0.001" step="0.001" value={skuWeight} onChange={(e)=>setSkuWeight(e.target.value)}/></div><Button type="submit" size="sm">Save SKU Profile</Button></form>
+        <form onSubmit={async(e)=>{e.preventDefault();if(!ruleName.trim()){toast.error('Enter a rule name');return;}try{await createShippingRule({name:ruleName,strategy:ruleStrategy});setRuleName('');toast.success('Shipping automation rule created');}catch(error){toast.error(error instanceof Error?error.message:'Unable to create rule');}}} className="rounded-2xl border border-slate-200 bg-white p-5 space-y-3"><div><h3 className="font-black text-slate-900">Courier Automation Rule</h3><p className="text-xs text-slate-500">Set the default selection strategy for imported orders.</p></div><Input label="Rule Name" value={ruleName} onChange={(e)=>setRuleName(e.target.value)} placeholder="Use cheapest courier"/><div><label className="block text-xs font-bold text-slate-700 mb-1">Courier strategy</label><select value={ruleStrategy} onChange={(e)=>setRuleStrategy(e.target.value as typeof ruleStrategy)} className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm bg-white"><option value="CHEAPEST">Cheapest</option><option value="FASTEST">Fastest</option><option value="MANUAL">Manual approval</option></select></div><Button type="submit" size="sm">Create Rule</Button></form>
+      </div>
+
       {/* Sync Telemetry Stat Bar */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex items-center gap-3">
@@ -138,7 +201,7 @@ export const IntegrationsPage: React.FC = () => {
             <ShoppingBag className="w-5 h-5" />
           </div>
           <div>
-            <div className="text-lg font-black text-slate-900 font-display">4,821</div>
+            <div className="text-lg font-black text-slate-900 font-display">{importedOrderCount}</div>
             <div className="text-[11px] font-semibold text-slate-500">Total Synced Orders</div>
           </div>
         </div>
@@ -168,7 +231,7 @@ export const IntegrationsPage: React.FC = () => {
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
-            <div className="text-lg font-black text-slate-900 font-display">99.98%</div>
+            <div className="text-lg font-black text-slate-900 font-display">{webhookHealth}%</div>
             <div className="text-[11px] font-semibold text-slate-500">Webhook Health SLA</div>
           </div>
         </div>
@@ -573,25 +636,23 @@ export const IntegrationsPage: React.FC = () => {
         </div>
 
         <div className="divide-y divide-slate-100">
-          {syncLogs.map((log) => (
+          {liveEvents.map((log) => (
             <div key={log.id} className="py-3 flex items-center justify-between text-xs">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-700 shrink-0">
-                  {log.type === 'ORDER_IMPORT' ? <ShoppingBag className="w-4 h-4 text-blue-600" /> :
-                   log.type === 'TRACKING_PUSH' ? <Activity className="w-4 h-4 text-emerald-600" /> :
+                  {log.event_type === 'ORDER_IMPORT' ? <ShoppingBag className="w-4 h-4 text-blue-600" /> :
+                   log.direction === 'OUTBOUND' ? <Activity className="w-4 h-4 text-emerald-600" /> :
                    <RefreshCw className="w-4 h-4 text-purple-600" />}
                 </div>
                 <div>
                   <div className="font-bold text-slate-900 flex items-center gap-2">
-                    <span>{log.channel}</span>
+                    <span>{log.direction}</span>
                     <span className="text-slate-300">•</span>
                     <span className="text-slate-600 font-medium">
-                      {log.type === 'ORDER_IMPORT' ? `Imported ${log.count} new orders` :
-                       log.type === 'TRACKING_PUSH' ? `Pushed ${log.count} AWB tracking numbers` :
-                       `Reconciled ${log.count} inventory SKUs`}
+                      {log.message || log.event_type}
                     </span>
                   </div>
-                  <span className="text-[11px] text-slate-400">{log.timestamp}</span>
+                  <span className="text-[11px] text-slate-400">{new Date(log.created_at).toLocaleString('en-IN')}</span>
                 </div>
               </div>
 

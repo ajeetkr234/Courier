@@ -125,8 +125,12 @@ export const LandingPage: React.FC = () => {
     };
 
     const hash = window.location.hash;
-    if (hash) {
-      const targetElement = document.querySelector(hash);
+    // Supabase email confirmations return credentials in the URL fragment.
+    // Only treat a simple fragment as an in-page anchor; auth fragments are
+    // parsed by the Supabase client and must never be used as CSS selectors.
+    const anchorId = /^#[A-Za-z][\w:.-]*$/.test(hash) ? hash.slice(1) : '';
+    if (anchorId) {
+      const targetElement = document.getElementById(anchorId);
       if (targetElement) {
         targetElement.scrollIntoView({ behavior: 'smooth' });
         return;
@@ -879,7 +883,7 @@ export const LandingPage: React.FC = () => {
   ];
 
   return (
-    <div className="text-slate-900 flex flex-col font-sans relative pb-20 sm:pb-0">
+    <div className="text-slate-900 flex flex-col font-sans relative pb-24 sm:pb-0 overflow-x-clip">
       {/* Hero Section */}
       <section className="relative pt-8 sm:pt-12 pb-8 sm:pb-12 px-3 xs:px-4 sm:px-8 lg:px-12 bg-gradient-to-b from-blue-50/40 via-white to-white overflow-hidden">
 
@@ -2627,18 +2631,12 @@ export const LandingPage: React.FC = () => {
       </AnimatePresence>
 
       {/* Sticky Mobile Floating Conversion CTA Bar */}
-      <div className="sm:hidden fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-3 right-3 xs:left-4 xs:right-4 z-40 bg-slate-950/95 backdrop-blur-md p-2.5 xs:p-3 rounded-2xl border border-slate-800 shadow-2xl flex items-center justify-between text-white">
-        <div className="flex items-center gap-2 xs:gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center font-bold text-white text-xs shadow-xs shrink-0">
-            <Truck className="w-4 h-4 text-white" />
-          </div>
-          <div>
-            <span className="block text-xs font-black text-white font-display">ShipFaster Logistic</span>
-            <span className="block text-[10px] text-slate-400 font-semibold">Rates from ₹28/500g</span>
-          </div>
-        </div>
-        <Link to="/register">
-          <button className="px-3 xs:px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-[11px] xs:text-xs shadow-lg shadow-blue-600/30 flex items-center gap-1.5 cursor-pointer shrink-0">
+      <div className="sm:hidden fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] right-3 z-40 text-white">
+        <Link to="/register" aria-label="Start shipping with ShipFaster">
+          <button className="min-h-11 px-3.5 py-2.5 rounded-full bg-slate-950/95 hover:bg-slate-900 backdrop-blur-md text-white font-extrabold text-xs shadow-2xl border border-slate-700 flex items-center gap-2 cursor-pointer whitespace-nowrap">
+            <span className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center shrink-0">
+              <Truck className="w-3.5 h-3.5 text-white" />
+            </span>
             <span>Start Shipping</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>

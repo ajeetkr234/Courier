@@ -38,7 +38,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
           ref={ref}
           id={inputId}
           className={clsx(
-            'w-full bg-white border border-slate-300 text-slate-900 rounded-xl px-3.5 py-2.5 text-sm placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all',
+            'w-full bg-white border border-slate-300 text-slate-900 rounded-xl px-3.5 py-2.5 text-sm placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all cursor-default caret-indigo-600',
             leftIcon && 'pl-10',
             rightIcon && 'pr-10',
             error && 'border-rose-500 focus:border-rose-500 focus:ring-rose-500/20',
@@ -47,7 +47,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
           {...props}
         />
         {rightIcon && (
-          <div className="absolute right-3.5 text-slate-400">
+          <div className="absolute right-1.5 text-slate-400">
             {rightIcon}
           </div>
         )}
