@@ -1,5 +1,18 @@
 import React, { useEffect, useRef } from 'react';
-import * as THREE from 'three';
+import {
+  Scene,
+  PerspectiveCamera,
+  WebGLRenderer,
+  BufferGeometry,
+  BufferAttribute,
+  PointsMaterial,
+  Points,
+  IcosahedronGeometry,
+  OctahedronGeometry,
+  BoxGeometry,
+  MeshBasicMaterial,
+  Mesh,
+} from 'three';
 
 export const GlobalThreeBackground: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -12,18 +25,18 @@ export const GlobalThreeBackground: React.FC = () => {
     const width = container.clientWidth;
     const height = container.clientHeight;
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
+    const scene = new Scene();
+    const camera = new PerspectiveCamera(60, width / height, 0.1, 1000);
     camera.position.z = 30;
 
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    const renderer = new WebGLRenderer({ alpha: true, antialias: true });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     container.appendChild(renderer.domElement);
 
     // Floating 3D Particles
     const particleCount = 180;
-    const particleGeo = new THREE.BufferGeometry();
+    const particleGeo = new BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
     const colors = new Float32Array(particleCount * 3);
 
@@ -38,35 +51,35 @@ export const GlobalThreeBackground: React.FC = () => {
       colors[i * 3 + 2] = 0.95;                      // B
     }
 
-    particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    particleGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    particleGeo.setAttribute('position', new BufferAttribute(positions, 3));
+    particleGeo.setAttribute('color', new BufferAttribute(colors, 3));
 
-    const particleMat = new THREE.PointsMaterial({
+    const particleMat = new PointsMaterial({
       size: 0.35,
       vertexColors: true,
       transparent: true,
       opacity: 0.45,
     });
 
-    const particles = new THREE.Points(particleGeo, particleMat);
+    const particles = new Points(particleGeo, particleMat);
     scene.add(particles);
 
     // Add 3 Floating Wireframe Geometries (Icosahedron, Octahedron, Cube)
     const geometries = [
-      new THREE.IcosahedronGeometry(2.5, 1),
-      new THREE.OctahedronGeometry(2.2, 0),
-      new THREE.BoxGeometry(2, 2, 2)
+      new IcosahedronGeometry(2.5, 1),
+      new OctahedronGeometry(2.2, 0),
+      new BoxGeometry(2, 2, 2)
     ];
 
-    const meshes: THREE.Mesh[] = [];
+    const meshes: Mesh[] = [];
     geometries.forEach((geo, idx) => {
-      const mat = new THREE.MeshBasicMaterial({
+      const mat = new MeshBasicMaterial({
         color: 0x3b82f6,
         wireframe: true,
         transparent: true,
         opacity: 0.18,
       });
-      const mesh = new THREE.Mesh(geo, mat);
+      const mesh = new Mesh(geo, mat);
       mesh.position.set(
         (idx - 1) * 18,
         (idx % 2 === 0 ? 1 : -1) * 8,
@@ -137,7 +150,18 @@ export const GlobalThreeBackground: React.FC = () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleResize);
-      if (container && renderer.domElement) {
+
+      // Clean up WebGL resources to avoid GPU memory leaks
+      particleGeo.dispose();
+      particleMat.dispose();
+      geometries.forEach((geo) => geo.dispose());
+      meshes.forEach((mesh) => {
+        if (mesh.material instanceof MeshBasicMaterial) {
+          mesh.material.dispose();
+        }
+      });
+
+      if (container && renderer.domElement && container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);
       }
       renderer.dispose();

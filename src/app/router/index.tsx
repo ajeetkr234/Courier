@@ -4,11 +4,6 @@ import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 // Layouts
 import { ScrollToTopWrapper } from '../../components/layout/ScrollToTopWrapper';
 import { PublicLayout } from '../../components/layout/PublicLayout';
-import { SellerLayout } from '../../components/layout/SellerLayout';
-import { AdminLayout } from '../../components/layout/AdminLayout';
-
-// Eagerly loaded primary landing page for zero initial render delay
-import { LandingPage } from '../../features/landing/LandingPage';
 import { useAuth } from '../providers/AuthProvider';
 
 // Helper for type-safe named export lazy-loading
@@ -17,7 +12,12 @@ const lazyNamed = <T extends Record<string, any>, K extends keyof T>(
   exportName: K
 ) => lazy(() => loader().then((module) => ({ default: module[exportName] })));
 
+// Lazy-loaded Layouts
+const SellerLayout = lazyNamed(() => import('../../components/layout/SellerLayout'), 'SellerLayout');
+const AdminLayout = lazyNamed(() => import('../../components/layout/AdminLayout'), 'AdminLayout');
+
 // Lazy-loaded Public Pages
+const LandingPage = lazyNamed(() => import('../../features/landing/LandingPage'), 'LandingPage');
 const FeaturesPage = lazyNamed(() => import('../../features/landing/FeaturesPage'), 'FeaturesPage');
 const SolutionsPage = lazyNamed(() => import('../../features/landing/SolutionsPage'), 'SolutionsPage');
 const CouriersPage = lazyNamed(() => import('../../features/landing/CouriersPage'), 'CouriersPage');

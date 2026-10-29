@@ -71,64 +71,38 @@ export async function rechargeWalletInSupabase(
   paymentRef: string
 ): Promise<WalletRechargeRequest> {
   const effectiveSellerId = await getEffectiveSellerId(sellerId);
-  try {
-    const { data, error } = await supabase.rpc('request_wallet_recharge', {
-      p_amount: amount,
-      p_payment_ref: paymentRef,
-    });
-    if (!error && data) {
-      cacheLocalRecharge(effectiveSellerId, data as WalletRechargeRequest);
-      return data as WalletRechargeRequest;
-    }
-    if (error) console.warn('request_wallet_recharge RPC error, attempting direct insert:', error);
-  } catch (rpcErr) {
-    console.warn('request_wallet_recharge RPC exception:', rpcErr);
+
+  if (isMockMode) {
+    const fallbackReq: WalletRechargeRequest = {
+      id: `req-${Date.now()}`,
+      seller_id: effectiveSellerId,
+      amount: Math.round(amount * 82) / 100,
+      paid_amount: Math.round(amount * 100) / 100,
+      gst_amount: Math.round(amount * 18) / 100,
+      payment_reference: paymentRef,
+      status: 'PENDING',
+      requested_by: effectiveSellerId,
+      created_at: new Date().toISOString(),
+    };
+    cacheLocalRecharge(effectiveSellerId, fallbackReq);
+    return fallbackReq;
   }
 
-  // Fallback to direct insert
-  try {
-    const { data: insertData, error: insertError } = await supabase
-      .from('wallet_recharge_requests')
-      .insert({
-        seller_id: effectiveSellerId,
-        paid_amount: Math.round(amount * 100) / 100,
-        amount: Math.round(amount * 82) / 100,
-        gst_amount: Math.round(amount * 18) / 100,
-        payment_reference: paymentRef,
-        status: 'PENDING',
-      })
-      .select()
-      .single();
+  const { data, error } = await supabase.rpc('request_wallet_recharge', {
+    p_amount: amount,
+    p_payment_ref: paymentRef,
+  });
 
-    if (!insertError && insertData) {
-      const formatted = {
-        ...insertData,
-        amount: Number(insertData.amount),
-        paid_amount: Number(insertData.paid_amount),
-        gst_amount: Number(insertData.gst_amount),
-      } as WalletRechargeRequest;
-      cacheLocalRecharge(effectiveSellerId, formatted);
-      return formatted;
-    }
-    if (insertError) console.warn('Direct insert into wallet_recharge_requests failed:', insertError);
-  } catch (tableErr) {
-    console.warn('Table insert exception:', tableErr);
+  if (error) {
+    throw new Error(error.message || 'Failed to submit wallet recharge request.');
   }
 
-  // Local fallback object
-  const fallbackReq: WalletRechargeRequest = {
-    id: `req-${Date.now()}`,
-    seller_id: effectiveSellerId,
-    amount: Math.round(amount * 82) / 100,
-    paid_amount: Math.round(amount * 100) / 100,
-    gst_amount: Math.round(amount * 18) / 100,
-    payment_reference: paymentRef,
-    status: 'PENDING',
-    requested_by: effectiveSellerId,
-    created_at: new Date().toISOString(),
-  };
-  cacheLocalRecharge(effectiveSellerId, fallbackReq);
-  return fallbackReq;
+  if (!data) {
+    throw new Error('No data returned from wallet recharge request.');
+  }
+
+  cacheLocalRecharge(effectiveSellerId, data as WalletRechargeRequest);
+  return data as WalletRechargeRequest;
 }
 
 function cacheLocalRecharge(sellerId: string, req: WalletRechargeRequest) {
@@ -203,51 +177,10 @@ export async function debitWalletForShipmentInSupabase(
   const newBalance = currentBalance - amount;
 
   if (!isMockMode) {
-    const { data: insertedEntry } = await supabase
-      .from('ledger_entries')
-      .insert({
-        seller_id: effectiveSellerId,
-        type: 'SHIPMENT_DEBIT',
-        amount,
-        direction: 'DEBIT',
-        reference_type: 'AWB',
-        reference_id: awbNumber,
-        idempotency_key: `deb-${awbNumber}-${Date.now()}`,
-      })
-      .select()
-      .single();
-
-    await supabase.from('wallets').upsert({
-      seller_id: effectiveSellerId,
-      balance: newBalance,
-      updated_at: new Date().toISOString(),
-    });
-
-    const resultEntry: LedgerEntry = insertedEntry
-      ? {
-          id: insertedEntry.id,
-          seller_id: insertedEntry.seller_id,
-          type: 'SHIPMENT_DEBIT',
-          amount: Number(insertedEntry.amount),
-          direction: 'DEBIT',
-          reference_type: 'AWB',
-          reference_id: awbNumber,
-          description: `Shipping debit for AWB ${awbNumber} (${courierName})`,
-          created_at: insertedEntry.created_at,
-        }
-      : {
-          id: `led-${Date.now()}`,
-          seller_id: effectiveSellerId,
-          type: 'SHIPMENT_DEBIT',
-          amount,
-          direction: 'DEBIT',
-          reference_type: 'AWB',
-          reference_id: awbNumber,
-          description: `Shipping debit for AWB ${awbNumber} (${courierName})`,
-          created_at: new Date().toISOString(),
-        };
-
-    return { balance: newBalance, entry: resultEntry };
+    // In live mode, wallet debits for shipping must be executed atomically on the server
+    // via book-shipment edge function / finalize_shipment_booking database RPC.
+    // Client-side direct table mutations are blocked by RLS policies.
+    throw new Error('Direct client-side wallet debits are prohibited. Shipments must be booked through the secure server booking pipeline.');
   }
 
   return {
