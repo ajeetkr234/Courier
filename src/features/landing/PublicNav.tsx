@@ -18,20 +18,20 @@ export const PublicNavbar: React.FC = () => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      // Always show near top of page (first 50px) or if mobile menu is open
-      if (currentScrollY <= 50 || mobileMenuOpen) {
+      // Always show near top of page (first 60px) or if mobile menu is open
+      if (currentScrollY <= 60 || mobileMenuOpen) {
         setIsNavHidden(false);
         lastScrollY.current = currentScrollY <= 0 ? 0 : currentScrollY;
         return;
       }
 
-      // Forward scrolling (down) -> hide navbar
-      if (currentScrollY > lastScrollY.current && currentScrollY - lastScrollY.current > 4) {
-        setIsNavHidden(true);
-      }
-      // Back scrolling (up) -> make navbar visible immediately
-      else if (currentScrollY < lastScrollY.current && lastScrollY.current - currentScrollY > 4) {
+      // Back scrolling (up) -> make navbar visible immediately on ANY upward motion
+      if (currentScrollY < lastScrollY.current) {
         setIsNavHidden(false);
+      }
+      // Forward scrolling (down) -> hide navbar
+      else if (currentScrollY > lastScrollY.current && currentScrollY - lastScrollY.current > 3) {
+        setIsNavHidden(true);
       }
 
       lastScrollY.current = currentScrollY <= 0 ? 0 : currentScrollY;
@@ -59,15 +59,17 @@ export const PublicNavbar: React.FC = () => {
   const shippingPath = user ? dashboardPath : '/register';
 
   return (
-    <motion.div 
-      variants={{
-        visible: { y: '0%' },
-        hidden: { y: '-100%' }
-      }}
-      animate={isNavHidden ? 'hidden' : 'visible'}
-      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-      className="sticky top-0 z-50 will-change-transform"
-    >
+    <>
+      <motion.div 
+        initial={false}
+        variants={{
+          visible: { y: '0%' },
+          hidden: { y: '-100%' }
+        }}
+        animate={isNavHidden ? 'hidden' : 'visible'}
+        transition={{ duration: 0.25, ease: 'easeInOut' }}
+        className="fixed top-0 left-0 right-0 z-50 w-full shadow-xs will-change-transform"
+      >
       {/* Slim Refined Top Promotional Bar with Continuous Marquee */}
       {isAnnouncementVisible && (
         <div className="bg-blue-600 text-white text-[11px] sm:text-xs font-semibold py-1.5 flex items-center overflow-hidden shadow-xs transition-all relative">
@@ -254,6 +256,14 @@ export const PublicNavbar: React.FC = () => {
         )}
       </header>
     </motion.div>
+    {/* Flow spacer so hero content starts below fixed navbar */}
+    <div 
+      aria-hidden="true" 
+      className={`w-full pointer-events-none transition-[height] duration-200 ${
+        isAnnouncementVisible ? 'h-[104px]' : 'h-[72px]'
+      }`} 
+    />
+  </>
   );
 };
 
