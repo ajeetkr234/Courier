@@ -6,11 +6,32 @@ import { ScrollToTopWrapper } from '../../components/layout/ScrollToTopWrapper';
 import { PublicLayout } from '../../components/layout/PublicLayout';
 import { useAuth } from '../providers/AuthProvider';
 
-// Helper for type-safe named export lazy-loading
+// Helper for type-safe named export lazy-loading with auto-retry on new deployment chunk changes
 const lazyNamed = <T extends Record<string, any>, K extends keyof T>(
   loader: () => Promise<T>,
   exportName: K
-) => lazy(() => loader().then((module) => ({ default: module[exportName] })));
+) => lazy(async () => {
+  try {
+    const module = await loader();
+    return { default: module[exportName] };
+  } catch (error: any) {
+    const isChunkError = 
+      error?.message?.includes('Failed to fetch dynamically imported module') ||
+      error?.name === 'ChunkLoadError' ||
+      error?.message?.includes('Loading chunk');
+
+    if (isChunkError && typeof window !== 'undefined') {
+      const storageKey = 'vite_chunk_reload_' + window.location.pathname;
+      const hasReloaded = sessionStorage.getItem(storageKey);
+      if (!hasReloaded) {
+        sessionStorage.setItem(storageKey, 'true');
+        window.location.reload();
+        return new Promise<{ default: T[K] }>(() => {});
+      }
+    }
+    throw error;
+  }
+});
 
 // Lazy-loaded Layouts
 const SellerLayout = lazyNamed(() => import('../../components/layout/SellerLayout'), 'SellerLayout');
