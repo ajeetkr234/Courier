@@ -2,12 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '../../components/ui/Button';
-import { ArrowRight, Menu, X, ChevronRight, Phone, Mail, MapPin } from 'lucide-react';
+import { ArrowRight, Menu, X, ChevronRight, Phone, Mail, MapPin, LogOut, ShieldCheck, Store } from 'lucide-react';
 import { useAuth } from '../../app/providers/AuthProvider';
 
 export const PublicNavbar: React.FC = () => {
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAnnouncementVisible, setIsAnnouncementVisible] = useState(true);
   const [isNavHidden, setIsNavHidden] = useState(false);
@@ -18,25 +18,23 @@ export const PublicNavbar: React.FC = () => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      // Always show near top of page (first 60px) or if mobile menu is open
-      if (currentScrollY <= 60 || mobileMenuOpen) {
+      // Always show near top of page (first 50px) or if mobile menu is open
+      if (currentScrollY <= 50 || mobileMenuOpen) {
         setIsNavHidden(false);
-        lastScrollY.current = currentScrollY;
+        lastScrollY.current = currentScrollY <= 0 ? 0 : currentScrollY;
         return;
       }
 
-      const diff = currentScrollY - lastScrollY.current;
-
-      // Upward scroll -> reveal navbar immediately
-      if (diff < -4) {
-        setIsNavHidden(false);
-        lastScrollY.current = currentScrollY;
-      }
-      // Downward scroll -> hide navbar
-      else if (diff > 8) {
+      // Forward scrolling (down) -> hide navbar
+      if (currentScrollY > lastScrollY.current && currentScrollY - lastScrollY.current > 4) {
         setIsNavHidden(true);
-        lastScrollY.current = currentScrollY;
       }
+      // Back scrolling (up) -> make navbar visible immediately
+      else if (currentScrollY < lastScrollY.current && lastScrollY.current - currentScrollY > 4) {
+        setIsNavHidden(false);
+      }
+
+      lastScrollY.current = currentScrollY <= 0 ? 0 : currentScrollY;
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -147,20 +145,48 @@ export const PublicNavbar: React.FC = () => {
 
           {/* Desktop Right CTAs */}
           <div className="hidden lg:flex items-center gap-2.5 sm:gap-3.5">
-            <Link to={accountPath}>
-              <Button variant="ghost" size="sm" className="font-bold text-slate-700 hover:text-blue-600 px-2.5 sm:px-3 text-xs">
-                {accountLabel}
-              </Button>
-            </Link>
-            <Link to={shippingPath}>
-              <Button 
-                size="sm" 
-                className="font-bold text-xs shadow-xs hover:shadow-md hover:shadow-blue-500/20 hover:-translate-y-0.5 transition-all duration-200 group"
-                rightIcon={<ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-200" />}
-              >
-                Start Shipping
-              </Button>
-            </Link>
+            {user ? (
+              <>
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700">
+                  {user.role?.startsWith('PLATFORM_') ? (
+                    <>
+                      <ShieldCheck className="w-3.5 h-3.5 text-purple-600" />
+                      <span className="text-purple-700">Platform Admin</span>
+                    </>
+                  ) : (
+                    <>
+                      <Store className="w-3.5 h-3.5 text-emerald-600" />
+                      <span className="text-emerald-700">{user.name || 'Seller'}</span>
+                    </>
+                  )}
+                </div>
+                <Link to={dashboardPath}>
+                  <Button size="sm" className="font-bold text-xs shadow-xs hover:shadow-md hover:shadow-blue-500/20">
+                    Open Dashboard
+                  </Button>
+                </Link>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => logout()} 
+                  className="font-bold text-xs text-slate-500 hover:text-rose-600 px-2.5"
+                  title="Sign out of current account"
+                >
+                  <LogOut className="w-3.5 h-3.5 mr-1" />
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <Link to="/login">
+                <Button 
+                  size="sm" 
+                  className="font-bold text-xs shadow-xs hover:shadow-md hover:shadow-blue-500/20 hover:-translate-y-0.5 transition-all duration-200 group"
+                  rightIcon={<ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-200" />}
+                >
+                  Login / Sign Up
+                </Button>
+              </Link>
+            )}
           </div>
 
           {/* Mobile Hamburger Toggle Button */}
@@ -196,12 +222,33 @@ export const PublicNavbar: React.FC = () => {
             })}
             
             <div className="pt-3 flex flex-col gap-2.5">
-              <Link to={accountPath} onClick={() => setMobileMenuOpen(false)}>
-                <Button variant="outline" className="w-full justify-center">{accountLabel}</Button>
-              </Link>
-              <Link to={shippingPath} onClick={() => setMobileMenuOpen(false)}>
-                <Button className="w-full justify-center" rightIcon={<ArrowRight className="w-4 h-4" />}>Start Shipping</Button>
-              </Link>
+              {user ? (
+                <>
+                  <div className="flex items-center justify-between px-3 py-2 bg-slate-50 rounded-xl border border-slate-200 text-xs font-semibold">
+                    <span>Logged in as:</span>
+                    <span className="font-bold text-blue-600">
+                      {user.role?.startsWith('PLATFORM_') ? 'Platform Admin' : (user.name || 'Seller')}
+                    </span>
+                  </div>
+                  <Link to={dashboardPath} onClick={() => setMobileMenuOpen(false)}>
+                    <Button className="w-full justify-center">Open Dashboard</Button>
+                  </Link>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => { logout(); setMobileMenuOpen(false); }} 
+                    className="w-full justify-center text-rose-600 hover:bg-rose-50 border-rose-200"
+                  >
+                    <LogOut className="w-4 h-4 mr-1.5" />
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
+                  <Button className="w-full justify-center" rightIcon={<ArrowRight className="w-4 h-4" />}>
+                    Login / Sign Up
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
         )}

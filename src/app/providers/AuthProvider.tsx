@@ -3,18 +3,28 @@ import { toast } from 'sonner';
 import type { UserProfile, UserRole } from '../../types';
 import { useAppStore } from '../../lib/store';
 import { usePlatformStore } from '../../services/store';
-import { getActiveSession, signInUser, signOutUser, signUpUser } from '../../services/supabaseAuth';
+import { getActiveSession, signInUser, signOutUser, signUpUser, createDemoSession } from '../../services/supabaseAuth';
 import { supabase } from '../../lib/supabase';
 
 interface AuthContextType {
   user: UserProfile | null;
   isLoading: boolean;
   login: (email: string, password?: string, role?: UserRole) => Promise<void>;
+  loginDemo: (isAdmin?: boolean) => void;
   register: (email: string, password: string, companyName: string, phone: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType>({} as AuthContextType);
+const defaultAuthContext: AuthContextType = {
+  user: null,
+  isLoading: false,
+  login: async () => {},
+  loginDemo: () => {},
+  register: async () => {},
+  logout: async () => {},
+};
+
+const AuthContext = createContext<AuthContextType>(defaultAuthContext);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { currentUser, setCurrentUser, setCurrentSeller } = useAppStore();
@@ -84,6 +94,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const loginDemo = (isAdmin = false) => {
+    setIsLoading(true);
+    try {
+      const email = isAdmin ? 'admin.demo@shipfaster.test' : 'seller.demo@shipfaster.test';
+      const session = createDemoSession(email, isAdmin);
+      apply(session);
+      const roleLabel = isAdmin ? 'Platform Control Tower (Admin)' : 'Seller Panel';
+      toast.success(`Signed in to ${roleLabel}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const logout = async () => {
     await signOutUser();
     apply(null);
@@ -91,7 +114,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user: currentUser, isLoading, login, register, logout }}>
+    <AuthContext.Provider value={{ user: currentUser, isLoading, login, loginDemo, register, logout }}>
       {children}
     </AuthContext.Provider>
   );
