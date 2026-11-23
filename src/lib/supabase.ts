@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
-const env: Record<string, any> = (typeof import.meta !== 'undefined' && (import.meta as any).env) 
-  ? (import.meta as any).env 
+const env: Record<string, any> = (typeof import.meta !== 'undefined' && (import.meta as any).env)
+  ? (import.meta as any).env
   : ((typeof globalThis !== 'undefined' && (globalThis as any).process?.env) ? (globalThis as any).process.env : {});
 
 const FALLBACK_SUPABASE_URL = 'https://ytydhmrcsowhygttdoiw.supabase.co';
@@ -43,7 +43,7 @@ export async function getEffectiveSellerId(providedSellerId?: string | null): Pr
     const { data: { session } } = await supabase.auth.getSession();
     const claimedSellerId = session?.user.app_metadata?.seller_id;
     if (isValidUUID(claimedSellerId)) return claimedSellerId;
-  } catch {}
+  } catch { }
 
   if (typeof window !== 'undefined') {
     try {
@@ -52,7 +52,7 @@ export async function getEffectiveSellerId(providedSellerId?: string | null): Pr
         const parsed = JSON.parse(cached);
         if (isValidUUID(parsed?.seller?.id)) return parsed.seller.id;
       }
-    } catch {}
+    } catch { }
   }
 
   return '32d724db-23c4-4cba-a76f-f78e4022194e';
